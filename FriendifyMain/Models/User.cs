@@ -15,7 +15,7 @@ namespace FriendifyMain.Models
         public enum StatusEnum { Single, Relationship, Married}
 
 
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Username { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -24,13 +24,14 @@ namespace FriendifyMain.Models
         public string Email { get; set; }
         public bool Suspended { get; set; }
         public SexEnum Sex { get; set; }
-        public StatusEnum status { get; set; }
+        public StatusEnum Status { get; set; }
 
-        public Picture? picture { get; set; }
+        public Picture? Picture { get; set; }
         public string? Country { get; set; }
         public string? PhoneNumber { get; set; }
         public List<Follower> Follows { get; set; }
         public List<Follower> FollowedBy { get; set; }
+        public List<Post> Posts { get; set; }
 
         // Moderator fields
         public string? Address { get; set; }

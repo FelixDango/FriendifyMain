@@ -7,6 +7,6 @@ namespace FriendifyMain.Models
 {
     public class Follower
     {
-        public User follower { get; set; }
+        public User User{ get; set; }
     }
 }

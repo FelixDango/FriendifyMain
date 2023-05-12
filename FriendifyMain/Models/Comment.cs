@@ -7,7 +7,9 @@ namespace FriendifyMain.Models
 {
     public class Comment
     {
+        public string Id { get; set; }
+        public string UserId { get; set; }
         public string Text { get; set; }
-        public DateTime Datum { get; set; }
+        public DateTime Date { get; set; }
     }
 }
