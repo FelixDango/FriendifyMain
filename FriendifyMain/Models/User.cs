@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,16 +15,25 @@ namespace FriendifyMain.Models
         public enum SexEnum { Male, Female, Other }
         public enum StatusEnum { Single, Relationship, Married}
 
-
-        public string Id { get; set; }
+        [Key]
+        public int Id { get; set; }
+        [Required]
         public string Username { get; set; }
+        [Required]
         public string FirstName { get; set; }
+        [Required]
         public string LastName { get; set; }
+        [Required]
         public string Password { get; set; }
+        [Required]
         public DateTime BirthDate { get; set; }
+        [Required]
         public string Email { get; set; }
+        [Required]
         public bool Suspended { get; set; }
+        [Required]
         public SexEnum Sex { get; set; }
+        [Required]
         public StatusEnum Status { get; set; }
 
         public Picture? Picture { get; set; }

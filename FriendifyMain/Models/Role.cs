@@ -20,7 +20,7 @@ namespace FriendifyMain.Models
     public class AssignedRole
     {
         [Key]
-        public string Id { get; set; }
+        public int Id { get; set; }
 
         // Foreign key to link to User
         public int UserId { get; set; }

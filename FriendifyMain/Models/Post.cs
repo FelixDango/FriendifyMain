@@ -1,9 +1,12 @@
-﻿namespace FriendifyMain.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FriendifyMain.Models
 {
     public class Post
     {
-        public string Id { get; set; }
-        public string UserId { get; set; }
+        [Key]
+        public int Id { get; set; }
+        public int UserId { get; set; }
         public string Content { get; set; }
         public DateTime Date { get; set; }
         public List<User> LikedBy { get; set; }
