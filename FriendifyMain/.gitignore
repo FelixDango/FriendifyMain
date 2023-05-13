@@ -231,3 +231,6 @@ _Pvt_Extensions
 .fake/
 /ClientApp/.angular/
 /ClientApp/.angular/
+
+# JetBrains
+.idea
