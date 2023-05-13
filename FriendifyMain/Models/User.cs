@@ -19,6 +19,7 @@ namespace FriendifyMain.Models
         [Key]
         public int Id { get; set; }
         [Required]
+        [RegularExpression(@"^[a-zA-Z0-9]+$", ErrorMessage = "Username can only contain letters or digits.")]
         public string Username { get; set; }
         [Required]
         public string FirstName { get; set; }
@@ -43,6 +44,8 @@ namespace FriendifyMain.Models
         public List<Follower> Follows { get; set; }
         public List<Follower> FollowedBy { get; set; }
         public List<Post> Posts { get; set; }
+        public List<AssignedRole> AssignedRoles { get; set; }
+
 
         // Moderator fields
         public string? Address { get; set; }

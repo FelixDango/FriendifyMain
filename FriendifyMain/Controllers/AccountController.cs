@@ -30,7 +30,13 @@ namespace FriendifyMain.Controllers
             {
                 // Create a new user with the given username and password
                 var user = new User { Username = model.Username };
+
+                // Add logging statements to track the user creation process
+                Console.WriteLine("Creating user: " + user.Username);
+
                 var result = await _userManager.CreateAsync(user, model.Password);
+                Console.WriteLine("result: " + result);
+
 
                 // Check if the user creation was successful
                 if (result.Succeeded)
@@ -42,8 +48,20 @@ namespace FriendifyMain.Controllers
                     return Ok(user);
                 }
 
+                // Log the errors if user creation failed
+                foreach (var error in result.Errors)
+                {
+                    Console.WriteLine("User creation error: " + error.Description);
+                }
+
                 // If not, return a 400 Bad Request response with the errors
                 return BadRequest(result.Errors);
+            }
+
+            // Log the validation errors if the model is not valid
+            foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+            {
+                Console.WriteLine("Model validation error: " + error.ErrorMessage);
             }
 
             // If the model is not valid, return a 400 Bad Request response with the validation errors
