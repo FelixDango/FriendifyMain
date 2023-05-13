@@ -233,4 +233,4 @@ _Pvt_Extensions
 /ClientApp/.angular/
 
 # JetBrains
-.idea
+/.idea/
