@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace FriendifyMain.Models
 {
     /// <summary>
     /// Data model for user data 
     /// </summary>
-    public class User
+    public class User : IdentityUser<int>
     {
         // Help types
         public enum SexEnum { Male, Female, Other }

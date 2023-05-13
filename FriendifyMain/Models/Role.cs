@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 
 namespace FriendifyMain.Models
 {
-    public class Role
+    public class Role : IdentityRole<int>
     {
         [Key]
         public int Id { get; set; }
