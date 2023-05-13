@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using FriendifyMain.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace FriendifyMain
 {
@@ -20,6 +21,10 @@ namespace FriendifyMain
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            
+            services.AddIdentity<User, Role>()
+                .AddEntityFrameworkStores<FriendifyContext>()
+                .AddDefaultTokenProviders();
 
             // Add a connection string to your appsettings.json file
             var connectionString = Configuration.GetConnectionString("FriendifyConnection");
