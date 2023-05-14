@@ -34,7 +34,7 @@ namespace FriendifyMain.Controllers
                 }
 
                 // Get the list of users that the current user follows
-                var followedUsers = currentUser.Follows.Select(f => f.UserId).ToList();
+                var followedUsers = currentUser.Follows.Select(f => f.Id).ToList();
 
                 // Get the latest posts from the followed users, ordered by date in descending order
                 var posts = await _context.Posts

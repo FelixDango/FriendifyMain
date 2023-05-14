@@ -1,7 +1,5 @@
 ﻿using FriendifyMain.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Data;
 
 public class FriendifyContext : DbContext
 {
@@ -15,4 +13,25 @@ public class FriendifyContext : DbContext
     public DbSet<Role> Roles { get; set; }
     public DbSet<AssignedRole> AssignedRoles { get; set; }
     // Add other DbSets as needed
+
+    // Override the OnModelCreating method
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+
+        // configure the base class for IdentityUser
+        base.OnModelCreating(modelBuilder);
+
+        // configure the one-to-many relationship between User and Post
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.Posts) // specify the navigation property
+            .WithOne(p => p.User) // specify the inverse navigation property
+            .HasForeignKey(p => p.UserId); // specify the foreign key property
+
+        modelBuilder.Entity<Comment>()
+        .HasOne(c => c.Post) // specify the navigation property
+        .WithMany(p => p.Comments) // specify the inverse navigation property
+        .HasForeignKey(c => c.PostId); // specify the foreign key property
+
+
+    }
 }

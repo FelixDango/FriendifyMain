@@ -5,6 +5,9 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using FriendifyMain.Models;
 using Microsoft.AspNetCore.Identity;
+using FriendifyMain.Mappers;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FriendifyMain
 {
@@ -26,12 +29,36 @@ namespace FriendifyMain
                 .AddEntityFrameworkStores<FriendifyContext>()
                 .AddDefaultTokenProviders();
 
+            services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
             // Add a connection string to your appsettings.json file
             var connectionString = Configuration.GetConnectionString("FriendifyConnection");
 
             // Register the DbContext with the dependency injection container
             services.AddDbContext<FriendifyContext>(options => options.UseSqlServer(connectionString));
 
+            // Register the AutoMapper service and add the mapping profiles
+            services.AddAutoMapper(typeof(RegisterMapper));
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                // Password settings
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireLowercase = false;
+                options.Password.RequiredUniqueChars = 6;
+
+                // Disable validation for username and email
+                options.User.RequireUniqueEmail = false;
+                options.User.AllowedUserNameCharacters = null;
+
+                // Lockout settings
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+                options.Lockout.MaxFailedAccessAttempts = 10;
+                options.Lockout.AllowedForNewUsers = true;
+
+            });
 
             // Add authentication services
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
