@@ -24,14 +24,20 @@ namespace FriendifyMain.ViewModels
         public string ConfirmPassword { get; set; }
 
         [Required]
+        [MinLength(1)]
+        [MaxLength(100)]
         public string FirstName { get; set; }
 
+        [MinLength(1)]
+        [MaxLength(100)]
         [Required]
         public string LastName { get; set; }
 
         [Required]
         public DateTime BirthDate { get; set; }
 
+        [MinLength(1)]
+        [MaxLength(100)]
         [Required]
         public string Email { get; set; }
 

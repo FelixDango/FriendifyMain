@@ -28,10 +28,23 @@ public class FriendifyContext : DbContext
             .HasForeignKey(p => p.UserId); // specify the foreign key property
 
         modelBuilder.Entity<Comment>()
-        .HasOne(c => c.Post) // specify the navigation property
-        .WithMany(p => p.Comments) // specify the inverse navigation property
-        .HasForeignKey(c => c.PostId); // specify the foreign key property
+            .HasOne(c => c.Post) // specify the navigation property
+            .WithMany(p => p.Comments) // specify the inverse navigation property
+            .HasForeignKey(c => c.PostId); // specify the foreign key property
 
+        modelBuilder.Entity<Comment>()
+            .HasOne(c => c.User) // specify the navigation property
+            .WithMany(p => p.Comments) // specify the inverse navigation property
+            .HasForeignKey(c => c.UserId); // specify the foreign key property
 
+        modelBuilder.Entity<Picture>()
+            .HasOne(c => c.User) // specify the navigation property
+            .WithMany(p => p.Images) // specify the inverse navigation property
+            .HasForeignKey(c => c.UserId); // specify the foreign key property
+
+        modelBuilder.Entity<Video>()
+            .HasOne(c => c.User) // specify the navigation property
+            .WithMany(p => p.Videos) // specify the inverse navigation property
+            .HasForeignKey(c => c.UserId); // specify the foreign key property
     }
 }
