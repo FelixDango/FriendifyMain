@@ -9,6 +9,7 @@ public class FriendifyContext : DbContext
     }
 
     public DbSet<User> Users { get; set; }
+    public DbSet<Message> Messages { get; set; }
     public DbSet<Post> Posts { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<AssignedRole> AssignedRoles { get; set; }
@@ -46,5 +47,10 @@ public class FriendifyContext : DbContext
             .HasOne(c => c.User) // specify the navigation property
             .WithMany(p => p.Videos) // specify the inverse navigation property
             .HasForeignKey(c => c.UserId); // specify the foreign key property
+
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.Messages) // specify the navigation property
+            .WithOne(m => m.User) // specify the inverse navigation property
+            .HasForeignKey(m => m.UserId); // specify the foreign key property
     }
 }
