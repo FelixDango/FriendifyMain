@@ -10,6 +10,10 @@ import { HomeComponent } from './views/home/home.component';
 import { CounterComponent } from './views/counter/counter.component';
 import { FetchDataComponent } from './views/fetch-data/fetch-data.component';
 import { UserPostComponent } from './components/user-post/user-post.component';
+import { LoginComponent } from './components/login/login.component';
+import { RegisterComponent } from './components/register/register.component';
+import { ProfilePageComponent } from './views/profile-page/profile-page.component';
+import { ProfileComponent } from './components/profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +22,11 @@ import { UserPostComponent } from './components/user-post/user-post.component';
     HomeComponent,
     CounterComponent,
     FetchDataComponent,
-    UserPostComponent
+    UserPostComponent,
+    LoginComponent,
+    RegisterComponent,
+    ProfilePageComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -28,6 +36,9 @@ import { UserPostComponent } from './components/user-post/user-post.component';
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent },
+      { path: 'login', component: LoginComponent },
+      { path: 'register', component: RegisterComponent },
+      { path: 'profile-page', component: ProfilePageComponent },
     ])
   ],
   providers: [],

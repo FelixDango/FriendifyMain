@@ -1,0 +1,46 @@
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <h2 class="mb-3">Register</h2>
+      <form (ngSubmit)="register()">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" [(ngModel)]="username" name="username" id="username" class="form-control" placeholder="Choose a username" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" [(ngModel)]="password" name="password" id="password" class="form-control" placeholder="Choose a password" required>
+        </div>
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" id="confirmPassword" class="form-control" placeholder="Confirm your password" required>
+        </div>
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <input type="text" [(ngModel)]="firstName" name="firstName" id="firstName" class="form-control" placeholder="Enter your first name" required>
+        </div>
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input type="text" [(ngModel)]="lastName" name="lastName" id="lastName" class="form-control" placeholder="Enter your last name" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" [(ngModel)]="email" name="email" id="email" class="form-control" placeholder="Enter your email address" required>
+        </div>
+        <div class="form-group">
+          <label for="birthdate">Birthdate</label>
+          <input type="date" [(ngModel)]="birthdate" name="birthdate" id="birthdate" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="sex">Sex</label>
+          <select class="form-control" [(ngModel)]="sex" name="sex" id="sex" required>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Register</button>
+      </form>
+    </div>
+  </div>
+</div>

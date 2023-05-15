@@ -1,0 +1,6 @@
+<app-profile></app-profile>
+<ng-container class="user-posts">
+  <div *ngFor="let post of userPosts">
+    <app-user-post [post]="post"></app-user-post>
+  </div>
+</ng-container>
