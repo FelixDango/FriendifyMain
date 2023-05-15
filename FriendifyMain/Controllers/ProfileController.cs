@@ -134,7 +134,7 @@ namespace FriendifyMain.Controllers
         [HttpGet]
         [Authorize] // Require authentication
         [ProducesResponseType(typeof(List<User>), 200)] // Specify possible response type and status code
-        public async Task<IActionResult> Get([FromBody] string name, [FromBody] string role) // Indicate that the name and role are bound from query string
+        public async Task<IActionResult> Get([FromQuery] string name, [FromQuery] string role) // Indicate that the name and role are bound from query string
         {
             // Get the current user from the user manager
             var currentUser = await _userManager.GetUserAsync(User);
@@ -148,7 +148,7 @@ namespace FriendifyMain.Controllers
                 // Filter users by name if provided
                 if (!string.IsNullOrEmpty(name))
                 {
-                    users = users.Where(u => u.FirstName.Contains(name) || u.LastName.Contains(name)).ToList();
+                    users = users.Where(u => u.UserName != null && (u.UserName.Contains(name) || u.FirstName.Contains(name) || u.LastName.Contains(name))).ToList();
                 }
 
                 // Filter users by role if provided

@@ -29,7 +29,7 @@ namespace FriendifyMain.Controllers
         [HttpGet("finduser")]
         [Authorize] // Require authentication
         [ProducesResponseType(typeof(List<User>), 200)] // Specify possible response type and status code
-        public async Task<IActionResult> FindUser([FromBody] string name, [FromBody] string role) // Indicate that the name (Username, Firstname or Lastname) and role are bound from query string
+        public async Task<IActionResult> FindUser([FromQuery] string name, [FromQuery] string role) // Indicate that the name (Username, Firstname or Lastname) and role are bound from query string
         {
             // Get all users from the database context
             var users = await _context.Users.ToListAsync();
@@ -54,7 +54,7 @@ namespace FriendifyMain.Controllers
         [HttpGet("finduser")]
         [Authorize] // Require authentication
         [ProducesResponseType(typeof(List<Post>), 200)] // Specify possible response type and status code
-        public async Task<IActionResult> FindPost([FromBody] string content, [FromBody] DateTime? date) // Indicate that the content and date are bound from query string
+        public async Task<IActionResult> FindPost([FromQuery] string content, [FromQuery] DateTime? date) // Indicate that the content and date are bound from query string
         {
             // Get all posts from the database context
             var posts = await _context.Posts.ToListAsync();
