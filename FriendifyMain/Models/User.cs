@@ -50,6 +50,8 @@ namespace FriendifyMain.Models
         public List<AssignedRole> AssignedRoles { get; set; }
         public List<Picture> Images { get; set; }
         public List<Video> Videos { get; set; }
+        public List<Message> Messages { get; set; }
+
 
 
         // Moderator fields
