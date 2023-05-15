@@ -36,7 +36,7 @@ namespace FriendifyMain.ViewModels
         [Required]
         public DateTime BirthDate { get; set; }
 
-        [MinLength(1)]
+        [MinLength(6)]
         [MaxLength(100)]
         [Required]
         public string Email { get; set; }
