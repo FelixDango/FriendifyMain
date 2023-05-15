@@ -51,7 +51,7 @@ namespace FriendifyMain.Controllers
         }
 
         // The post action allows an authenticated user to search posts by content or date
-        [HttpGet("finduser")]
+        [HttpGet("findpost")]
         [Authorize] // Require authentication
         [ProducesResponseType(typeof(List<Post>), 200)] // Specify possible response type and status code
         public async Task<IActionResult> FindPost([FromQuery] string content, [FromQuery] DateTime? date) // Indicate that the content and date are bound from query string
