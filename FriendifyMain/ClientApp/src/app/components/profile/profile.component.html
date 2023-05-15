@@ -4,8 +4,13 @@
       <div class="card">
         <img src="path/to/avatar.jpg" class="card-img-top" alt="Avatar">
         <div class="card-body">
-          <h5 class="card-title">Username</h5>
-          <p class="card-text">Biography text goes here...</p>
+          <h5 class="card-title">{{ user.username }}</h5>
+          <p class="card-text">Biography: {{ user.firstName }} {{ user.lastName }}</p>
+          <p class="card-text">Email: {{ user.email }}</p>
+          <p class="card-text">Birthdate: {{ user.birthDate | date }}</p>
+          <p class="card-text">Country: {{ user.country }}</p>
+          <p class="card-text">Phone Number: {{ user.phoneNumber }}</p>
+          <p class="card-text">Address: {{ user.address }}, {{ user.city }}</p>
         </div>
       </div>
     </div>
