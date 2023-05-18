@@ -30,8 +30,8 @@ namespace FriendifyMain
                 .AddDefaultTokenProviders();
 
             services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
-            // Add a connection string to your appsettings.json file
-            var connectionString = Configuration.GetConnectionString("FriendifyConnection");
+            // Add a connection string to your secrets.json file
+            var connectionString = Configuration.GetConnectionString("DefaultConnection");
 
             // Register the DbContext with the dependency injection container
             services.AddDbContext<FriendifyContext>(options => options.UseSqlServer(connectionString));
