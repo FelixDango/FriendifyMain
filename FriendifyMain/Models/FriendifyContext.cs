@@ -1,7 +1,8 @@
 ﻿using FriendifyMain.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-public class FriendifyContext : DbContext
+public class FriendifyContext : IdentityDbContext<User, Role, int>
 {
     public FriendifyContext(DbContextOptions<FriendifyContext> options)
     : base(options)
