@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FriendifyMain.Migrations
 {
     [DbContext(typeof(FriendifyContext))]
-    [Migration("20230522112659_V2")]
-    partial class V2
+    [Migration("20230522215235_v2")]
+    partial class v2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
