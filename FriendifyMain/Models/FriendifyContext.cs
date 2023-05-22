@@ -39,9 +39,10 @@ public class FriendifyContext : DbContext
             .HasForeignKey(c => c.UserId); // specify the foreign key property
 
         modelBuilder.Entity<Picture>()
-            .HasOne(c => c.User) // specify the navigation property
-            .WithMany(p => p.Images) // specify the inverse navigation property
-            .HasForeignKey(c => c.UserId); // specify the foreign key property
+            .HasOne(p => p.User)
+            .WithMany(u => u.Images)
+            .HasForeignKey(p => p.UserId)
+            .HasPrincipalKey(u => u.Id);
 
         modelBuilder.Entity<Video>()
             .HasOne(c => c.User) // specify the navigation property
@@ -52,5 +53,12 @@ public class FriendifyContext : DbContext
             .HasMany(u => u.Messages) // specify the navigation property
             .WithOne(m => m.User) // specify the inverse navigation property
             .HasForeignKey(m => m.UserId); // specify the foreign key property
+
+        modelBuilder.Entity<Post>()
+            .HasOne(p => p.User)
+            .WithMany(u => u.Posts)
+            .HasForeignKey(p => p.UserId)
+            .OnDelete(DeleteBehavior.NoAction);
+
     }
 }
