@@ -34,9 +34,9 @@
         <div class="form-group">
           <label for="sex">Sex</label>
           <select class="form-control" [(ngModel)]="sex" name="sex" id="sex" required>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
+            <option [value]="0">Male</option>
+            <option [value]="1">Female</option>
+            <option [value]="2">Other</option>
           </select>
         </div>
         <button type="submit" class="btn btn-primary">Register</button>

@@ -14,9 +14,9 @@ export class AuthService {
       password: password
     };
 
-    return this.http.post(this.baseUrl +'/login', loginData);
+    return this.http.post('https://localhost:7073/api/Account/login', loginData);
   }
   register(registerData: any): Observable<any> {
-    return this.http.post(this.baseUrl + '/register', registerData);
+    return this.http.post('https://localhost:7073/api/Account/register', registerData);
   }
 }

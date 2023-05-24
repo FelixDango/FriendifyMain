@@ -16,9 +16,12 @@ export class LoginComponent {
     this.authService.login(this.username, this.password).subscribe(
       (response) => {
         // Handle successful login response
+        console.log(response);
       },
       (error) => {
         // Handle login error
+        console.log(error);
+
       }
     );
   }

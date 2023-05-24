@@ -14,7 +14,8 @@ export class RegisterComponent {
   lastName: string | undefined;
   email: string | undefined;
   birthdate: Date | undefined;
-  sex: string | undefined;
+  sex: number = 0;
+  status: number | undefined;
 
   constructor(private authService: AuthService) {}
   register(): void {
@@ -26,13 +27,15 @@ export class RegisterComponent {
     const registerData = {
       username: this.username,
       password: this.password,
+      confirmPassword: this.confirmPassword,
       firstName: this.firstName,
       lastName: this.lastName,
       email: this.email,
       birthdate: this.birthdate,
-      sex: this.sex
+      sex: parseInt(String(this.sex), 10),
+      status: 0
     };
-
+    console.log(registerData);
     this.authService.register(registerData).subscribe(
       (response: any) => {
         console.log(response);

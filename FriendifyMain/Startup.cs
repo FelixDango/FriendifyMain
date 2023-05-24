@@ -25,6 +25,16 @@ namespace FriendifyMain
         {
             services.AddControllers();
             
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", builder =>
+                {
+                    builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
+            });
+            
             services.AddIdentity<User, Role>()
                 .AddEntityFrameworkStores<FriendifyContext>()
                 .AddDefaultTokenProviders();
@@ -95,7 +105,7 @@ namespace FriendifyMain
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API Name v1");
                 });
             }
-
+            app.UseCors("AllowAll");
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthentication(); // Add this line to enable authentication
