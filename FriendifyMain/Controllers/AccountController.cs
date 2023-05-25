@@ -39,6 +39,16 @@ namespace FriendifyMain.Controllers
             // Hash the password and assign it to the PasswordHash property
             user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, model.Password);
 
+            //Initialize user fields/property fields
+            user.Follows = new();
+            user.FollowedBy = new();
+            user.Posts = new();
+            user.Comments = new();
+            user.AssignedRoles = new();
+            user.Images = new();
+            user.Videos = new();
+            user.Messages = new();
+
             // Add logging statements to track the user creation process
             Console.WriteLine("Creating user: " + user.UserName);
 
