@@ -14,6 +14,7 @@ import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { ProfilePageComponent } from './views/profile-page/profile-page.component';
 import { ProfileComponent } from './components/profile/profile.component';
+import { ComposePostComponent } from './components/compose-post/compose-post.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { ProfileComponent } from './components/profile/profile.component';
     LoginComponent,
     RegisterComponent,
     ProfilePageComponent,
-    ProfileComponent
+    ProfileComponent,
+    ComposePostComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
