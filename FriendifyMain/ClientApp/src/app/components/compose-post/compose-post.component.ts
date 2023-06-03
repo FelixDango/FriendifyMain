@@ -14,7 +14,7 @@ export class ComposePostComponent {
   errorMessage: string = '';
 
   handleFileInput(event: any) {
-    const file: File = event.target.files[0];
+    const file: File = event.files[0];
     const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'video/avi'];
 
     if (file && allowedTypes.includes(file.type)) {
@@ -24,11 +24,8 @@ export class ComposePostComponent {
       this.selectedFile = null;
       this.errorMessage = 'Invalid file format. Only images (JPEG, PNG, GIF) and videos (MP4, AVI) are allowed.';
     }
-  }
+    console.log('file',this.selectedFile);
 
-  clearFile() {
-    this.selectedFile = null;
-    this.errorMessage = '';
   }
 
   handleTextInput(event: any): void {
