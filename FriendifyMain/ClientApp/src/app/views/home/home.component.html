@@ -1,9 +1,8 @@
+<app-compose-post></app-compose-post>
 <h1>Your Timeline!</h1>
-<ng-container>
-  <app-compose-post></app-compose-post>
-</ng-container>
-<ng-container>
-  <div *ngFor="let post of userPosts">
-    <app-user-post [post]="post"></app-user-post>
+
+<div *ngFor="let post of userPosts" >
+  <div class="shadow-3 mb-4">
+    <app-user-post  [post]="post"></app-user-post>
   </div>
-</ng-container>
+</div>

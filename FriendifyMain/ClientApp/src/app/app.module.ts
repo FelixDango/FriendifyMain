@@ -17,6 +17,12 @@ import { ProfilePageComponent } from './views/profile-page/profile-page.componen
 import { ProfileComponent } from './components/profile/profile.component';
 import { ComposePostComponent } from './components/compose-post/compose-post.component';
 import {CheckboxModule} from "primeng/checkbox";
+import {FileUploadModule} from "primeng/fileupload";
+import {InputTextareaModule} from "primeng/inputtextarea";
+import {RippleModule} from "primeng/ripple";
+import {ImageModule} from "primeng/image";
+import {AvatarModule} from "primeng/avatar";
+import {MenubarModule} from "primeng/menubar";
 
 @NgModule({
   declarations: [
@@ -45,7 +51,13 @@ import {CheckboxModule} from "primeng/checkbox";
       {path: 'register', component: RegisterComponent},
       {path: 'profile-page', component: ProfilePageComponent},
     ]),
-    CheckboxModule
+    CheckboxModule,
+    FileUploadModule,
+    InputTextareaModule,
+    RippleModule,
+    ImageModule,
+    AvatarModule,
+    MenubarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

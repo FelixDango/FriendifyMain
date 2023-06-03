@@ -11,4 +11,17 @@ export class UserPostComponent {
   likePost() {
     // Implement the logic to like the post here
   }
+
+  toggleLikePost() {
+    if (this.post.liked) {
+      // Unlike the post
+      this.post.likesCount--;
+      this.post.liked = false;
+    } else {
+      // Like the post
+      this.post.likesCount++;
+      this.post.liked = true;
+    }
+  }
+
 }

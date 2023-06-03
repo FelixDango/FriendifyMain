@@ -1,7 +1,22 @@
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title">{{ post.title }}</h5>
-    <p class="card-text">{{ post.content }}</p>
-    <button class="btn btn-primary" (click)="likePost()">Like</button>
+<div class="p-card mb-5 shadow-3">
+  <div class="p-card-body">
+    <div class="p-d-flex p-ai-center mb-3">
+      <p-avatar [image]="post.profilePicture" size="large" class="mr-2"></p-avatar>
+      <div>
+        <h5 class="p-card-title">{{ post.title }}</h5>
+        <p class="p-card-subtitle">{{ post.username }}</p>
+      </div>
+    </div>
+    <p class="p-card-text">{{ post.content }}</p>
+
+    <div class="p-media-container mb-4">
+      <p-image *ngIf="post.image" [src]="post.image" class="p-mr-2 p-card-media rounded-image" alt="Post Image" width="100%" height="auto"></p-image>
+      <video *ngIf="post.video" [src]="post.video" class="p-mr-2 p-card-media" controls width="100%" height="auto"></video>
+    </div>
+
+    <div class="p-d-flex p-ai-center">
+      <button pButton pRipple type="button" [label]="post.likesCount" icon="pi pi-thumbs-up" [ngClass]="{'p-button-text p-button-rounded p-button-success': post.liked, 'p-button-text p-button-rounded': !post.liked}" (click)="toggleLikePost()"></button>
+      <button pButton pRipple type="button" icon="pi pi-share-alt" class="p-button-text p-button-rounded"></button>
+    </div>
   </div>
 </div>

@@ -2784,7 +2784,7 @@
       <Folder Include="ClientApp\src\app\components\" />
       <Folder Include="ClientApp\src\app\models\" />
       <Folder Include="ClientApp\src\app\views\" />
-      <Folder Include="ClientApp\src\assets\images\" />
+      <Folder Include="ClientApp\src\assets\media\" />
     </ItemGroup>
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
