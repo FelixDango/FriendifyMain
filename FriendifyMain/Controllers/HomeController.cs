@@ -30,6 +30,9 @@ namespace FriendifyMain.Controllers
             {
                 // Get the current user from the user manager
                 var currentUser = await _userManager.GetUserAsync(User);
+                // Load the related data explicitly
+                await _context.Entry(currentUser).Collection(u => u.FollowedBy).LoadAsync();
+                await _context.Entry(currentUser).Collection(u => u.Follows).LoadAsync();
 
                 // Check if the user is suspended
                 if (currentUser.Suspended)
@@ -37,26 +40,19 @@ namespace FriendifyMain.Controllers
                     return BadRequest("You are suspended"); // Return a bad request response with an error message
                 }
 
-                if (currentUser.Follows != null)
-                {
-                    // Get the list of users that the current user follows
-                    var followedUsers = currentUser.Follows.Select(f => f.Id).ToList();
 
-                    // Get the latest posts from the followed users, ordered by date in descending order
-                    var posts = await _context.Posts
-                        .Where(p => followedUsers.Contains(p.UserId))
-                        .OrderByDescending(p => p.Date)
-                        .ToListAsync();
+                // Get the list of users that the current user follows
+                var followedUsers = currentUser.Follows.Select(f => f.Id).ToList();
 
-                    // Return an OK response with the posts as the data
-                    return Ok(posts);
+                // Get the latest posts from the followed users, ordered by date in descending order
+                var posts = await _context.Posts
+                    .Where(p => followedUsers.Contains(p.UserId))
+                    .OrderByDescending(p => p.Date)
+                    .ToListAsync();
 
-                }
-                else
-                {
-                    // Return an OK response with the posts as the data
-                    return Ok(new List<Post>());
-                }
+                // Return an OK response with the posts as the data
+                return Ok(posts);
+
 
 
             }
