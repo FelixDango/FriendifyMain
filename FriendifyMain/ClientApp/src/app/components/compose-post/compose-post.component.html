@@ -3,7 +3,7 @@
     <form>
       <div class="form-group">
         <label for="postContent">Post Content</label>
-        <textarea class="form-control" [(ngModel)]="postContent" name="postContent" id="postContent" rows="3" (change)="handleTextInput($event)" maxlength="281"></textarea>
+        <textarea class="form-control" [(ngModel)]="postContent" name="postContent" id="postContent" rows="3" (change)="handleTextInput($event)"></textarea>
         <div class="character-count" [ngClass]="{'exceeded-limit': postContent.length > 281}">
           {{ postContent.length }}/281 characters
         </div>

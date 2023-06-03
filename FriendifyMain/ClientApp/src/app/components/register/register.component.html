@@ -1,46 +1,48 @@
-<div class="container">
-  <div class="row justify-content-center">
-    <div class="col-md-9">
-      <h2 class="mb-3">Register</h2>
-      <form (ngSubmit)="register()">
-        <div class="form-group">
-          <label for="username">Username</label>
-          <input type="text" [(ngModel)]="username" name="username" id="username" class="form-control" placeholder="Choose a username" required>
-        </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" [(ngModel)]="password" name="password" id="password" class="form-control" placeholder="Choose a password" required>
-        </div>
-        <div class="form-group">
-          <label for="confirmPassword">Confirm Password</label>
-          <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" id="confirmPassword" class="form-control" placeholder="Confirm your password" required>
-        </div>
-        <div class="form-group">
-          <label for="firstName">First Name</label>
-          <input type="text" [(ngModel)]="firstName" name="firstName" id="firstName" class="form-control" placeholder="Enter your first name" required>
-        </div>
-        <div class="form-group">
-          <label for="lastName">Last Name</label>
-          <input type="text" [(ngModel)]="lastName" name="lastName" id="lastName" class="form-control" placeholder="Enter your last name" required>
-        </div>
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" [(ngModel)]="email" name="email" id="email" class="form-control" placeholder="Enter your email address" required>
-        </div>
-        <div class="form-group">
-          <label for="birthdate">Birthdate</label>
-          <input type="date" [(ngModel)]="birthdate" name="birthdate" id="birthdate" class="form-control" required>
-        </div>
-        <div class="form-group">
-          <label for="sex">Sex</label>
-          <select class="form-control" [(ngModel)]="sex" name="sex" id="sex" required>
-            <option [value]="0">Male</option>
-            <option [value]="1">Female</option>
-            <option [value]="2">Other</option>
-          </select>
-        </div>
-        <button type="submit" class="btn btn-primary">Register</button>
-      </form>
+<div class="container-fluid d-flex justify-content-center align-items-center">
+  <div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">
+    <div class="text-center mb-5">
+      <img src="assets/images/blocks/logos/hyper.svg" alt="Image" height="50" class="mb-3">
+      <div class="text-900 text-3xl font-medium mb-3">Register</div>
     </div>
+
+    <form (ngSubmit)="register()">
+      <div class="form-group">
+        <label for="username" class="block text-900 font-medium mb-2">Username</label>
+        <input type="text" [(ngModel)]="username" name="username" id="username" class="w-full mb-3" placeholder="Choose a username" required>
+      </div>
+      <div class="form-group">
+        <label for="password" class="block text-900 font-medium mb-2">Password</label>
+        <input type="password" [(ngModel)]="password" name="password" id="password" class="w-full mb-3" placeholder="Choose a password" required>
+      </div>
+      <div class="form-group">
+        <label for="confirmPassword" class="block text-900 font-medium mb-2">Confirm Password</label>
+        <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" id="confirmPassword" class="w-full mb-3" placeholder="Confirm your password" required>
+      </div>
+      <div class="form-group">
+        <label for="firstName" class="block text-900 font-medium mb-2">First Name</label>
+        <input type="text" [(ngModel)]="firstName" name="firstName" id="firstName" class="w-full mb-3" placeholder="Enter your first name" required>
+      </div>
+      <div class="form-group">
+        <label for="lastName" class="block text-900 font-medium mb-2">Last Name</label>
+        <input type="text" [(ngModel)]="lastName" name="lastName" id="lastName" class="w-full mb-3" placeholder="Enter your last name" required>
+      </div>
+      <div class="form-group">
+        <label for="email" class="block text-900 font-medium mb-2">Email</label>
+        <input type="email" [(ngModel)]="email" name="email" id="email" class="w-full mb-3" placeholder="Enter your email address" required>
+      </div>
+      <div class="form-group">
+        <label for="birthdate" class="block text-900 font-medium mb-2">Birthdate</label>
+        <input type="date" [(ngModel)]="birthdate" name="birthdate" id="birthdate" class="w-full mb-3" required>
+      </div>
+      <div class="form-group">
+        <label for="sex" class="block text-900 font-medium mb-2">Sex</label>
+        <select class="w-full mb-3" [(ngModel)]="sex" name="sex" id="sex" required>
+          <option [value]="0">Male</option>
+          <option [value]="1">Female</option>
+          <option [value]="2">Other</option>
+        </select>
+      </div>
+      <button type="submit" class="w-full btn btn-primary">Register</button>
+    </form>
   </div>
 </div>

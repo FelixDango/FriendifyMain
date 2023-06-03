@@ -29,4 +29,19 @@ export class ProfileComponent {
     isModerator: false,
     isAdmin: false
   };
+
+  isFollowing: boolean = false;
+  isHovered: boolean = false;
+
+  toggleFollow() {
+    this.isFollowing = !this.isFollowing;
+    if (this.isFollowing) {
+      // Follow logic
+      // Add code to handle follow functionality
+    } else {
+      // Unfollow logic
+      // Add code to handle unfollow functionality
+    }
+  }
+
 }

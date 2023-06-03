@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {AuthService} from "../../services/auth.service";
+import { AuthService } from "../../services/auth.service";
 
 @Component({
   selector: 'app-login',
@@ -9,11 +9,13 @@ import {AuthService} from "../../services/auth.service";
 export class LoginComponent {
   username: string = "";
   password: string = "";
+  rememberMe: boolean = false;
 
   constructor(private authService: AuthService) {}
 
-  login(): void {
-    this.authService.login(this.username, this.password).subscribe(
+  signIn(username: string, password: string, rememberMe: boolean): void {
+    console.log(this.username, this.password, this.rememberMe);
+    this.authService.login(username, password, rememberMe).subscribe(
       (response) => {
         // Handle successful login response
         console.log(response);
@@ -21,7 +23,6 @@ export class LoginComponent {
       (error) => {
         // Handle login error
         console.log(error);
-
       }
     );
   }
