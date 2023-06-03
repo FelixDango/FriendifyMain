@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 
 
@@ -30,6 +31,7 @@ namespace FriendifyMain.Models
         public int RoleId { get; set; }
 
         // Navigation property to link to User
+        [JsonIgnore]
         public User User { get; set; }
 
         // Navigation property to link to Role
