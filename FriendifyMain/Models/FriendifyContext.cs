@@ -53,7 +53,8 @@ public class FriendifyContext : IdentityDbContext<User, Role, int>
         modelBuilder.Entity<User>()
             .HasMany(u => u.Messages) // specify the navigation property
             .WithOne(m => m.User) // specify the inverse navigation property
-            .HasForeignKey(m => m.UserId); // specify the foreign key property
+            .HasForeignKey(m => m.UserId) // specify the foreign key property
+            .OnDelete(DeleteBehavior.NoAction); // Prevent cascading delete
 
         modelBuilder.Entity<Post>()
             .HasOne(p => p.User)
