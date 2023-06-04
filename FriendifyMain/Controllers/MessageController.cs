@@ -1,12 +1,10 @@
-﻿using FriendifyMain.Models;
+﻿using AutoMapper;
+using FriendifyMain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
 
 namespace FriendifyMain.Controllers
 {
@@ -27,28 +25,32 @@ namespace FriendifyMain.Controllers
             _mapper = mapper;
         }
 
-        // The get action allows an authenticated user to get their own messages or an admin to get any messages by user id
-        [HttpGet("{id}")]
+        // The get action allows an authenticated user to get their own messages or an admin to get any messages 
+        [HttpGet]
         [Authorize] // Require authentication
         [ProducesResponseType(typeof(List<Message>), 200)] // Specify possible response type and status code
         [ProducesResponseType(typeof(string), 404)] // Specify possible response type and status code
-        public async Task<IActionResult> Get(int id) // Indicate that the id is bound from route data
+        public async Task<IActionResult> Get() // Indicate that the id is bound from route data
         {
             // Get the current user from the user manager
             var currentUser = await _userManager.GetUserAsync(User);
 
-            // Check if the current user is an admin or requesting their own messages
-            if (currentUser != null && (currentUser.IsAdmin || currentUser.Id == id))
+            // Check if the current user is not null
+            if (currentUser != null)
             {
-                // Get the messages by user id from the database context
-                var messages = await _context.Messages.Where(m => m.UserId == id).ToListAsync();
+                // Get the messages sent or received by the current user from the database context
+                var messages = await _context.Messages.Include(m => m.Videos)
+                                                      .Include(m => m.Pictures)
+                                                      .Where(m => m.UserId == currentUser.Id
+                                                               || m.ReceiverId == currentUser.Id).ToListAsync();
 
                 // Return a 200 OK response with the messages data
                 return Ok(messages);
             }
 
-            // If not, return a 403 forbidden response
-            return Forbid();
+            // If the current user is null, return a 401 unauthorized response
+            return Unauthorized();
+
         }
 
         // The create action allows an authenticated user to create a new message with optional pictures and videos
