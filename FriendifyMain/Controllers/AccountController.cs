@@ -48,6 +48,7 @@ namespace FriendifyMain.Controllers
             user.Images = new();
             user.Videos = new();
             user.Messages = new();
+            user.Biography = "Hey, let's get connected!";
 
             // Add logging statements to track the user creation process
             Console.WriteLine("Creating user: " + user.UserName);
