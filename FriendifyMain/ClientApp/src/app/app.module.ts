@@ -23,6 +23,7 @@ import {RippleModule} from "primeng/ripple";
 import {ImageModule} from "primeng/image";
 import {AvatarModule} from "primeng/avatar";
 import {MenubarModule} from "primeng/menubar";
+import { LogoutComponent } from './components/logout/logout.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import {MenubarModule} from "primeng/menubar";
     RegisterComponent,
     ProfilePageComponent,
     ProfileComponent,
-    ComposePostComponent
+    ComposePostComponent,
+    LogoutComponent
   ],
   imports: [
     BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
@@ -50,6 +52,7 @@ import {MenubarModule} from "primeng/menubar";
       {path: 'login', component: LoginComponent},
       {path: 'register', component: RegisterComponent},
       {path: 'profile-page', component: ProfilePageComponent},
+      {path: 'logout', component: LogoutComponent},
     ]),
     CheckboxModule,
     FileUploadModule,
