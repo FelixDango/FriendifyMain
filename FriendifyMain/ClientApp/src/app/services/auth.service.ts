@@ -9,7 +9,6 @@ export class AuthService {
   private baseUrl = 'https://localhost:7073/api/Account';
 
   constructor(private http: HttpClient) {}
-
   login(username: string, password: string, rememberMe: boolean): Observable<any> {
     const loginData = {
       username: username,

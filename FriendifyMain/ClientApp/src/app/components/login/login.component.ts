@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { AuthService } from "../../services/auth.service";
 import { Router } from "@angular/router";
+import {HttpResponse} from "@angular/common/http";
+import {HttpClient} from "@angular/common/http";
 
 @Component({
   selector: 'app-login',
@@ -17,14 +19,19 @@ export class LoginComponent {
   signIn(username: string, password: string, rememberMe: boolean): void {
     console.log(this.username, this.password, this.rememberMe);
     this.authService.login(username, password, rememberMe).subscribe(
-      (response) => {
+      (response: HttpResponse<any>) => {
         // Handle login success
         //const token = response.headers.get('Authorization');
-        console.log(response);
-        // set token in local storage
-        //if (token) localStorage.setItem('token', token);
-        // redirect to home page
-        //this.router.navigate(['/']);
+        const authToken = response.headers.get('Authorization');
+        if (authToken) {
+          console.log(authToken.length);
+          // Set token in local storage
+          localStorage.setItem('token', authToken);
+          // Redirect to home page
+          this.router.navigate(['/']);
+        } else {
+          console.log('Authorization header not found');
+        }
       },
       (error) => {
         // Handle login error

@@ -124,9 +124,10 @@ namespace FriendifyMain.Controllers
 
                 // Set the token in the response headers
                 Response.Headers.Add("Authorization", $"Bearer {token}");
+                Response.Headers.Add("Access-Control-Expose-Headers", "Authorization");
 
-                // Return a 200 OK response with the user data in the body
-                return Ok(user);
+                // Return a 200 OK response with the user data in the body and the token in the header
+                return Ok();
             }
 
             // If not, return a 401 Unauthorized response with an error message
