@@ -120,6 +120,9 @@ namespace FriendifyMain.Controllers
 
                 // Get the message by its id from the database context
                 var message = await _context.Messages.FindAsync(id);
+                await _context.Entry(message).Collection(p => p.Pictures).LoadAsync();
+                await _context.Entry(message).Collection(p => p.Videos).LoadAsync();
+
 
                 // Check if the message exists
                 if (message == null)
@@ -148,61 +151,5 @@ namespace FriendifyMain.Controllers
             }
         }
 
-        // The edit action allows the owner or admin or moderator to edit a message by its id
-        [HttpPut("{id}/edit")]
-        [Authorize] // Require authentication
-        [ProducesResponseType(typeof(Message), 200)] // Specify possible response type and status code
-        [ProducesResponseType(typeof(ModelStateDictionary), 400)] // Specify possible response type and status code
-        [ProducesResponseType(typeof(string), 404)] // Specify possible response type and status code
-        public async Task<IActionResult> Edit(int id, [FromBody] Message model) // Indicate that the id is bound from route data and the model is bound from form data
-        {
-            try
-            {
-                // Get the current user from the user manager
-                var currentUser = await _userManager.GetUserAsync(User);
-
-
-                // Validate the message model using data annotations and custom logic
-                if (ModelState.IsValid && !string.IsNullOrEmpty(model.Content))
-                {
-                    // Get the original message by its id from the database context
-                    var originalMessage = await _context.Messages.FindAsync(id);
-
-                    // Check if the original message exists and matches with the given message id
-                    if (originalMessage == null || originalMessage.Id != model.Id)
-                    {
-                        return NotFound("Message not found."); // Return a 404 not found response with an error message
-                    }
-
-                    // Check if the current user is the owner or admin or moderator of the original message
-                    if (originalMessage.UserId == currentUser.Id || currentUser.IsAdmin || currentUser.IsModerator)
-                    {
-                        // If yes, update the original message properties that can be edited by the user input
-                        originalMessage.Content = model.Content;
-                        originalMessage.Pictures = model.Pictures;
-                        originalMessage.Videos = model.Videos;
-
-                        // Save the changes to the database context and reload the original message to reflect any changes made by triggers or computed columns in the database 
-                        _context.Messages.Update(originalMessage);
-                        await _context.SaveChangesAsync();
-                        await _context.Entry(originalMessage).ReloadAsync();
-
-                        // Return a 200 OK response with the updated message data
-                        return Ok(originalMessage);
-                    }
-
-                    // If no, return a 403 forbidden response
-                    return Forbid();
-                }
-
-                // If the model is not valid, return a 400 Bad Request response with validation errors
-                return BadRequest(ModelState);
-            }
-            catch (Exception ex)
-            {
-                // Handle any possible exceptions
-                return View("Error", ex.Message); // Return a view that shows the error message
-            }
-        }
     }
 }
