@@ -1,0 +1,56 @@
+.profile {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.p-card-body {
+  display: flex;
+  flex-direction: row;
+}
+
+.avatar {
+  flex: 0 0 auto;
+  margin-right: 20px;
+}
+
+.avatar img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+.info {
+  flex: 1 1 auto;
+}
+
+.name {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.username {
+  font-size: 16px;
+  margin: 0;
+  color: #657786;
+}
+
+.location,
+.bio {
+  margin: 5px 0;
+  color: #657786;
+}
+
+.follow-stats {
+  margin-top: 10px;
+}
+
+.followers,
+.following {
+  margin-right: 10px;
+}
+
+button {
+  justify-self: right;
+}

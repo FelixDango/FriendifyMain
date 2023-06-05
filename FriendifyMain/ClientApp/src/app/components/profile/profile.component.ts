@@ -12,6 +12,7 @@ export class ProfileComponent {
     username: 'john_doe',
     firstName: 'John',
     lastName: 'Doe',
+    bio: 'This is my bio.',
     password: 'password',
     birthDate: new Date('1990-01-01'),
     email: 'john.doe@example.com',

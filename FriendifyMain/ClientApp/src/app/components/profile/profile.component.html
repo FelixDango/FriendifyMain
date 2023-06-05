@@ -1,35 +1,22 @@
-<div class="card profile-card">
-  <div class="card-body d-flex flex-row flex-wrap">
-    <div class="d-flex flex-column ai-center">
-      <p-avatar src="assets/media/profile.png" class="profile-picture" alt="Avatar"></p-avatar>
-      <h5 class="card-title">{{ user.username }}</h5>
-      <p class="text-muted">Followers: {{ user.followedBy.length }}</p>
-      <p class="text-muted">Following: {{ user.follows.length }}</p>
+<div class="p-card mb-5 shadow-3">
+  <div class="p-card-body">
+    <div class="avatar">
+      <img src="assets/media/profile.png">
     </div>
-    <div class="card-content flex-grow-1">
-      <p class="text-900">Biography: {{ user.firstName }} {{ user.lastName }}</p>
-      <p class="text-900">Email: {{ user.email }}</p>
-      <p class="text-900">Birthdate: {{ user.birthDate | date }}</p>
-      <p class="text-900">Country: {{ user.country }}</p>
-      <p class="text-900">Phone Number: {{ user.phoneNumber }}</p>
-      <p class="text-900">Address: {{ user.address }}, {{ user.city }}</p>
+    <div class="info">
+      <h2 class="name">{{ user.firstName }} {{ user.lastName }}</h2>
+      <h3 class="username">@{{ user.username }}</h3>
+      <p class="location">{{ user.city }}, {{ user.country }}</p>
+      <p class="bio">{{ user.bio }}</p>
+      <div class="follow-stats">
+        <span class="followers">{{ user.followedBy.length }} followers</span>
+        <span class="following">{{ user.follows.length }} following</span>
+      </div>
     </div>
-  </div>
-  <div class="d-flex jc-center mt-3">
-    <button
-      pButton
-      type="button"
-      label="{{ isFollowing ? 'Unfollow' : 'Follow' }}"
-      class="button-raised"
-      [ngClass]="{
-        'button-danger': isFollowing,
-        'button-secondary': !isFollowing,
-        'button-danger-hover': isFollowing && !isHovered,
-        'button-secondary-hover': !isFollowing && isHovered
-      }"
-      (click)="toggleFollow()"
-      (mouseenter)="isHovered = true"
-      (mouseleave)="isHovered = false"
-    ></button>
+    <div>
+      <button pButton (click)="toggleFollow()">
+        {{ isFollowing ? 'Unfollow' : 'Follow' }}
+      </button>
+    </div>
   </div>
 </div>
