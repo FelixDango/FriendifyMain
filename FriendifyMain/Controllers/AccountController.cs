@@ -86,6 +86,7 @@ namespace FriendifyMain.Controllers
         [ProducesResponseType(typeof(User), 200)] // Specify possible response type and status code
         [ProducesResponseType(typeof(string), 401)] // Specify possible response type and status code
         [ProducesResponseType(typeof(ModelStateDictionary), 400)] // Specify possible response type and status code
+        [Produces("application/json")] // Specify response content type
         public async Task<IActionResult> Login([FromBody] LoginViewModel model) // Indicate that the model is bound from form data
         {
             // Sign in the user using a cookie and check if it was successful
@@ -94,8 +95,19 @@ namespace FriendifyMain.Controllers
             {
                 // Get the user by their username from the user manager
                 var user = await _userManager.FindByNameAsync(model.Username);
+                if (user == null)
+                {
+                    // User not found
+                    return NotFound("User not found.");
+                }
 
-                // Return a 200 OK response with the user data
+                // Generate the authentication token
+                var token = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultProvider, "Authentication");
+
+                // Set the token in the response headers
+                Response.Headers.Add("Authorization", $"Bearer {token}");
+
+                // Return a 200 OK response with the user data in the body
                 return Ok(user);
             }
 
