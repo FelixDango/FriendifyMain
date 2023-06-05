@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace FriendifyMain.Models
 {
@@ -8,12 +9,17 @@ namespace FriendifyMain.Models
         public int Id { get; set; }
 
         public int UserId { get; set; }
+        [JsonIgnore]
         public User User { get; set; }
         public string Content { get; set; }
         public DateTime Date { get; set; }
-        public List<User> LikedBy { get; set; }
+        [JsonInclude]
+        public List<Like> Likes { get; set; }
+        [JsonInclude]
         public List<Comment> Comments { get; set; }
+        [JsonInclude]
         public List<Picture> Pictures { get; set; }
+        [JsonInclude]
         public List<Video> Videos { get; set; }
     }
 

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using FriendifyMain.ViewModels;
 
 namespace FriendifyMain.Controllers
 {
@@ -34,8 +35,30 @@ namespace FriendifyMain.Controllers
             // Get the current user from the user manager
             var currentUser = await _userManager.GetUserAsync(User);
 
+            if (currentUser == null || _context == null) { return BadRequest(); }
+
+            // Check if the user is suspended
+            if (currentUser.Suspended)
+            {
+                return BadRequest("You are suspended"); // Return a bad request response with an error message
+            }
+
+            // Load the related data explicitly
+            await _context.Entry(currentUser).Collection(u => u.FollowedBy).LoadAsync();
+            await _context.Entry(currentUser).Collection(u => u.Follows).LoadAsync();
+            await _context.Entry(currentUser).Collection(u => u.AssignedRoles).LoadAsync();
+            await _context.Entry(currentUser).Collection(u => u.Posts).LoadAsync();
+
+            await _context.Posts
+                    .Include(p => p.Pictures)
+                    .Include(p => p.Videos)
+                    .Include(p => p.Comments)
+                    .OrderByDescending(p => p.Date)
+                    .ToListAsync();
+
+
             // Check if the current user is an admin or requesting their own profile
-            if (currentUser != null && (currentUser.IsAdmin || currentUser.Id == id))
+            if (currentUser.IsAdmin || currentUser.Id == id)
             {
                 // Get the user by id from the database context
                 var user = await _context.Users.FindAsync(id);
@@ -60,13 +83,14 @@ namespace FriendifyMain.Controllers
         [ProducesResponseType(typeof(User), 200)] // Specify possible response type and status code
         [ProducesResponseType(typeof(IdentityError[]), 400)] // Specify possible response type and status code
         [ProducesResponseType(typeof(string), 404)] // Specify possible response type and status code
-        public async Task<IActionResult> Update(int id, [FromBody] User model) // Indicate that the id is bound from route data and the model is bound from form data
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateViewModel model)
         {
             // Get the current user from the user manager
             var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null || _context == null) { return BadRequest(); }
 
             // Check if the current user is an admin or updating their own profile
-            if (currentUser != null && (currentUser.IsAdmin || currentUser.Id == id))
+            if (currentUser.IsAdmin || currentUser.Id == id)
             {
                 // Get the user by id from the database context
                 var user = await _context.Users.FindAsync(id);
@@ -74,7 +98,7 @@ namespace FriendifyMain.Controllers
                 // Check if the user exists
                 if (user == null)
                 {
-                    return NotFound("User not found."); // Return a 404 not found response with an error message
+                    return NotFound("User not found.");
                 }
 
                 // Use AutoMapper to update the user properties from the model
@@ -97,6 +121,7 @@ namespace FriendifyMain.Controllers
             // If not, return a 403 forbidden response
             return Forbid();
         }
+
         // The delete action allows an authenticated user to delete their own profile or an admin to delete any profile by id
         [HttpDelete("{id}")]
         [Authorize] // Require authentication
@@ -163,6 +188,112 @@ namespace FriendifyMain.Controllers
 
             // If not, return a 403 forbidden response
             return Forbid();
+        }
+
+        // The follow action allows the current user to follow another user by their id
+        [HttpPost("{id}/follow")]
+        [Authorize] // Require authentication
+        [ProducesResponseType(200)] // Specify possible response status code
+        [ProducesResponseType(typeof(string), 404)] // Specify possible response type and status code
+        public async Task<IActionResult> Follow(int id) // Indicate that the id is bound from route data
+        {
+            try
+            {
+                // Get the current user from the user manager
+                var currentUser = await _userManager.GetUserAsync(User);
+
+                if (currentUser == null || _context == null) { return BadRequest(); }
+
+                // Load the related data explicitly
+                await _context.Entry(currentUser).Collection(u => u.FollowedBy).LoadAsync();
+                await _context.Entry(currentUser).Collection(u => u.Follows).LoadAsync();
+
+                // Check if the current user is suspended
+                if (currentUser.Suspended)
+                {
+                    return BadRequest("You are suspended"); // Return a bad request response with an error message
+                }
+
+                // Get the other user by their id from the database context
+                var otherUser = await _context.Users.FindAsync(id);
+
+                // Check if the other user exists
+                if (otherUser == null)
+                {
+                    return NotFound("User not found."); // Return a 404 not found response with an error message
+                }
+
+                // Check if the current user is already following the other user
+                if (currentUser.Follows.Contains(otherUser))
+                {
+                    return Ok("You are already following this user."); // Return a 200 OK response with a message
+                }
+
+                // If not, add the other user to the follows list of the current user and save changes to database context
+                currentUser.Follows.Add(otherUser);
+                await _context.SaveChangesAsync();
+
+                // Return a 200 OK response with a message
+                return Ok($"You are now following {otherUser.UserName}.");
+            }
+            catch (Exception ex)
+            {
+                // Handle any possible exceptions
+                return StatusCode(500, ex.Message); // Return an internal server error response with the error message
+            }
+        }
+
+        // The unfollow action allows the current user to unfollow another user by their id
+        [HttpPost("{id}/unfollow")]
+        [Authorize] // Require authentication
+        [ProducesResponseType(200)] // Specify possible response status code
+        [ProducesResponseType(typeof(string), 404)] // Specify possible response type and status code
+        public async Task<IActionResult> Unfollow(int id) // Indicate that the id is bound from route data
+        {
+            try
+            {
+                // Get the current user from the user manager
+                var currentUser = await _userManager.GetUserAsync(User);
+
+                if (currentUser == null || _context == null) { return BadRequest(); }
+
+                // Load the related data explicitly
+                await _context.Entry(currentUser).Collection(u => u.FollowedBy).LoadAsync();
+                await _context.Entry(currentUser).Collection(u => u.Follows).LoadAsync();
+
+                // Check if the current user is suspended
+                if (currentUser.Suspended)
+                {
+                    return BadRequest("You are suspended"); // Return a bad request response with an error message
+                }
+
+                // Get the other user by their id from the database context
+                var otherUser = await _context.Users.FindAsync(id);
+
+                // Check if the other user exists
+                if (otherUser == null)
+                {
+                    return NotFound("User not found."); // Return a 404 not found response with an error message
+                }
+
+                // Check if the current user is following the other user
+                if (!currentUser.Follows.Contains(otherUser))
+                {
+                    return Ok("You are not following this user."); // Return a 200 OK response with a message
+                }
+
+                // If yes, remove the other user from the follows list of the current user and save changes to database context
+                currentUser.Follows.Remove(otherUser);
+                await _context.SaveChangesAsync();
+
+                // Return a 200 OK response with a message
+                return Ok($"You have unfollowed {otherUser.UserName}.");
+            }
+            catch (Exception ex)
+            {
+                // Handle any possible exceptions
+                return StatusCode(500, ex.Message); // Return an internal server error response with the error message
+            }
         }
     }
 

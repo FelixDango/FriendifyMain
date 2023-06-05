@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FriendifyMain.Migrations
 {
     [DbContext(typeof(FriendifyContext))]
-    partial class FriendifyContextModelSnapshot : ModelSnapshot
+    [Migration("20230604105021_v3")]
+    partial class v3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -72,21 +75,6 @@ namespace FriendifyMain.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Comment");
-                });
-
-            modelBuilder.Entity("FriendifyMain.Models.Like", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PostId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "PostId");
-
-                    b.HasIndex("PostId");
-
-                    b.ToTable("Likes");
                 });
 
             modelBuilder.Entity("FriendifyMain.Models.Message", b =>
@@ -227,10 +215,6 @@ namespace FriendifyMain.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Biography")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
 
@@ -288,6 +272,9 @@ namespace FriendifyMain.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("PostId")
+                        .HasColumnType("int");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -316,6 +303,8 @@ namespace FriendifyMain.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("PostId");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -508,25 +497,6 @@ namespace FriendifyMain.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("FriendifyMain.Models.Like", b =>
-                {
-                    b.HasOne("FriendifyMain.Models.Post", "Post")
-                        .WithMany("Likes")
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FriendifyMain.Models.User", "User")
-                        .WithMany("Likes")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Post");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("FriendifyMain.Models.Message", b =>
                 {
                     b.HasOne("FriendifyMain.Models.User", "Receiver")
@@ -578,6 +548,13 @@ namespace FriendifyMain.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FriendifyMain.Models.User", b =>
+                {
+                    b.HasOne("FriendifyMain.Models.Post", null)
+                        .WithMany("LikedBy")
+                        .HasForeignKey("PostId");
                 });
 
             modelBuilder.Entity("FriendifyMain.Models.Video", b =>
@@ -676,7 +653,7 @@ namespace FriendifyMain.Migrations
                 {
                     b.Navigation("Comments");
 
-                    b.Navigation("Likes");
+                    b.Navigation("LikedBy");
 
                     b.Navigation("Pictures");
 
@@ -695,8 +672,6 @@ namespace FriendifyMain.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("Images");
-
-                    b.Navigation("Likes");
 
                     b.Navigation("Messages");
 

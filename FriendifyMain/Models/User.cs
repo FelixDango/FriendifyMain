@@ -39,6 +39,8 @@ namespace FriendifyMain.Models
         [Required]
         public StatusEnum Status { get; set; }
 
+        
+        public string Biography { get; set; }
         public bool Suspended { get; set; }
         public Picture? Picture { get; set; }
         public string? Country { get; set; }
@@ -51,6 +53,7 @@ namespace FriendifyMain.Models
         public List<Picture> Images { get; set; }
         public List<Video> Videos { get; set; }
         public List<Message> Messages { get; set; }
+        public List<Like> Likes { get; set; }
 
 
 

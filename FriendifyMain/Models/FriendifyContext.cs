@@ -14,6 +14,7 @@ public class FriendifyContext : IdentityDbContext<User, Role, int>
     public DbSet<Post> Posts { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<AssignedRole> AssignedRoles { get; set; }
+    public DbSet<Like> Likes { get; set; } 
     // Add other DbSets as needed
 
     // Override the OnModelCreating method
@@ -53,13 +54,28 @@ public class FriendifyContext : IdentityDbContext<User, Role, int>
         modelBuilder.Entity<User>()
             .HasMany(u => u.Messages) // specify the navigation property
             .WithOne(m => m.User) // specify the inverse navigation property
-            .HasForeignKey(m => m.UserId); // specify the foreign key property
+            .HasForeignKey(m => m.UserId) // specify the foreign key property
+            .OnDelete(DeleteBehavior.NoAction); // Prevent cascading delete
 
         modelBuilder.Entity<Post>()
             .HasOne(p => p.User)
             .WithMany(u => u.Posts)
             .HasForeignKey(p => p.UserId)
             .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Like>()
+            .HasKey(l => new { l.UserId, l.PostId }); // specify the composite primary key for Like
+
+        modelBuilder.Entity<Like>()
+            .HasOne(l => l.User) // specify the navigation property for User
+            .WithMany(u => u.Likes) // specify the inverse navigation property for User
+            .HasForeignKey(l => l.UserId); // specify the foreign key for User
+
+        modelBuilder.Entity<Like>()
+            .HasOne(l => l.Post) // specify the navigation property for Post
+            .WithMany(p => p.Likes) // specify the inverse navigation property for Post
+            .HasForeignKey(l => l.PostId); // specify the foreign key for Post
+
 
     }
 }
