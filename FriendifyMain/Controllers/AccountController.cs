@@ -101,7 +101,7 @@ namespace FriendifyMain.Controllers
             Console.WriteLine(result);
             if (result.Succeeded)
             {
-                /// Get the user by their username from the user manager
+                // Get the user by their username from the user manager
                 var user = await _userManager.FindByNameAsync(model.Username);
 
                 if (user == null)
@@ -127,7 +127,7 @@ namespace FriendifyMain.Controllers
                 Response.Headers.Add("Access-Control-Expose-Headers", "Authorization");
 
                 // Return a 200 OK response with the user data in the body and the token in the header
-                return Ok();
+                return Ok(user);
             }
 
             // If not, return a 401 Unauthorized response with an error message

@@ -17,18 +17,18 @@ export class LoginComponent {
   constructor(private authService: AuthService, private router: Router) {}
 
   signIn(username: string, password: string, rememberMe: boolean): void {
-    console.log(this.username, this.password, this.rememberMe);
     this.authService.login(username, password, rememberMe).subscribe(
       (response: HttpResponse<any>) => {
         // Handle login success
         //const token = response.headers.get('Authorization');
         const authToken = response.headers.get('Authorization');
         if (authToken) {
-          console.log(authToken.length);
           // Set token in local storage
           localStorage.setItem('token', authToken);
           // Redirect to home page
           this.router.navigate(['/']);
+          // Save user data in local storage
+          localStorage.setItem('user', JSON.stringify(response.body));
         } else {
           console.log('Authorization header not found');
         }
