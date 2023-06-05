@@ -9,6 +9,7 @@ export interface User {
   lastName: string;
   password: string;
   birthDate: Date;
+  bio: string;
   email: string;
   suspended: boolean;
   sex: SexEnum;
