@@ -61,7 +61,16 @@ namespace FriendifyMain.Controllers
             if (result.Succeeded)
             {
                 // Sign in the user using a cookie
-                await _signInManager.SignInAsync(user, isPersistent: false);
+                await _signInManager.SignInAsync(user, isPersistent: true);
+
+                // Generate the authentication token
+                var token = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultProvider, "Authentication");
+
+                // Store the token in the database
+                await _userManager.SetAuthenticationTokenAsync(user, TokenOptions.DefaultProvider, "Authentication", token);
+
+                // Set the token in the response headers
+                Response.Headers.Add("Authorization", $"Bearer {token}");
 
                 // Return a 200 OK response with the user data
                 return Ok(user);
@@ -92,20 +101,30 @@ namespace FriendifyMain.Controllers
             Console.WriteLine(result);
             if (result.Succeeded)
             {
-                // Get the user by their username from the user manager
+                /// Get the user by their username from the user manager
                 var user = await _userManager.FindByNameAsync(model.Username);
-                Console.WriteLine(user.UserName);
+
                 if (user == null)
                 {
                     // User not found
                     return NotFound("User not found.");
                 }
 
-                // Generate the authentication token
-                var token = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultProvider, "Authentication");
-                Console.WriteLine("token",token);
+                // Get the token from the database
+                var token = await _userManager.GetAuthenticationTokenAsync(user, TokenOptions.DefaultProvider, "Authentication");
+
+                // Check if the token is null or expired
+                if (token == null || await _userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultProvider, "Authentication", token) == false)
+                {
+                    // Generate a new token and store it in the database
+                    token = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultProvider, "Authentication");
+                    Console.WriteLine($"new token {token}");
+                    await _userManager.SetAuthenticationTokenAsync(user, TokenOptions.DefaultProvider, "Authentication", token);
+                }
+
                 // Set the token in the response headers
                 Response.Headers.Add("Authorization", $"Bearer {token}");
+
                 // Return a 200 OK response with the user data in the body
                 return Ok(user);
             }
