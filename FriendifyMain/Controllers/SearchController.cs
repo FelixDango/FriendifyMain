@@ -34,16 +34,29 @@ namespace FriendifyMain.Controllers
             // Get all users from the database context
             var users = await _context.Users.ToListAsync();
 
+            foreach (var currentUser in users) {
+                // Load the related data explicitly
+                await _context.Entry(currentUser).Collection(u => u.Followers).LoadAsync();
+                await _context.Entry(currentUser).Collection(u => u.Following).LoadAsync();
+                await _context.Entry(currentUser).Collection(u => u.AssignedRoles).LoadAsync();
+                await _context.Entry(currentUser).Collection(u => u.Posts).LoadAsync();
+
+                await _context.Users
+                         .Include(u => u.Picture) // Include the Picture navigation property
+                         .FirstOrDefaultAsync(u => u.Id == currentUser.Id); // Filter by id
+            }
+            
+
             // Filter users by name (Username, Firstname or Lastname) if provided
             if (!string.IsNullOrEmpty(name))
             {
-                users = users.Where(u => u.UserName != null && (u.UserName.Contains(name) || u.FirstName.Contains(name) || u.LastName.Contains(name))).ToList();
+                users = users.Where(u => u.UserName != null && (u.UserName.ToUpper().Contains(name.ToUpper()) || u.FirstName.ToUpper().Contains(name.ToUpper()) || u.LastName.ToUpper().Contains(name.ToUpper()))).ToList();
             }
 
             // Filter users by role if provided
             if (!string.IsNullOrEmpty(role))
             {
-                users = users.Where(u => u.AssignedRoles.Any(r => r.Role.Name == role)).ToList();
+                users = users.Where(u => u.AssignedRoles.Any(r => r.Role.Name.ToUpper() == role.ToUpper())).ToList();
             }
 
             // Return a 200 OK response with the filtered users list
