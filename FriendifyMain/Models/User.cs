@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
@@ -45,8 +46,14 @@ namespace FriendifyMain.Models
         public Picture? Picture { get; set; }
         public string? Country { get; set; }
         public string? PhoneNumber { get; set; }
+        [JsonIgnore]
         public List<User> Follows { get; set; }
+        [JsonInclude]
+        public List<int> FollowsIds { get; set; }
+        [JsonIgnore]
         public List<User> FollowedBy { get; set; }
+        [JsonInclude]
+        public List<int> FollowedByIds { get; set; }
         public List<Post> Posts { get; set; }
         public List<Comment> Comments { get; set; }
         public List<AssignedRole> AssignedRoles { get; set; }

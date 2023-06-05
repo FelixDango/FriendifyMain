@@ -224,13 +224,13 @@ namespace FriendifyMain.Controllers
                 }
 
                 // Check if the current user is already following the other user
-                if (currentUser.Follows.Contains(otherUser))
+                if (currentUser.FollowsIds.Contains(otherUser.Id))
                 {
                     return Ok("You are already following this user."); // Return a 200 OK response with a message
                 }
 
                 // If not, add the other user to the follows list of the current user and save changes to database context
-                currentUser.Follows.Add(otherUser);
+                currentUser.FollowsIds.Add(otherUser.Id);
                 await _context.SaveChangesAsync();
 
                 // Return a 200 OK response with a message
@@ -277,13 +277,13 @@ namespace FriendifyMain.Controllers
                 }
 
                 // Check if the current user is following the other user
-                if (!currentUser.Follows.Contains(otherUser))
+                if (!currentUser.FollowsIds.Contains(otherUser.Id))
                 {
                     return Ok("You are not following this user."); // Return a 200 OK response with a message
                 }
 
                 // If yes, remove the other user from the follows list of the current user and save changes to database context
-                currentUser.Follows.Remove(otherUser);
+                currentUser.FollowsIds.Remove(otherUser.Id);
                 await _context.SaveChangesAsync();
 
                 // Return a 200 OK response with a message

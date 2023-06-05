@@ -36,6 +36,7 @@ namespace FriendifyMain.Controllers
                 // Load the related data explicitly 
                 await _context.Entry(currentUser).Collection(u => u.FollowedBy).LoadAsync();
                 await _context.Entry(currentUser).Collection(u => u.Follows).LoadAsync();
+                
 
 
                 // Check if the user is suspended 
@@ -45,7 +46,7 @@ namespace FriendifyMain.Controllers
                 }
 
                 // Get the list of users that the current user follows and add the current user to the list 
-                var followedUsers = currentUser.Follows.Select(f => f.Id).ToList();
+                var followedUsers = currentUser.FollowsIds;
                 followedUsers.Add(currentUser.Id);
 
                 // Get the latest posts from the followed users and the current user, ordered by date in descending order 

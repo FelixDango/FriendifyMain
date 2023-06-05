@@ -76,6 +76,18 @@ public class FriendifyContext : IdentityDbContext<User, Role, int>
             .WithMany(p => p.Likes) // specify the inverse navigation property for Post
             .HasForeignKey(l => l.PostId); // specify the foreign key for Post
 
+        modelBuilder.Entity<User>()
+            .Property(u => u.FollowsIds)
+            .HasConversion(
+                v => string.Join(",", v), // convert the list of integers to a comma-separated string
+                v => v.Split(",", StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList() // convert the string back to a list of integers
+            );
 
+        modelBuilder.Entity<User>()
+            .Property(u => u.FollowedByIds)
+            .HasConversion(
+                v => string.Join(",", v), // convert the list of integers to a comma-separated string
+                v => v.Split(",", StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList() // convert the string back to a list of integers
+            );
     }
 }

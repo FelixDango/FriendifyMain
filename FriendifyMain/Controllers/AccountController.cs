@@ -41,7 +41,9 @@ namespace FriendifyMain.Controllers
 
             //Initialize user fields/property fields
             user.Follows = new();
+            user.FollowsIds = new();
             user.FollowedBy = new();
+            user.FollowedByIds = new();
             user.Posts = new();
             user.Comments = new();
             user.AssignedRoles = new();
