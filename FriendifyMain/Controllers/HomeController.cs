@@ -54,6 +54,7 @@ namespace FriendifyMain.Controllers
                     .Include(p => p.Pictures)
                     .Include(p => p.Videos)
                     .Include(p => p.Comments)
+                    .Include(p => p.Likes)
                     .OrderByDescending(p => p.Date)
                     .ToListAsync();
 
@@ -79,6 +80,8 @@ namespace FriendifyMain.Controllers
             {
                 // Get the current user from the user manager
                 var currentUser = await _userManager.GetUserAsync(User);
+
+                if (currentUser == null || _context == null) { return BadRequest(); }
 
                 // Check if the user is suspended
                 if (currentUser.Suspended)
@@ -132,6 +135,10 @@ namespace FriendifyMain.Controllers
             {
                 // Get the current user from the user manager
                 var currentUser = await _userManager.GetUserAsync(User);
+                // Get the post by its id from the database context
+                var post = await _context.Posts.FindAsync(PostId);
+
+                if (currentUser == null || _context == null) { return BadRequest(); }
 
                 // Check if the user is suspended
                 if (currentUser.Suspended)
@@ -139,14 +146,14 @@ namespace FriendifyMain.Controllers
                     return BadRequest("You are suspended"); // Return a bad request response with an error message 
                 }
 
-                // Get the post by its id from the database context
-                var post = await _context.Posts.FindAsync(PostId);
-
                 // Check if the post exists
                 if (post == null)
                 {
                     return NotFound(); // Return a 404 not found response 
                 }
+
+                // Load the related data explicitly
+                await _context.Entry(post).Collection(p => p.Likes).LoadAsync();
 
                 // Check if the current user has already liked the post 
                 if (post.Likes.Any(l => l.UserId == currentUser.Id))
@@ -182,6 +189,8 @@ namespace FriendifyMain.Controllers
             {
                 //Get current user from user manager
                 var currentUser = await _userManager.GetUserAsync(User);
+
+                if (currentUser == null || _context == null) { return BadRequest(); }
 
                 //Check if user is suspended
                 if (currentUser.Suspended)
@@ -238,6 +247,8 @@ namespace FriendifyMain.Controllers
                 //Get current user from user manager
                 var currentUser = await _userManager.GetUserAsync(User);
 
+                if (currentUser == null || _context == null) { return BadRequest(); }
+
                 //Check if user is suspended
                 if (currentUser.Suspended)
                 {
@@ -257,6 +268,7 @@ namespace FriendifyMain.Controllers
                 await _context.Entry(post).Collection(p => p.Comments).LoadAsync();
                 await _context.Entry(post).Collection(p => p.Pictures).LoadAsync();
                 await _context.Entry(post).Collection(p => p.Videos).LoadAsync();
+                await _context.Entry(post).Collection(p => p.Likes).LoadAsync();
 
                 //Check if current user is owner or moderator of post
                 if (post.UserId == currentUser.Id || currentUser.IsModerator || currentUser.IsAdmin)
@@ -289,6 +301,8 @@ namespace FriendifyMain.Controllers
                 // Get the current user from the user manager
                 var currentUser = await _userManager.GetUserAsync(User);
 
+                if (currentUser == null || _context == null) { return BadRequest(); }
+
                 // Check if the user is suspended
                 if (currentUser.Suspended)
                 {
@@ -308,6 +322,7 @@ namespace FriendifyMain.Controllers
                 await _context.Entry(post).Collection(p => p.Comments).LoadAsync();
                 await _context.Entry(post).Collection(p => p.Pictures).LoadAsync();
                 await _context.Entry(post).Collection(p => p.Videos).LoadAsync();
+                await _context.Entry(post).Collection(p => p.Likes).LoadAsync();
 
                 // Check if the current user is the owner or admin or moderator of the post
                 if (post.UserId == currentUser.Id || currentUser.IsAdmin || currentUser.IsModerator)
@@ -339,6 +354,8 @@ namespace FriendifyMain.Controllers
                 // Get the current user from the user manager
                 var currentUser = await _userManager.GetUserAsync(User);
 
+                if (currentUser == null || _context == null) { return BadRequest(); }
+
                 // Check if the user is suspended
                 if (currentUser.Suspended)
                 {
@@ -361,6 +378,7 @@ namespace FriendifyMain.Controllers
                     await _context.Entry(originalPost).Collection(p => p.Comments).LoadAsync();
                     await _context.Entry(originalPost).Collection(p => p.Pictures).LoadAsync();
                     await _context.Entry(originalPost).Collection(p => p.Videos).LoadAsync();
+                    await _context.Entry(originalPost).Collection(p => p.Likes).LoadAsync();
 
                     // Check if the current user is the owner or admin or moderator of the original post
                     if (originalPost.UserId == currentUser.Id || currentUser.IsAdmin || currentUser.IsModerator)
