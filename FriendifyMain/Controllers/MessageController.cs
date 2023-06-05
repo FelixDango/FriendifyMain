@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FriendifyMain.Models;
+using FriendifyMain.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -120,6 +121,8 @@ namespace FriendifyMain.Controllers
 
                 // Get the message by its id from the database context
                 var message = await _context.Messages.FindAsync(id);
+
+                if (message == null || _context == null) { return BadRequest(); }
                 await _context.Entry(message).Collection(p => p.Pictures).LoadAsync();
                 await _context.Entry(message).Collection(p => p.Videos).LoadAsync();
 

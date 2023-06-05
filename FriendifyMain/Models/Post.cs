@@ -13,8 +13,8 @@ namespace FriendifyMain.Models
         public User User { get; set; }
         public string Content { get; set; }
         public DateTime Date { get; set; }
-        [JsonIgnore]
-        public List<User> LikedBy { get; set; }
+        [JsonInclude]
+        public List<Like> Likes { get; set; }
         [JsonInclude]
         public List<Comment> Comments { get; set; }
         [JsonInclude]

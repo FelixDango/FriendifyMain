@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FriendifyMain.Models
+namespace FriendifyMain.ViewModels
 {
     public class PostViewModel
     {

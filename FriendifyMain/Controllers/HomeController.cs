@@ -97,7 +97,7 @@ namespace FriendifyMain.Controllers
                         UserId = currentUser.Id, // The user is the current user
                         User = currentUser,
                         Date = DateTime.Now, // The date is the current date and time
-                        LikedBy = new List<User>(), // The liked by list is initially empty
+                        Likes = new List<Like>(), // The liked by list is initially empty
                         Comments = new List<Comment>(), // The comments list is initially empty
                         Pictures = new List<Picture>(),
                         Videos = new List<Video>()
@@ -148,22 +148,16 @@ namespace FriendifyMain.Controllers
                     return NotFound(); // Return a 404 not found response 
                 }
 
-                //if post is new let's create a list of likedby 
-                if (post.LikedBy == null)
-                {
-                    post.LikedBy = new();
-                }
-
                 // Check if the current user has already liked the post 
-                if (post.LikedBy.Contains(currentUser))
+                if (post.Likes.Any(l => l.UserId == currentUser.Id))
                 {
                     // If yes, remove the current user from the liked by list 
-                    post.LikedBy.Remove(currentUser);
+                    post.Likes.Remove(post.Likes.FirstOrDefault(l => l.UserId == currentUser.Id));
                 }
                 else
                 {
                     // If no, add the current user to the liked by list 
-                    post.LikedBy.Add(currentUser);
+                    post.Likes.Add(new Like { UserId = currentUser.Id, PostId = post.Id });
                 }
 
                 // Save changes to database context 
@@ -319,7 +313,7 @@ namespace FriendifyMain.Controllers
                 if (post.UserId == currentUser.Id || currentUser.IsAdmin || currentUser.IsModerator)
                 {
                     post.Comments ??= new();
-                    post.LikedBy ??= new();
+                    post.Likes ??= new();
                     post.Pictures ??= new();
                     post.Videos ??= new();
                     // If yes, return an OK response with the post as the data
