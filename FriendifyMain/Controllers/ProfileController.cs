@@ -56,7 +56,10 @@ namespace FriendifyMain.Controllers
                             .OrderByDescending(p => p.Date)
                             .ToListAsync();
 
-            
+            await _context.Users
+                     .Include(u => u.Picture) // Include the Picture navigation property
+                     .FirstOrDefaultAsync(u => u.Id == id); // Filter by id
+
 
             // Check if the current user is an admin or requesting their own profile
             if (currentUser.IsAdmin || currentUser.Id == id)
@@ -90,6 +93,10 @@ namespace FriendifyMain.Controllers
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null || _context == null) { return BadRequest(); }
 
+            await _context.Users
+                     .Include(u => u.Picture) // Include the Picture navigation property
+                     .FirstOrDefaultAsync(u => u.Id == id); // Filter by id
+
             // Check if the current user is an admin or updating their own profile
             if (currentUser.IsAdmin || currentUser.Id == id)
             {
@@ -104,6 +111,11 @@ namespace FriendifyMain.Controllers
 
                 // Use AutoMapper to update the user properties from the model
                 _mapper.Map(model, user);
+
+                if (model != null && model.PictureUrl != null)
+                {
+                    user.Picture.Url = model.PictureUrl;
+                }
 
                 // Update the user in the database context and save changes
                 var result = await _userManager.UpdateAsync(user);

@@ -22,5 +22,7 @@ namespace FriendifyMain.ViewModels
         [MinLength(1)]
         [MaxLength(200)]
         public string Biography { get; set; }
+        [MaxLength(500)]
+        public string PictureUrl { get; set; }
     }
 }

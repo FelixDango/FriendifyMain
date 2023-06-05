@@ -44,7 +44,7 @@ namespace FriendifyMain.Models
         
         public string Biography { get; set; }
         public bool Suspended { get; set; }
-        public Picture? Picture { get; set; }
+        public Picture Picture { get; set; }
         public string? Country { get; set; }
         public string? PhoneNumber { get; set; }
         public List<Follower> Following { get; set; }

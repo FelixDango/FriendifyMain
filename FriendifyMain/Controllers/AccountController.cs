@@ -1,12 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
 using FriendifyMain.Models;
 using FriendifyMain.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using AutoMapper;
 
 namespace FriendifyMain.Controllers
 {
@@ -24,7 +22,7 @@ namespace FriendifyMain.Controllers
             _userManager = userManager;
             _signInManager = signInManager;
             _mapper = mapper;
-    }
+        }
 
         // The register action allows a new user to create an account
         [HttpPost("register")]
@@ -50,6 +48,7 @@ namespace FriendifyMain.Controllers
             user.Messages = new();
             user.Likes = new();
             user.Biography = "Hey, let's get connected!";
+            user.Picture = new() { Id = 0, UserId = user.Id, User = user, Url = "test.png" };
 
             // Add logging statements to track the user creation process
             Console.WriteLine("Creating user: " + user.UserName);
