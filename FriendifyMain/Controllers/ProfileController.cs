@@ -1,10 +1,10 @@
-﻿using FriendifyMain.Models;
+﻿using AutoMapper;
+using FriendifyMain.Models;
+using FriendifyMain.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using FriendifyMain.ViewModels;
 
 namespace FriendifyMain.Controllers
 {
@@ -26,11 +26,11 @@ namespace FriendifyMain.Controllers
         }
 
         // The get action allows an authenticated user to get their own profile or an admin to get any profile by id
-        [HttpGet("{id}")]
+        [HttpGet("{id}/CriticalData")]
         [Authorize] // Require authentication
         [ProducesResponseType(typeof(User), 200)] // Specify possible response type and status code
         [ProducesResponseType(typeof(string), 404)] // Specify possible response type and status code
-        public async Task<IActionResult> Get(int id) // Indicate that the id is bound from route data
+        public async Task<IActionResult> GetCrit(int id) // Indicate that the id is bound from route data
         {
             // Get the current user from the user manager
             var currentUser = await _userManager.GetUserAsync(User);
@@ -80,6 +80,73 @@ namespace FriendifyMain.Controllers
             // If not, return a 403 forbidden response
             return Forbid();
         }
+
+        // The get action allows an authenticated user to get their own profile or an admin to get any profile by id
+        [HttpGet("{id}/view")]
+        [Authorize] // Require authentication
+        [ProducesResponseType(typeof(User), 200)] // Specify possible response type and status code
+        [ProducesResponseType(typeof(string), 404)] // Specify possible response type and status code
+        public async Task<IActionResult> Get(int id) // Indicate that the id is bound from route data
+        {
+            // Get the current user from the user manager
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            if (currentUser == null || _context == null) { return BadRequest(); }
+
+            // Check if the user is suspended
+            if (currentUser.Suspended)
+            {
+                return BadRequest("You are suspended"); // Return a bad request response with an error message
+            }
+
+            // Load the related data explicitly
+            await _context.Entry(currentUser).Collection(u => u.Followers).LoadAsync();
+            await _context.Entry(currentUser).Collection(u => u.Following).LoadAsync();
+            await _context.Entry(currentUser).Collection(u => u.AssignedRoles).LoadAsync();
+            await _context.Entry(currentUser).Collection(u => u.Posts).LoadAsync();
+
+            await _context.Posts
+                            .Include(p => p.Pictures)
+                            .Include(p => p.Videos)
+                            .Include(p => p.Comments)
+                            .OrderByDescending(p => p.Date)
+                            .ToListAsync();
+
+            await _context.Users
+                     .Include(u => u.Picture) // Include the Picture navigation property
+                     .FirstOrDefaultAsync(u => u.Id == id); // Filter by id
+
+
+
+            // Get the user by id from the database context
+            var user = await _context.Users.FindAsync(id);
+
+            // Check if the user exists
+            if (user == null)
+            {
+                return NotFound("User not found."); // Return a 404 not found response with an error message
+            }
+
+            // Remove Critical fields from response
+            user.PasswordHash = "Censored";
+            user.Email = "Censored";
+            user.Address = "Censored";
+            user.Country = "Censored";
+            user.Likes = new();
+            user.Comments = new();
+            user.NormalizedEmail = "Censored";
+            user.SecurityStamp = "Censored";
+            user.City = "Censored";
+            user.PhoneNumber = "Censored";
+            user.Images = new();
+            user.Messages = new();
+            user.Videos = new();
+
+            // Return a 200 OK response with the user data
+            return Ok(user);
+
+        }
+
 
         // The update action allows an authenticated user to update their own profile or an admin to update any profile by id
         [HttpPut("{id}")]
@@ -237,13 +304,13 @@ namespace FriendifyMain.Controllers
                 }
 
                 // Check if the current user is already following the other user
-                if (currentUser.Following.Select(e=> e.UserId == otherUser.Id).FirstOrDefault())
+                if (currentUser.Following.Select(e => e.UserId == otherUser.Id).FirstOrDefault())
                 {
                     return Ok("You are already following this user."); // Return a 200 OK response with a message
                 }
 
                 // If not, add the other user to the follows list of the current user and save changes to database context
-                currentUser.Following.Add(new Follower() { UserId = otherUser.Id, FollowerId = currentUser.Id});
+                currentUser.Following.Add(new Follower() { UserId = otherUser.Id, FollowerId = currentUser.Id });
                 await _context.SaveChangesAsync();
 
                 // Return a 200 OK response with a message
