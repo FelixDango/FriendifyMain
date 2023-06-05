@@ -253,13 +253,13 @@ namespace FriendifyMain.Controllers
                 // Filter users by name if provided
                 if (!string.IsNullOrEmpty(name))
                 {
-                    users = users.Where(u => u.UserName != null && (u.UserName.Contains(name) || u.FirstName.Contains(name) || u.LastName.Contains(name))).ToList();
+                    users = users.Where(u => u.UserName != null && (u.UserName.ToUpper().Contains(name.ToUpper()) || u.FirstName.ToUpper().Contains(name.ToUpper()) || u.LastName.ToUpper().Contains(name.ToUpper()))).ToList();
                 }
 
                 // Filter users by role if provided
                 if (!string.IsNullOrEmpty(role))
                 {
-                    users = users.Where(u => u.AssignedRoles.Any(r => r.Role.Name == role)).ToList();
+                    users = users.Where(u => u.AssignedRoles.Any(r => r.Role.Name.ToUpper() == role.ToUpper())).ToList();
                 }
 
                 // Return a 200 OK response with the filtered users list
