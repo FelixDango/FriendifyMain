@@ -34,8 +34,8 @@ namespace FriendifyMain.Controllers
                 if (currentUser == null || _context == null) { return BadRequest(); }
 
                 // Load the related data explicitly 
-                await _context.Entry(currentUser).Collection(u => u.FollowedBy).LoadAsync();
-                await _context.Entry(currentUser).Collection(u => u.Follows).LoadAsync();
+                await _context.Entry(currentUser).Collection(u => u.Followers).LoadAsync();
+                await _context.Entry(currentUser).Collection(u => u.Following).LoadAsync();
                 
 
 
@@ -46,7 +46,7 @@ namespace FriendifyMain.Controllers
                 }
 
                 // Get the list of users that the current user follows and add the current user to the list 
-                var followedUsers = currentUser.FollowsIds;
+                var followedUsers = currentUser.Following.Select(f => f.UserId).ToList();
                 followedUsers.Add(currentUser.Id);
 
                 // Get the latest posts from the followed users and the current user, ordered by date in descending order 

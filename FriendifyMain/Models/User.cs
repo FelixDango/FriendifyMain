@@ -11,6 +11,7 @@ namespace FriendifyMain.Models
     /// <summary>
     /// Data model for user data 
     /// </summary>
+    
     public class User : IdentityUser<int>
     {
         // Help types
@@ -46,14 +47,8 @@ namespace FriendifyMain.Models
         public Picture? Picture { get; set; }
         public string? Country { get; set; }
         public string? PhoneNumber { get; set; }
-        [JsonIgnore]
-        public List<User> Follows { get; set; }
-        [JsonInclude]
-        public List<int> FollowsIds { get; set; }
-        [JsonIgnore]
-        public List<User> FollowedBy { get; set; }
-        [JsonInclude]
-        public List<int> FollowedByIds { get; set; }
+        public List<Follower> Following { get; set; }
+        public List<Follower> Followers { get; set; }
         public List<Post> Posts { get; set; }
         public List<Comment> Comments { get; set; }
         public List<AssignedRole> AssignedRoles { get; set; }
