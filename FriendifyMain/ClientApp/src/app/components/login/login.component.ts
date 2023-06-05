@@ -20,7 +20,7 @@ export class LoginComponent {
       (response) => {
         // Handle login success
         //const token = response.headers.get('Authorization');
-        console.log(response.headers);
+        console.log(response);
         // set token in local storage
         //if (token) localStorage.setItem('token', token);
         // redirect to home page

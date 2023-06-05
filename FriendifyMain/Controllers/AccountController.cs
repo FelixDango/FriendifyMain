@@ -82,7 +82,6 @@ namespace FriendifyMain.Controllers
         // The login action allows an existing user to sign in using their username and password
         [HttpPost("login")]
         [AllowAnonymous] // Allow anonymous access
-        [ProducesResponseType(typeof(User), 200)] // Specify possible response type and status code
         [ProducesResponseType(typeof(string), 401)] // Specify possible response type and status code
         [ProducesResponseType(typeof(ModelStateDictionary), 400)] // Specify possible response type and status code
         [Produces("application/json")] // Specify response content type
@@ -90,10 +89,12 @@ namespace FriendifyMain.Controllers
         {
             // Sign in the user using a cookie and check if it was successful
             var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, lockoutOnFailure: false);
+            Console.WriteLine(result);
             if (result.Succeeded)
             {
                 // Get the user by their username from the user manager
                 var user = await _userManager.FindByNameAsync(model.Username);
+                Console.WriteLine(user.UserName);
                 if (user == null)
                 {
                     // User not found
@@ -102,10 +103,9 @@ namespace FriendifyMain.Controllers
 
                 // Generate the authentication token
                 var token = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultProvider, "Authentication");
-
+                Console.WriteLine("token",token);
                 // Set the token in the response headers
                 Response.Headers.Add("Authorization", $"Bearer {token}");
-
                 // Return a 200 OK response with the user data in the body
                 return Ok(user);
             }
