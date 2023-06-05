@@ -44,18 +44,19 @@ namespace FriendifyMain.Controllers
             }
 
             // Load the related data explicitly
-            await _context.Entry(currentUser).Collection(u => u.FollowedBy).LoadAsync();
-            await _context.Entry(currentUser).Collection(u => u.Follows).LoadAsync();
+            await _context.Entry(currentUser).Collection(u => u.Followers).LoadAsync();
+            await _context.Entry(currentUser).Collection(u => u.Following).LoadAsync();
             await _context.Entry(currentUser).Collection(u => u.AssignedRoles).LoadAsync();
             await _context.Entry(currentUser).Collection(u => u.Posts).LoadAsync();
 
             await _context.Posts
-                    .Include(p => p.Pictures)
-                    .Include(p => p.Videos)
-                    .Include(p => p.Comments)
-                    .OrderByDescending(p => p.Date)
-                    .ToListAsync();
+                            .Include(p => p.Pictures)
+                            .Include(p => p.Videos)
+                            .Include(p => p.Comments)
+                            .OrderByDescending(p => p.Date)
+                            .ToListAsync();
 
+            
 
             // Check if the current user is an admin or requesting their own profile
             if (currentUser.IsAdmin || currentUser.Id == id)
@@ -205,8 +206,8 @@ namespace FriendifyMain.Controllers
                 if (currentUser == null || _context == null) { return BadRequest(); }
 
                 // Load the related data explicitly
-                await _context.Entry(currentUser).Collection(u => u.FollowedBy).LoadAsync();
-                await _context.Entry(currentUser).Collection(u => u.Follows).LoadAsync();
+                await _context.Entry(currentUser).Collection(u => u.Followers).LoadAsync();
+                await _context.Entry(currentUser).Collection(u => u.Following).LoadAsync();
 
                 // Check if the current user is suspended
                 if (currentUser.Suspended)
@@ -224,13 +225,13 @@ namespace FriendifyMain.Controllers
                 }
 
                 // Check if the current user is already following the other user
-                if (currentUser.Follows.Contains(otherUser))
+                if (currentUser.Following.Select(e=> e.UserId == otherUser.Id).FirstOrDefault())
                 {
                     return Ok("You are already following this user."); // Return a 200 OK response with a message
                 }
 
                 // If not, add the other user to the follows list of the current user and save changes to database context
-                currentUser.Follows.Add(otherUser);
+                currentUser.Following.Add(new Follower() { UserId = otherUser.Id, FollowerId = currentUser.Id});
                 await _context.SaveChangesAsync();
 
                 // Return a 200 OK response with a message
@@ -258,8 +259,8 @@ namespace FriendifyMain.Controllers
                 if (currentUser == null || _context == null) { return BadRequest(); }
 
                 // Load the related data explicitly
-                await _context.Entry(currentUser).Collection(u => u.FollowedBy).LoadAsync();
-                await _context.Entry(currentUser).Collection(u => u.Follows).LoadAsync();
+                await _context.Entry(currentUser).Collection(u => u.Followers).LoadAsync();
+                await _context.Entry(currentUser).Collection(u => u.Following).LoadAsync();
 
                 // Check if the current user is suspended
                 if (currentUser.Suspended)
@@ -277,13 +278,15 @@ namespace FriendifyMain.Controllers
                 }
 
                 // Check if the current user is following the other user
-                if (!currentUser.Follows.Contains(otherUser))
+                if (!currentUser.Following.Select(e => e.UserId == otherUser.Id).FirstOrDefault())
                 {
                     return Ok("You are not following this user."); // Return a 200 OK response with a message
                 }
 
                 // If yes, remove the other user from the follows list of the current user and save changes to database context
-                currentUser.Follows.Remove(otherUser);
+                currentUser.Following = currentUser.Following.Where(e => e.UserId != otherUser.Id).ToList(); // Remove the other user from the following list of the current user
+                otherUser.Followers = otherUser.Followers.Where(e => e.UserId != currentUser.Id).ToList(); // Remove the current user from the followers list of the other user
+
                 await _context.SaveChangesAsync();
 
                 // Return a 200 OK response with a message

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FriendifyMain.Migrations
 {
     [DbContext(typeof(FriendifyContext))]
-    partial class FriendifyContextModelSnapshot : ModelSnapshot
+    [Migration("20230605113131_v6")]
+    partial class v6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -72,21 +75,6 @@ namespace FriendifyMain.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Comment");
-                });
-
-            modelBuilder.Entity("FriendifyMain.Models.Follower", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("FollowerId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "FollowerId");
-
-                    b.HasIndex("FollowerId");
-
-                    b.ToTable("Follower");
                 });
 
             modelBuilder.Entity("FriendifyMain.Models.Like", b =>
@@ -267,6 +255,14 @@ namespace FriendifyMain.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FollowedByIds")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FollowsIds")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -470,6 +466,21 @@ namespace FriendifyMain.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("UserUser", b =>
+                {
+                    b.Property<int>("FollowedById")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FollowsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("FollowedById", "FollowsId");
+
+                    b.HasIndex("FollowsId");
+
+                    b.ToTable("UserUser");
+                });
+
             modelBuilder.Entity("FriendifyMain.Models.AssignedRole", b =>
                 {
                     b.HasOne("FriendifyMain.Models.Role", "Role")
@@ -504,25 +515,6 @@ namespace FriendifyMain.Migrations
                         .IsRequired();
 
                     b.Navigation("Post");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("FriendifyMain.Models.Follower", b =>
-                {
-                    b.HasOne("FriendifyMain.Models.User", "Following")
-                        .WithMany("Following")
-                        .HasForeignKey("FollowerId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("FriendifyMain.Models.User", "User")
-                        .WithMany("Followers")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Following");
 
                     b.Navigation("User");
                 });
@@ -669,6 +661,21 @@ namespace FriendifyMain.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("UserUser", b =>
+                {
+                    b.HasOne("FriendifyMain.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("FollowedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FriendifyMain.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("FollowsId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("FriendifyMain.Models.Message", b =>
                 {
                     b.Navigation("Pictures");
@@ -697,10 +704,6 @@ namespace FriendifyMain.Migrations
                     b.Navigation("AssignedRoles");
 
                     b.Navigation("Comments");
-
-                    b.Navigation("Followers");
-
-                    b.Navigation("Following");
 
                     b.Navigation("Images");
 

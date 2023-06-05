@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using FriendifyMain.Mappers;
+using FriendifyMain.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using Microsoft.OpenApi.Models;
-using FriendifyMain.Models;
-using Microsoft.AspNetCore.Identity;
-using FriendifyMain.Mappers;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Mvc;
+using System.Text;
 
 namespace FriendifyMain
 {
@@ -24,7 +23,6 @@ namespace FriendifyMain
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll", builder =>
@@ -34,7 +32,7 @@ namespace FriendifyMain
                         .AllowAnyHeader();
                 });
             });
-            
+
             services.AddIdentity<User, Role>()
                 .AddEntityFrameworkStores<FriendifyContext>()
                 .AddDefaultTokenProviders();
@@ -85,7 +83,7 @@ namespace FriendifyMain
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"] ?? throw new ArgumentNullException("Jwt:Key")))
                     };
                 });
-            
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API Name", Version = "v1" });

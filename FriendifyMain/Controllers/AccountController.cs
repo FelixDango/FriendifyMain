@@ -40,8 +40,8 @@ namespace FriendifyMain.Controllers
             user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, model.Password);
 
             //Initialize user fields/property fields
-            user.Follows = new();
-            user.FollowedBy = new();
+            user.Following = new();
+            user.Followers = new();
             user.Posts = new();
             user.Comments = new();
             user.AssignedRoles = new();
