@@ -23,6 +23,7 @@ export class LoginComponent {
         // get only the token from the response header
         let authToken = response.headers.get('Authorization');
         if (authToken) {
+          this.setCookie('Authorization', authToken, 1);
           authToken = authToken.replace('Bearer ', '');
           // Set token in local storage
           localStorage.setItem('token', authToken);
@@ -43,5 +44,12 @@ export class LoginComponent {
         console.log(error);
       }
     );
+  }
+
+  private setCookie(name: string, value: string, expiresInDays: number) {
+    const expires = new Date();
+    expires.setDate(expires.getDate() + expiresInDays);
+    const cookieValue = encodeURIComponent(value) + (expires ? '; expires=' + expires.toUTCString() : '');
+    document.cookie = name + '=' + cookieValue + '; path=/';
   }
 }

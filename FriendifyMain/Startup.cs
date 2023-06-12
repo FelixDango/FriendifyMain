@@ -1,13 +1,13 @@
 ﻿using FriendifyMain.Mappers;
 using FriendifyMain.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using System.Security.Claims;
-using System.Text;
+using System;
 
 namespace FriendifyMain
 {
@@ -33,6 +33,15 @@ namespace FriendifyMain
                         .AllowAnyHeader();
                 });
             });
+            services.AddLogging(logging =>
+            {
+                logging.AddConsole(); // Configure logging to write to the console
+                logging.AddDebug();   // Optionally, add additional logging providers
+                // Add more logging providers as needed
+            });
+
+            services.AddDbContext<FriendifyContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<User, Role>(options =>
             {
@@ -52,52 +61,29 @@ namespace FriendifyMain
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
                 options.Lockout.MaxFailedAccessAttempts = 10;
                 options.Lockout.AllowedForNewUsers = true;
-
-                // Token settings
-                options.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;
-                options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
             })
-                .AddEntityFrameworkStores<FriendifyContext>()
-                .AddDefaultTokenProviders();
+            .AddEntityFrameworkStores<FriendifyContext>()
+            .AddDefaultTokenProviders();
 
-            services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
-            // Add a connection string to your secrets.json file
-            var connectionString = Configuration.GetConnectionString("DefaultConnection");
-
-            // Register the DbContext with the dependency injection container
-            services.AddDbContext<FriendifyContext>(options => options.UseSqlServer(connectionString));
-
-            // Register the AutoMapper service and add the mapping profiles
-            services.AddAutoMapper(typeof(RegisterMapper));
-
-            // Add authentication services
-            services.AddAuthentication(options =>
+            services.Configure<ApiBehaviorOptions>(options =>
             {
-                // Set the default scheme to JWT bearer
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
-                {
-                    // Configure the JWT bearer token validation parameters
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        RoleClaimType = ClaimTypes.Role,
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        ValidateLifetime = false,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = Configuration["Jwt:Issuer"],
-                        ValidAudience = Configuration["Jwt:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"] ?? throw new ArgumentNullException("Jwt:Key")))
-                    };
-                });
+                options.SuppressModelStateInvalidFilter = true;
+            });
 
-
-
+            services.AddAutoMapper(typeof(RegisterMapper));
 
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API Name", Version = "v1" });
             });
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.Name = "YourCookieName";
+                options.LoginPath = "/Account/Login";
+                options.AccessDeniedPath = "/Account/AccessDenied";
+            });
+
             // Other service configurations...
         }
 
@@ -113,6 +99,7 @@ namespace FriendifyMain
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API Name v1");
                 });
             }
+
             app.UseCors("AllowAll");
             app.UseHttpsRedirection();
             app.UseRouting();

@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class HttpService {
   private baseUrl = 'https://localhost:7073/api';
 
-  constructor(private http: HttpClient) {}
+  constructor(public http: HttpClient) {}
 
   get(url: string): Observable<any> {
     const fullUrl = this.baseUrl + url;
@@ -20,6 +20,7 @@ export class HttpService {
     const fullUrl = this.baseUrl + url;
     const headers = this.getHeadersWithAuthorization();
     console.log(fullUrl);
+    console.log(headers);
     return this.http.post(fullUrl, data, { headers });
   }
 

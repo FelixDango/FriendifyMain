@@ -1,4 +1,7 @@
-﻿using FriendifyMain.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using FriendifyMain.Models;
 using FriendifyMain.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -73,8 +76,7 @@ namespace FriendifyMain.Controllers
 
         // The create action allows the current user to create a new post with optional pictures and videos
         [Authorize] // Require authentication
-        [HttpPost] // Only respond to POST requests
-        [HttpPost("createpost")] // Only respond to POST requests with a PostId parameter in the route 
+        [HttpPost("createpost")] // Accept only POST requests and append the route to the controller route
         public async Task<ActionResult<Post>> Create([FromBody] PostViewModel postModel)
         {
             Console.WriteLine("Create post");
