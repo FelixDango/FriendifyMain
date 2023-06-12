@@ -11,22 +11,23 @@ import {User} from "../../models/user";
 })
 export class HomeComponent implements OnInit {
   userPosts$: Observable<Post[]>;
-  user: Observable<User> = this.authService.user$;
+  user: User | undefined;
 
   constructor(public authService: AuthService, private httpService: HttpService) {
-    this.userPosts$ = new Observable<Post[]>();
-    // Subscribe to isLoggedIn$ to update the navigation in real time
-    this.authService.isLoggedIn$.subscribe(() => {
-      this.loadUserPosts();
-    }, (error) => {
-      console.log(error);
-    });
+    this.userPosts$ = new Observable<Post[]>(); // Initialize the user posts
+    // get user from local storage
+    if (localStorage.getItem('user') === null) {
+      this.user = undefined;
+    } else {
+      this.user = JSON.parse(localStorage.getItem('user') || '{}');
+    }
   }
 
   ngOnInit() {
     // Check if the user is logged in
     if (this.authService.isLoggedIn()) {
-      this.loadUserPosts();
+      console.log('user is logged in');
+      //this.loadUserPosts();
     }
   }
 

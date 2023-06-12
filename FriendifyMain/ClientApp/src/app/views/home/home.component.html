@@ -1,12 +1,13 @@
-<ng-container *ngIf="user | async as user">
-  <div class="row">
-    <div class="col-12">
-      <h1>Welcome {{ user.firstName }}!</h1>
-    </div>
+<div class="row">
+  <div class="col-12">
+    <h1>Welcome {{ user?.firstName }}!</h1>
   </div>
+</div>
+<ng-container *ngIf="user">
+  <app-compose-post></app-compose-post>
+  <h1>Your Timeline!</h1>
 </ng-container>
-<app-compose-post></app-compose-post>
-<h1>Your Timeline!</h1>
+<h1 *ngIf="user === undefined">Here are public posts for you!</h1>
 
 <div *ngIf="userPosts$ | async as userPosts">
   <div *ngIf="userPosts.length > 0; else noPosts">

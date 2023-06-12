@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import {AuthService} from "../../services/auth.service";
+import {HttpService} from "../../services/http.service";
 
 @Component({
   selector: 'app-compose-post',
@@ -12,6 +14,8 @@ export class ComposePostComponent {
   isOverLimit: boolean = false;
   postContent: string = '';
   errorMessage: string = '';
+
+  constructor(private httpService: HttpService, private authService: AuthService) {}
 
   handleFileInput(event: any) {
     const file: File = event.files[0];
@@ -36,6 +40,12 @@ export class ComposePostComponent {
 
   submitPost() {
     // Perform post submission logic here
+    this.httpService.post('/Home/createpost', {text: this.text, image: this.selectedFile}).subscribe((response) => {
+      console.log('response', response);
+    }, (error) => {
+      console.log('error', error);
+      }
+    );
     // You can access the entered text using a template reference variable or ngModel
     // The selected file can be accessed via this.selectedFile
     console.log('Text:', this.text);

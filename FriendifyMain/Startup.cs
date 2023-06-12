@@ -81,9 +81,9 @@ namespace FriendifyMain
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         RoleClaimType = ClaimTypes.Role,
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ValidateLifetime = false,
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = Configuration["Jwt:Issuer"],
                         ValidAudience = Configuration["Jwt:Audience"],

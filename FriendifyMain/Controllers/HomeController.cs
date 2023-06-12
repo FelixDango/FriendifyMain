@@ -77,6 +77,7 @@ namespace FriendifyMain.Controllers
         [HttpPost("createpost")] // Only respond to POST requests with a PostId parameter in the route 
         public async Task<ActionResult<Post>> Create([FromBody] PostViewModel postModel)
         {
+            Console.WriteLine("Create post");
             try
             {
                 // Get the current user from the user manager

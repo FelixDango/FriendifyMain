@@ -20,9 +20,10 @@ export class LoginComponent {
     this.authService.login(username, password, rememberMe).subscribe(
       (response: HttpResponse<any>) => {
         // Handle login success
-        //const token = response.headers.get('Authorization');
-        const authToken = response.headers.get('Authorization');
+        // get only the token from the response header
+        let authToken = response.headers.get('Authorization');
         if (authToken) {
+          authToken = authToken.replace('Bearer ', '');
           // Set token in local storage
           localStorage.setItem('token', authToken);
           // Redirect to home page
