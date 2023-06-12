@@ -42,6 +42,9 @@ namespace FriendifyMain.Controllers
                                     await _context.Followers.CountAsync(f => f.DateTime >= selectedTime) +
                                     await _context.Posts.CountAsync(p => p.Date >= selectedTime);
 
+                // Get total posts in selected time range
+                var totalPosts = await _context.Posts.CountAsync(p => p.Date >= selectedTime);
+
                 // Get the total accounts created in the selected time range
                 var totalAccountsInTimespan = await _context.Users.CountAsync(u => u.RegisteredAt >= selectedTime);
 
@@ -54,6 +57,12 @@ namespace FriendifyMain.Controllers
                                               .Select(u => u.RegisteredAt)
                                               .ToListAsync();
 
+                // Get list of all post creation dates in selected time range
+                var postsCreationDates = await _context.Posts
+                                              .Where(p => p.Date >= selectedTime)
+                                              .Select(p => p.Date)
+                                              .ToListAsync();
+
                 // Get the count of males and females users
                 var maleCount = await _context.Users.CountAsync(u => u.Sex == Models.User.SexEnum.Male);
                 var femaleCount = await _context.Users.CountAsync(u => u.Sex == Models.User.SexEnum.Female);
@@ -64,13 +73,15 @@ namespace FriendifyMain.Controllers
                 // Create an AdminData object with the data
                 var data = new AdminData
                 {
+                    TotalPosts = totalPosts,
                     TotalInteractions = totalInteractions,
                     TotalAccounts = totalAccounts,
                     TotalAccountsInTimespan = totalAccountsInTimespan,
                     MaleCount = maleCount,
                     FemaleCount = femaleCount,
                     AverageInteractions = averageInteractions,
-                    RegistrationDates = registrationDates
+                    RegistrationDates = registrationDates,
+                    PostsCreationDates = postsCreationDates
                 };
 
                 // Return the result 
