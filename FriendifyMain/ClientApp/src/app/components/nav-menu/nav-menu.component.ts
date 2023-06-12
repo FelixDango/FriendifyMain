@@ -40,6 +40,7 @@ export class NavMenuComponent implements OnInit {
   }
 
   private updateMenuItems(): void {
+    console.log('updateMenuItems', this.authService.isLoggedIn());
     this.items = [
       {
         label: 'Home',
@@ -52,8 +53,7 @@ export class NavMenuComponent implements OnInit {
       },
       {
         label: this.authService.isLoggedIn() ? 'Logout' : 'Login',
-        routerLink: this.authService.isLoggedIn() ? '/logout' : '/login',
-        visible: !this.authService.isLoggedIn()
+        routerLink: this.authService.isLoggedIn() ? '/logout' : '/login'
       },
       {
         label: 'Register',

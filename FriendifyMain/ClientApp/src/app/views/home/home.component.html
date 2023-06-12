@@ -1,8 +1,23 @@
+<ng-container *ngIf="user | async as user">
+  <div class="row">
+    <div class="col-12">
+      <h1>Welcome {{ user.firstName }}!</h1>
+    </div>
+  </div>
+</ng-container>
 <app-compose-post></app-compose-post>
 <h1>Your Timeline!</h1>
 
-<div *ngFor="let post of userPosts" >
-  <div class="shadow-3 mb-4">
-    <app-user-post  [post]="post"></app-user-post>
+<div *ngIf="userPosts$ | async as userPosts">
+  <div *ngIf="userPosts.length > 0; else noPosts">
+    <div *ngFor="let post of userPosts">
+      <div class="shadow-3 mb-4">
+        <app-user-post [post]="post"></app-user-post>
+      </div>
+    </div>
   </div>
+  <ng-template #noPosts>
+    <p>No posts available.</p>
+  </ng-template>
 </div>
+

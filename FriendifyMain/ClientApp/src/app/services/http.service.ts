@@ -11,6 +11,7 @@ export class HttpService {
 
   get(url: string): Observable<any> {
     const fullUrl = this.baseUrl + url;
+    console.log(fullUrl);
     return this.http.get(fullUrl);
   }
 
