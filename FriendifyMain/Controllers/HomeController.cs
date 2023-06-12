@@ -148,7 +148,7 @@ namespace FriendifyMain.Controllers
                 }
 
                 // Check if the post exists
-                if (post == null)
+                if (post == null || post.Likes == null)
                 {
                     return NotFound(); // Return a 404 not found response 
                 }
@@ -165,7 +165,7 @@ namespace FriendifyMain.Controllers
                 else
                 {
                     // If no, add the current user to the liked by list 
-                    post.Likes.Add(new Like { UserId = currentUser.Id, PostId = post.Id });
+                    post.Likes.Add(new Like { UserId = currentUser.Id, PostId = post.Id, DateTime = DateTime.Now });
                 }
 
                 // Save changes to database context 

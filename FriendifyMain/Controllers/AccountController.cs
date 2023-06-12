@@ -38,6 +38,7 @@ namespace FriendifyMain.Controllers
             user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, model.Password);
 
             //Initialize user fields/property fields
+            user.RegisteredAt = DateTime.Now;
             user.Following = new();
             user.Followers = new();
             user.Posts = new();

@@ -302,7 +302,7 @@ namespace FriendifyMain.Controllers
                 }
 
                 // If not, add the other user to the follows list of the current user and save changes to database context
-                currentUser.Following.Add(new Follower() { UserId = otherUser.Id, FollowerId = currentUser.Id });
+                currentUser.Following.Add(new Follower() { UserId = otherUser.Id, FollowerId = currentUser.Id, DateTime = DateTime.Now });
                 await _context.SaveChangesAsync();
 
                 // Return a 200 OK response with a message

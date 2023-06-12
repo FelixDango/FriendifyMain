@@ -10,5 +10,6 @@ namespace FriendifyMain.Models
         public int PostId { get; set; } // The post that was liked
         [JsonIgnore]
         public Post Post { get; set; } // The navigation property to the post
+        public DateTime DateTime { get; set; } //Date and Time when this Like has been created
     }
 }

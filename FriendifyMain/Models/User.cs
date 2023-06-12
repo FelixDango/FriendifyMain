@@ -55,7 +55,7 @@ namespace FriendifyMain.Models
         public List<Video> Videos { get; set; }
         public List<Message> Messages { get; set; }
         public List<Like> Likes { get; set; }
-
+        public DateTime RegisteredAt { get; set; }
 
 
         // Moderator fields
