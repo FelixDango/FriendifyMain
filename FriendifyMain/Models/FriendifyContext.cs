@@ -14,7 +14,9 @@ public class FriendifyContext : IdentityDbContext<User, Role, int>
     public DbSet<Post> Posts { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<AssignedRole> AssignedRoles { get; set; }
-    public DbSet<Like> Likes { get; set; } 
+    public DbSet<Like> Likes { get; set; }
+    public DbSet<Comment> Comments { get; set; }
+    public DbSet<Follower> Followers { get; set; }
     // Add other DbSets as needed
 
     // Override the OnModelCreating method

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FriendifyMain.Migrations
 {
     [DbContext(typeof(FriendifyContext))]
-    partial class FriendifyContextModelSnapshot : ModelSnapshot
+    [Migration("20230612125737_UpdatedTimestamps")]
+    partial class UpdatedTimestamps
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,7 +74,7 @@ namespace FriendifyMain.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comment");
                 });
 
             modelBuilder.Entity("FriendifyMain.Models.Follower", b =>
@@ -89,7 +92,7 @@ namespace FriendifyMain.Migrations
 
                     b.HasIndex("FollowerId");
 
-                    b.ToTable("Followers");
+                    b.ToTable("Follower");
                 });
 
             modelBuilder.Entity("FriendifyMain.Models.Like", b =>
