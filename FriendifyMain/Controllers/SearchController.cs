@@ -51,30 +51,46 @@ namespace FriendifyMain.Controllers
             {
                 users = users.Where(u => u.UserName != null && (u.UserName.ToUpper().Contains(name.ToUpper()) || u.FirstName.ToUpper().Contains(name.ToUpper()) || u.LastName.ToUpper().Contains(name.ToUpper()))).ToList();
             }
-
+            // Remove Critical fields from response
+            foreach (var user in users)
+            {
+                user.PasswordHash = "Censored";
+                user.Email = "Censored";
+                user.Address = "Censored";
+                user.Country = "Censored";
+                user.Likes = new();
+                user.Comments = new();
+                user.NormalizedEmail = "Censored";
+                user.SecurityStamp = "Censored";
+                user.City = "Censored";
+                user.PhoneNumber = "Censored";
+                user.Images = new();
+                user.Messages = new();
+                user.Videos = new();
+            }
             // Return a 200 OK response with the filtered users list
             return Ok(users);
         }
 
-        // The post action allows an authenticated user to search posts by content or date
+        // The post action allows an authenticated user to search posts by content 
         [HttpGet("findpost")]
         [Authorize] // Require authentication
         [ProducesResponseType(typeof(List<Post>), 200)] // Specify possible response type and status code
-        public async Task<IActionResult> FindPost([FromQuery] string content, [FromQuery] DateTime? date) // Indicate that the content and date are bound from query string
+        public async Task<IActionResult> FindPost([FromQuery] string content) // Indicate that the content from query string
         {
             // Get all posts from the database context
-            var posts = await _context.Posts.ToListAsync();
+            var posts = await _context.Posts
+                    .Include(p => p.Pictures)
+                    .Include(p => p.Videos)
+                    .Include(p => p.Comments)
+                    .Include(p => p.Likes)
+                    .OrderByDescending(p => p.Date)
+                    .ToListAsync();
 
             // Filter posts by content if provided
             if (!string.IsNullOrEmpty(content))
             {
-                posts = posts.Where(p => p.Content.Contains(content)).ToList();
-            }
-
-            // Filter posts by date if provided
-            if (date.HasValue)
-            {
-                posts = posts.Where(p => p.Date.Date == date.Value.Date).ToList();
+                posts = posts.Where(p => p.Content.ToUpper().Contains(content.ToUpper())).ToList();
             }
 
             // Return a 200 OK response with the filtered posts list
