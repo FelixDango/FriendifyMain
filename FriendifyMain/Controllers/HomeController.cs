@@ -147,14 +147,20 @@ namespace FriendifyMain.Controllers
                     return BadRequest("You are suspended"); // Return a bad request response with an error message 
                 }
 
+                
                 // Check if the post exists
-                if (post == null || post.Likes == null)
+                if (post == null)
                 {
                     return NotFound(); // Return a 404 not found response 
                 }
 
                 // Load the related data explicitly
                 await _context.Entry(post).Collection(p => p.Likes).LoadAsync();
+
+                if (post.Likes == null)
+                {
+                    return NotFound(); // Return a 404 not found response 
+                }
 
                 // Check if the current user has already liked the post 
                 if (post.Likes.Any(l => l.UserId == currentUser.Id))
