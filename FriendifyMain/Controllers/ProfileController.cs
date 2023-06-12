@@ -46,7 +46,6 @@ namespace FriendifyMain.Controllers
             // Load the related data explicitly
             await _context.Entry(currentUser).Collection(u => u.Followers).LoadAsync();
             await _context.Entry(currentUser).Collection(u => u.Following).LoadAsync();
-            await _context.Entry(currentUser).Collection(u => u.AssignedRoles).LoadAsync();
             await _context.Entry(currentUser).Collection(u => u.Posts).LoadAsync();
 
             await _context.Posts
@@ -102,7 +101,6 @@ namespace FriendifyMain.Controllers
             // Load the related data explicitly
             await _context.Entry(currentUser).Collection(u => u.Followers).LoadAsync();
             await _context.Entry(currentUser).Collection(u => u.Following).LoadAsync();
-            await _context.Entry(currentUser).Collection(u => u.AssignedRoles).LoadAsync();
             await _context.Entry(currentUser).Collection(u => u.Posts).LoadAsync();
 
             await _context.Posts
@@ -235,11 +233,11 @@ namespace FriendifyMain.Controllers
             return Forbid();
         }
 
-        // The get action allows an authenticated user to get a list of all profiles or a filtered list by name or role
+        // The get action allows an authenticated user to get a list of all profiles or a filtered list by name
         [HttpGet]
         [Authorize] // Require authentication
         [ProducesResponseType(typeof(List<User>), 200)] // Specify possible response type and status code
-        public async Task<IActionResult> Get([FromQuery] string name, [FromQuery] string role) // Indicate that the name and role are bound from query string
+        public async Task<IActionResult> Get([FromQuery] string name) // Indicate that the name from query string
         {
             // Get the current user from the user manager
             var currentUser = await _userManager.GetUserAsync(User);
@@ -254,12 +252,6 @@ namespace FriendifyMain.Controllers
                 if (!string.IsNullOrEmpty(name))
                 {
                     users = users.Where(u => u.UserName != null && (u.UserName.ToUpper().Contains(name.ToUpper()) || u.FirstName.ToUpper().Contains(name.ToUpper()) || u.LastName.ToUpper().Contains(name.ToUpper()))).ToList();
-                }
-
-                // Filter users by role if provided
-                if (!string.IsNullOrEmpty(role))
-                {
-                    users = users.Where(u => u.AssignedRoles.Any(r => r.Role.Name.ToUpper() == role.ToUpper())).ToList();
                 }
 
                 // Return a 200 OK response with the filtered users list
@@ -380,3 +372,5 @@ namespace FriendifyMain.Controllers
     }
 
 }
+
+

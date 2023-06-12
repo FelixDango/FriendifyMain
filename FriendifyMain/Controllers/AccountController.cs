@@ -42,7 +42,6 @@ namespace FriendifyMain.Controllers
             user.Followers = new();
             user.Posts = new();
             user.Comments = new();
-            user.AssignedRoles = new();
             user.Images = new();
             user.Videos = new();
             user.Messages = new();

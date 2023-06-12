@@ -25,11 +25,11 @@ namespace FriendifyMain.Controllers
             _mapper = mapper;
         }
 
-        // The user action allows an authenticated user to search other users by name (Username, Firstname or Lastname) or role
+        // The user action allows an authenticated user to search other users by name (Username, Firstname or Lastname)
         [HttpGet("finduser")]
         [Authorize] // Require authentication
         [ProducesResponseType(typeof(List<User>), 200)] // Specify possible response type and status code
-        public async Task<IActionResult> FindUser([FromQuery] string name, [FromQuery] string role) // Indicate that the name (Username, Firstname or Lastname) and role are bound from query string
+        public async Task<IActionResult> FindUser([FromQuery] string name) // Indicate that the name (Username, Firstname or Lastname) from query string
         {
             // Get all users from the database context
             var users = await _context.Users.ToListAsync();
@@ -38,7 +38,6 @@ namespace FriendifyMain.Controllers
                 // Load the related data explicitly
                 await _context.Entry(currentUser).Collection(u => u.Followers).LoadAsync();
                 await _context.Entry(currentUser).Collection(u => u.Following).LoadAsync();
-                await _context.Entry(currentUser).Collection(u => u.AssignedRoles).LoadAsync();
                 await _context.Entry(currentUser).Collection(u => u.Posts).LoadAsync();
 
                 await _context.Users
@@ -51,12 +50,6 @@ namespace FriendifyMain.Controllers
             if (!string.IsNullOrEmpty(name))
             {
                 users = users.Where(u => u.UserName != null && (u.UserName.ToUpper().Contains(name.ToUpper()) || u.FirstName.ToUpper().Contains(name.ToUpper()) || u.LastName.ToUpper().Contains(name.ToUpper()))).ToList();
-            }
-
-            // Filter users by role if provided
-            if (!string.IsNullOrEmpty(role))
-            {
-                users = users.Where(u => u.AssignedRoles.Any(r => r.Role.Name.ToUpper() == role.ToUpper())).ToList();
             }
 
             // Return a 200 OK response with the filtered users list

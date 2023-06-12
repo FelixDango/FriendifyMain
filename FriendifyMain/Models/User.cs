@@ -51,7 +51,6 @@ namespace FriendifyMain.Models
         public List<Follower> Followers { get; set; }
         public List<Post> Posts { get; set; }
         public List<Comment> Comments { get; set; }
-        public List<AssignedRole> AssignedRoles { get; set; }
         public List<Picture> Images { get; set; }
         public List<Video> Videos { get; set; }
         public List<Message> Messages { get; set; }
