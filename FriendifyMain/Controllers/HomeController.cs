@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace FriendifyMain.Controllers
 {
@@ -17,11 +18,13 @@ namespace FriendifyMain.Controllers
         // Inject the database context and the user manager
         private readonly FriendifyContext _context;
         private readonly UserManager<User> _userManager;
+        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(FriendifyContext context, UserManager<User> userManager)
+        public HomeController(FriendifyContext context, UserManager<User> userManager,ILogger<HomeController> logger)
         {
             _context = context;
             _userManager = userManager;
+            _logger = logger;
         }
 
         // The index action returns the home page with the latest posts from the users that the current user follows and their own posts 
@@ -79,7 +82,8 @@ namespace FriendifyMain.Controllers
         [HttpPost("createpost")] // Accept only POST requests and append the route to the controller route
         public async Task<ActionResult<Post>> Create([FromBody] PostViewModel postModel)
         {
-            Console.WriteLine("Create post");
+            // Invalid token encountered, log the reason
+            _logger.LogError("Invalid token. Reason: {Reason}", "Token expired");
             try
             {
                 // Get the current user from the user manager
