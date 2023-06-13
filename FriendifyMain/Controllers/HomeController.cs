@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FriendifyMain.Models;
 using FriendifyMain.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,8 @@ using Microsoft.Extensions.Logging;
 
 namespace FriendifyMain.Controllers
 {
+    // add cors
+    [EnableCors("AllowAll")]
     [Route("api/[controller]")]
     [ApiController]
     public class HomeController : ControllerBase
@@ -28,7 +31,8 @@ namespace FriendifyMain.Controllers
         }
 
         // The index action returns the home page with the latest posts from the users that the current user follows and their own posts 
-        [Authorize] // Require authentication 
+        // add bearer authentication
+        [Authorize] // Require authentication
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Post>>> Index()
         {

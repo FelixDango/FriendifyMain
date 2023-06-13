@@ -19,25 +19,17 @@ export class LoginComponent {
   signIn(username: string, password: string, rememberMe: boolean): void {
     this.authService.login(username, password, rememberMe).subscribe(
       (response: HttpResponse<any>) => {
-        // Handle login success
-        // get only the token from the response header
-        let authToken = response.headers.get('Authorization');
-        if (authToken) {
-          this.setCookie('Authorization', authToken, 1);
-          authToken = authToken.replace('Bearer ', '');
-          // Set token in local storage
-          localStorage.setItem('token', authToken);
-          // Redirect to home page
-          this.router.navigate(['/']);
-          // Save user data in local storage
-          localStorage.setItem('user', JSON.stringify(response.body));
-          // Emit the authentication status
-          this.authService.isLoggedInSubject.next(true);
-          this.authService.user$ = response.body;
-          console.log('auth user', this.authService.user$);
-        } else {
-          console.log('Authorization header not found');
-        }
+
+        document.cookie = response.headers.get('Set-Cookie') || '';
+
+
+            // Save user data in local storage
+            localStorage.setItem('user', JSON.stringify(response.body));
+
+            // Emit the authentication status
+            this.authService.isLoggedInSubject.next(true);
+            this.authService.user$ = response.body;
+            console.log('auth user', this.authService.user$);
       },
       (error) => {
         // Handle login error
@@ -45,6 +37,8 @@ export class LoginComponent {
       }
     );
   }
+
+
 
   private setCookie(name: string, value: string, expiresInDays: number) {
     const expires = new Date();

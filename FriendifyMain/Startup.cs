@@ -31,9 +31,10 @@ namespace FriendifyMain
             {
                 options.AddPolicy("AllowAll", builder =>
                 {
-                    builder.AllowAnyOrigin()
+                    builder.WithOrigins("http://localhost:44401")
                         .AllowAnyMethod()
-                        .AllowAnyHeader();
+                        .AllowAnyHeader()
+                        .AllowCredentials();
                 });
             });
             services.AddLogging(logging =>
@@ -64,16 +65,34 @@ namespace FriendifyMain
             .AddEntityFrameworkStores<FriendifyContext>()
             .AddDefaultTokenProviders();
             
-            // Add JWT authentication
+            // Configure the Identity options
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequiredLength = 6;
+            });
+
+            // Add authentication
             services.AddAuthentication(options =>
             {
-                options.DefaultAuthenticateScheme =
-                    JwtBearerDefaults.AuthenticationScheme; // Use JWTs for authentication
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; // Use JWTs for challenges
-            }).AddScheme<JwtBearerOptions, JwtBearerHandler>(
-                JwtBearerDefaults.AuthenticationScheme, // Use JWTs for authentication
-                options => Configuration.Bind("JwtSettings", options) // Bind the JwtSettings section of appsettings.json to the options
-            );
+                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
+            .AddCookie(options =>
+            {
+                options.Events.OnRedirectToLogin = (context) =>
+                {
+                    context.Response.StatusCode = 401;
+                    return Task.CompletedTask;
+                };
+            });
+
+
             
 
             services.Configure<ApiBehaviorOptions>(options =>
@@ -103,12 +122,22 @@ namespace FriendifyMain
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API Name v1");
                 });
             }
-
-            app.UseCors("AllowAll");
+            
+            app.UseCors(builder =>
+                builder.WithOrigins("https://localhost:44401")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthentication(); // Add this line to enable authentication
             app.UseAuthorization();
+            
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Add("Access-Control-Allow-Origin", "https://localhost:44401");
+                await next.Invoke();
+            });
 
             app.UseEndpoints(endpoints =>
             {

@@ -1,6 +1,10 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
+using Azure;
 using FriendifyMain.Models;
 using FriendifyMain.ViewModels;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -110,32 +114,24 @@ namespace FriendifyMain.Controllers
                     return NotFound("User not found.");
                 }
 
-                // Get the token from the database
-                var token = await _userManager.GetAuthenticationTokenAsync(user, TokenOptions.DefaultProvider, "Authentication");
-                
-                // Check if the token is null or expired
-                if (token == null || await _userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultProvider, "Authentication", token) == false)
+                // Generate the authentication ticket
+                var principal = await _signInManager.CreateUserPrincipalAsync(user);
+                var authenticationProperties = new AuthenticationProperties
                 {
-                    // Generate a new token and store it in the database
-                    token = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultProvider, "Authentication");
-                    Console.WriteLine($"new token {token}");
-                    await _userManager.SetAuthenticationTokenAsync(user, TokenOptions.DefaultProvider, "Authentication", token);
-                }
+                    IsPersistent = true // Adjust as per your requirements
+                };
 
-                // Set the token in the response headers
-                Response.Headers.Add("Authorization", $"Bearer {token}");
-                Response.Headers.Add("Access-Control-Expose-Headers", "Authorization");
-                
-                // sign in user
-                await _signInManager.SignInAsync(user, isPersistent: true);
+                // Sign in the user using cookie authentication
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authenticationProperties);
 
-                // Return a 200 OK response with the user data in the body and the token in the header
+                // Return a 200 OK response with the user data
                 return Ok(user);
             }
 
             // If not, return a 401 Unauthorized response with an error message
             return Unauthorized("Invalid login attempt.");
         }
+
 
         // The logout action allows a signed-in user to sign out from their account
         [Authorize] // Require authentication
