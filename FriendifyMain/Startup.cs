@@ -8,6 +8,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using System.Security.Claims;
 using System;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FriendifyMain
 {
@@ -57,13 +60,21 @@ namespace FriendifyMain
                 options.User.RequireUniqueEmail = false;
                 options.User.AllowedUserNameCharacters = null;
 
-                // Lockout settings
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
-                options.Lockout.MaxFailedAccessAttempts = 10;
-                options.Lockout.AllowedForNewUsers = true;
             })
             .AddEntityFrameworkStores<FriendifyContext>()
             .AddDefaultTokenProviders();
+            
+            // Add JWT authentication
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme =
+                    JwtBearerDefaults.AuthenticationScheme; // Use JWTs for authentication
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; // Use JWTs for challenges
+            }).AddScheme<JwtBearerOptions, JwtBearerHandler>(
+                JwtBearerDefaults.AuthenticationScheme, // Use JWTs for authentication
+                options => Configuration.Bind("JwtSettings", options) // Bind the JwtSettings section of appsettings.json to the options
+            );
+            
 
             services.Configure<ApiBehaviorOptions>(options =>
             {
@@ -71,20 +82,13 @@ namespace FriendifyMain
             });
 
             services.AddAutoMapper(typeof(RegisterMapper));
-
+            
+            // add swagger
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API Name", Version = "v1" });
             });
-
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.Cookie.Name = "YourCookieName";
-                options.LoginPath = "/Account/Login";
-                options.AccessDeniedPath = "/Account/AccessDenied";
-            });
-
-            // Other service configurations...
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

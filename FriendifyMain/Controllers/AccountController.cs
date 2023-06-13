@@ -112,7 +112,7 @@ namespace FriendifyMain.Controllers
 
                 // Get the token from the database
                 var token = await _userManager.GetAuthenticationTokenAsync(user, TokenOptions.DefaultProvider, "Authentication");
-
+                
                 // Check if the token is null or expired
                 if (token == null || await _userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultProvider, "Authentication", token) == false)
                 {
@@ -125,6 +125,9 @@ namespace FriendifyMain.Controllers
                 // Set the token in the response headers
                 Response.Headers.Add("Authorization", $"Bearer {token}");
                 Response.Headers.Add("Access-Control-Expose-Headers", "Authorization");
+                
+                // sign in user
+                await _signInManager.SignInAsync(user, isPersistent: true);
 
                 // Return a 200 OK response with the user data in the body and the token in the header
                 return Ok(user);
