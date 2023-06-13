@@ -1,43 +1,93 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpResponse} from '@angular/common/http';
-import {BehaviorSubject, Observable} from 'rxjs';
+import { BehaviorSubject, catchError, Observable, ReplaySubject, tap, throwError } from 'rxjs';
 import {Router} from "@angular/router";
-import {User} from "../models/user";
+import { User } from "../models/user";
+
+// Define an interface for the response object
+interface LoginResponse extends HttpResponse<any> {
+  token: string;
+  user: User;
+}
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class AuthService {
+  getToken() {
+    return localStorage.getItem('token');
+  }
+
   private baseUrl = 'https://localhost:7073/api/Account';
   isLoggedInSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public isLoggedIn$: Observable<boolean> = this.isLoggedInSubject.asObservable();
-  public user$: Observable<User> = new Observable<User>();
+  public user$: ReplaySubject<User> = new ReplaySubject<User>(1); // Replay the last value to new subscribers
 
+  constructor(private http: HttpClient, private router: Router) { }
 
-  constructor(private http: HttpClient, private router: Router) {}
-  login(username: string, password: string, rememberMe: boolean): Observable<HttpResponse<any>> {
+  // ...
+
+  login(username: string, password: string, rememberMe: boolean): Observable<LoginResponse> {
     const loginData = {
       username: username,
       password: password,
       rememberMe: rememberMe
     };
-    return this.http.post(`${this.baseUrl}/login`, loginData, { observe: 'response' });
+    // Use the interface as the generic type parameter
+    return this.http.post<LoginResponse>(`${this.baseUrl}/login`, loginData, { responseType: 'json' }).pipe(
+      tap(response=>{ // Add a colon and specify the type
+        // Save token and user data to local storage
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+        // Emit the authentication status
+        this.isLoggedInSubject.next(true);
+        // Emit the user data
+        this.user$.next(response.user);
+        // Navigate to the home page
+        this.router.navigate(['/']);
+      }),
+      catchError(error => {
+        // Display an error message or log the error
+        console.error(error);
+        alert(error.message);
+        // Return an observable with a user-facing error message
+        return throwError('Something bad happened; please try again later.');
+      })
+    );
   }
 
   logout(): void {
     // Perform any necessary cleanup or logout logic here
     localStorage.removeItem('token'); // Remove token from local storage
-    // remove user from local storage to log user out
-    localStorage.removeItem('user');
-    // Redirect to the login page
-    this.router.navigate(['/login']);
     // Emit the authentication status
     this.isLoggedInSubject.next(false);
+    // Emit null as the user data
+    this.user$.next(null as any); // No error here
+    // Redirect to the login page
+    this.router.navigate(['/login']);
   }
 
-
   register(registerData: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/register`, registerData);
+    return this.http.post<LoginResponse>(`${this.baseUrl}/register`, registerData, { responseType: 'json' }).pipe(
+      tap(response => {
+        // Save token to local storage
+        localStorage.setItem('token', response.token);
+        // Emit the authentication status
+        this.isLoggedInSubject.next(true);
+        // Emit the user data
+        this.user$.next(response.user);
+        // Navigate to the home page
+        this.router.navigate(['/']);
+      }),
+      catchError(error => {
+        // Display an error message or log the error
+        console.error(error);
+        alert(error.message);
+        // Return an observable with a user-facing error message
+        return throwError('Something bad happened; please try again later.');
+      })
+    );
   }
 
   isLoggedIn(): boolean {
@@ -49,7 +99,4 @@ export class AuthService {
 
     return isLoggedIn;
   }
-
-
-
 }

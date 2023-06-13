@@ -1,14 +1,14 @@
-﻿using System.Security.Claims;
-using AutoMapper;
-using Azure;
+﻿using AutoMapper;
 using FriendifyMain.Models;
 using FriendifyMain.ViewModels;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace FriendifyMain.Controllers
 {
@@ -19,13 +19,28 @@ namespace FriendifyMain.Controllers
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IMapper _mapper; // Declare the _mapper variable
+        private readonly IConfiguration _configuration;
+        private readonly string _secretKey;
+
+
+        // Create a symmetric security key from the secret key
+        private readonly SymmetricSecurityKey _securityKey;
+
+        // Create a signing credentials object from the security key
+        private readonly SigningCredentials _signingCredentials;
 
         public AccountController(UserManager<User> userManager, SignInManager<User> signInManager,
-                                 IMapper mapper)
+                                 IMapper mapper, IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _mapper = mapper;
+            _configuration = configuration;
+
+            _secretKey = _configuration["SecretKey"];
+            _securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
+            _signingCredentials = new SigningCredentials(_securityKey, SecurityAlgorithms.HmacSha256);
+
         }
 
         // The register action allows a new user to create an account
@@ -64,20 +79,8 @@ namespace FriendifyMain.Controllers
             // Check if the user creation was successful
             if (result.Succeeded)
             {
-                // Sign in the user using a cookie
-                await _signInManager.SignInAsync(user, isPersistent: true);
-
-                // Generate the authentication token
-                var token = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultProvider, "Authentication");
-
-                // Store the token in the database
-                await _userManager.SetAuthenticationTokenAsync(user, TokenOptions.DefaultProvider, "Authentication", token);
-
-                // Set the token in the response headers
-                Response.Headers.Add("Authorization", $"Bearer {token}");
-
-                // Return a 200 OK response with the user data
-                return Ok(user);
+                // Return a 200 OK response with the user data and the JWT token
+                return Ok(new { user = user, token = GenerateToken(user) });
             }
 
             // Log the errors if user creation failed
@@ -100,50 +103,63 @@ namespace FriendifyMain.Controllers
         [Produces("application/json")] // Specify response content type
         public async Task<IActionResult> Login([FromBody] LoginViewModel model) // Indicate that the model is bound from form data
         {
-            // Sign in the user using a cookie and check if it was successful
-            var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, lockoutOnFailure: false);
-            Console.WriteLine(result);
-            if (result.Succeeded)
+
+            // Get the user by their username from the user manager
+            var user = await _userManager.FindByNameAsync(model.Username);
+
+            if (user == null)
             {
-                // Get the user by their username from the user manager
-                var user = await _userManager.FindByNameAsync(model.Username);
-
-                if (user == null)
-                {
-                    // User not found
-                    return NotFound("User not found.");
-                }
-
-                // Generate the authentication ticket
-                var principal = await _signInManager.CreateUserPrincipalAsync(user);
-                var authenticationProperties = new AuthenticationProperties
-                {
-                    IsPersistent = true // Adjust as per your requirements
-                };
-
-                // Sign in the user using cookie authentication
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authenticationProperties);
-
-                // Return a 200 OK response with the user data
-                return Ok(user);
+                // User not found
+                return NotFound("User not found.");
             }
 
-            // If not, return a 401 Unauthorized response with an error message
-            return Unauthorized("Invalid login attempt.");
+            // Check if the password is valid
+            var passwordResult = await _userManager.CheckPasswordAsync(user, model.Password);
+
+            if (!passwordResult)
+            {
+                // Password is invalid
+                return Unauthorized("Invalid password.");
+            }
+
+            // Return a 200 OK response with the user data and the JWT token
+            return Ok(new { user = user, token = GenerateToken(user) });
+
         }
 
 
         // The logout action allows a signed-in user to sign out from their account
-        [Authorize] // Require authentication
         [HttpPost("logout")]
         [ProducesResponseType(200)] // Specify possible response status code
         public async Task<IActionResult> Logout()
         {
-            // Sign out the user from the cookie
-            await _signInManager.SignOutAsync();
 
             // Return a 200 OK response
             return Ok();
+        }
+
+        // A helper method that can generate a JWT token for a given user
+        private string GenerateToken(User user)
+        {
+            // Create a list of claims for the user
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Role, "User")
+            };
+
+            // Create a JWT token for the user with the specified claims and expiration time
+            var token = new JwtSecurityToken(
+                issuer: "dotnet-user-jwts",
+                audience: "https://localhost:7073",
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(1),
+                signingCredentials: _signingCredentials);
+
+            // Write the token to a string and return it
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenString = tokenHandler.WriteToken(token);
+            return tokenString;
         }
     }
 }

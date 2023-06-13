@@ -1,16 +1,14 @@
 ﻿using FriendifyMain.Mappers;
 using FriendifyMain.Models;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Security.Claims;
-using System;
 using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+
+
 
 namespace FriendifyMain
 {
@@ -27,16 +25,7 @@ namespace FriendifyMain
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddCors(options =>
-            {
-                options.AddPolicy("AllowAll", builder =>
-                {
-                    builder.WithOrigins("http://localhost:44401")
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials();
-                });
-            });
+
             services.AddLogging(logging =>
             {
                 logging.AddConsole(); // Configure logging to write to the console
@@ -47,67 +36,63 @@ namespace FriendifyMain
             services.AddDbContext<FriendifyContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<User, Role>(options =>
-            {
-                // Password settings
-                options.Password.RequireDigit = true;
-                options.Password.RequiredLength = 8;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = true;
-                options.Password.RequireLowercase = false;
-                options.Password.RequiredUniqueChars = 6;
+            services.AddIdentity<User, Role>().AddEntityFrameworkStores<FriendifyContext>();
 
-                // User settings
-                options.User.RequireUniqueEmail = false;
-                options.User.AllowedUserNameCharacters = null;
+            // Add authentication using JWT only
 
-            })
-            .AddEntityFrameworkStores<FriendifyContext>()
-            .AddDefaultTokenProviders();
+            // Create a symmetric security key from the secret key in configuration
+            var secretKey = Configuration["SecretKey"];
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+
+            // Create a signing credentials object from the security key
+            var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             
-            // Configure the Identity options
-            services.Configure<IdentityOptions>(options =>
-            {
-                options.SignIn.RequireConfirmedAccount = false;
-                options.Password.RequireDigit = false;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequiredLength = 6;
-            });
 
-            // Add authentication
-            services.AddAuthentication(options =>
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+               {
+                   options.TokenValidationParameters = new TokenValidationParameters()
+                   {
+                       ValidateIssuer = true,
+                       ValidateAudience = true,
+                       ValidateLifetime = true,
+                       ValidateIssuerSigningKey = true,
+                       ValidIssuer = Configuration["JwtIssuer"], // Get the issuer name from configuration
+                       ValidAudience = Configuration["JwtAudience"], // Get the audience URL from configuration
+                       IssuerSigningKey = signingCredentials.Key,
+                       AuthenticationType = "Bearer"
+                   };
+               });
+
+            // Add authorization policies based on roles or claims
+            services.AddAuthorization(options =>
             {
-                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            })
-            .AddCookie(options =>
+                options.AddPolicy("Admin", policy => policy.RequireRole("Admin")); // Require the Admin role for some actions
+                options.AddPolicy("Moderator", policy => policy.RequireRole("Moderator")); // Require the Admin role for some actions
+                options.AddPolicy("User", policy => policy.RequireClaim(ClaimTypes.Role, "User")); // Require the User claim for some actions
+            });
+            
+
+            services.AddCors(options =>
             {
-                options.Events.OnRedirectToLogin = (context) =>
+                options.AddPolicy("AllowMySPA", policy =>
                 {
-                    context.Response.StatusCode = 401;
-                    return Task.CompletedTask;
-                };
+                    policy.WithOrigins("https://localhost:44401")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
+                });
             });
 
-
-            
-
-            services.Configure<ApiBehaviorOptions>(options =>
-            {
-                options.SuppressModelStateInvalidFilter = true;
-            });
-
+            // Add AutoMapper for mapping models and view models
             services.AddAutoMapper(typeof(RegisterMapper));
-            
-            // add swagger
+            services.AddAutoMapper(typeof(UpdateMapper));
+
+            // Add Swagger for API documentation
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API Name", Version = "v1" });
             });
-            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -122,27 +107,19 @@ namespace FriendifyMain
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API Name v1");
                 });
             }
-            
-            app.UseCors(builder =>
-                builder.WithOrigins("https://localhost:44401")
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
+
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseAuthentication(); // Add this line to enable authentication
-            app.UseAuthorization();
-            
-            app.Use(async (context, next) =>
-            {
-                context.Response.Headers.Add("Access-Control-Allow-Origin", "https://localhost:44401");
-                await next.Invoke();
-            });
+            app.UseAuthentication(); // Enable authentication middleware
+            app.UseAuthorization(); // Enable authorization middleware
+            app.UseCors("AllowMySPA");
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
+            
         }
     }
 }

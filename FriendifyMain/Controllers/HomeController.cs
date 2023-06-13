@@ -12,8 +12,6 @@ using Microsoft.Extensions.Logging;
 
 namespace FriendifyMain.Controllers
 {
-    // add cors
-    [EnableCors("AllowAll")]
     [Route("api/[controller]")]
     [ApiController]
     public class HomeController : ControllerBase
@@ -86,8 +84,7 @@ namespace FriendifyMain.Controllers
         [HttpPost("createpost")] // Accept only POST requests and append the route to the controller route
         public async Task<ActionResult<Post>> Create([FromBody] PostViewModel postModel)
         {
-            // Invalid token encountered, log the reason
-            _logger.LogError("Invalid token. Reason: {Reason}", "Token expired");
+            
             try
             {
                 // Get the current user from the user manager

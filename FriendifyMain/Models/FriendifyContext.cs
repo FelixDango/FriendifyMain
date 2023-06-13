@@ -91,7 +91,8 @@ public class FriendifyContext : IdentityDbContext<User, Role, int>
             .HasOne(f => f.Following)
             .WithMany(u => u.Following)// Define the one-to-many relationship from Follower to User
             .HasForeignKey(f => f.FollowerId)
-            .OnDelete(DeleteBehavior.NoAction); 
+            .OnDelete(DeleteBehavior.NoAction);
+        
 
     }
 }

@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
@@ -24,6 +24,7 @@ import {ImageModule} from "primeng/image";
 import {AvatarModule} from "primeng/avatar";
 import {MenubarModule} from "primeng/menubar";
 import { LogoutComponent } from './components/logout/logout.component';
+import { TokenInterceptor } from './services/TokenInterceptor.service';
 
 @NgModule({
   declarations: [
@@ -62,7 +63,13 @@ import { LogoutComponent } from './components/logout/logout.component';
     AvatarModule,
     MenubarModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
