@@ -57,8 +57,8 @@ namespace FriendifyMain
                        ValidateAudience = true,
                        ValidateLifetime = true,
                        ValidateIssuerSigningKey = true,
-                       ValidIssuer = Configuration["JwtIssuer"], // Get the issuer name from configuration
-                       ValidAudience = Configuration["JwtAudience"], // Get the audience URL from configuration
+                       ValidIssuer = Configuration["Jwt:JwtIssuer"], // Get the issuer name from configuration
+                       ValidAudience = Configuration["Jwt:JwtAudience"], // Get the audience URL from configuration
                        IssuerSigningKey = signingCredentials.Key,
                        AuthenticationType = "Bearer"
                    };
@@ -80,7 +80,8 @@ namespace FriendifyMain
                     policy.WithOrigins("https://localhost:44401")
                         .AllowAnyMethod()
                         .AllowAnyHeader()
-                        .AllowCredentials();
+                        .AllowCredentials()
+                        .WithExposedHeaders("Access-Control-Allow-Origin");
                 });
             });
 
@@ -108,11 +109,10 @@ namespace FriendifyMain
                 });
             }
 
-            app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseCors("AllowMySPA");
             app.UseAuthentication(); // Enable authentication middleware
             app.UseAuthorization(); // Enable authorization middleware
-            app.UseCors("AllowMySPA");
 
             app.UseEndpoints(endpoints =>
             {
