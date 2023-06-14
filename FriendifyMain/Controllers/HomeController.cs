@@ -91,7 +91,11 @@ namespace FriendifyMain.Controllers
             try
             {
                 // Get the current user from the user manager
-                var currentUser = await _userManager.GetUserAsync(User);
+                if (User.Identity.IsAuthenticated)
+                {
+                    Console.WriteLine(User.Identity.Name);
+                    
+                var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
 
                 if (currentUser == null)
                 {
@@ -133,6 +137,8 @@ namespace FriendifyMain.Controllers
                     // Return a created at action response with the post as the data and a location header pointing to the index action 
                     return CreatedAtAction(nameof(Index), post);
                 }
+                }
+                
 
                 // If the model is not valid, return a bad request response with the model state errors as the data 
                 // log the error
