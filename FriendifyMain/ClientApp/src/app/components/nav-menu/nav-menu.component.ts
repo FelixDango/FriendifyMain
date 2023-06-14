@@ -40,7 +40,6 @@ export class NavMenuComponent implements OnInit {
   }
 
   private updateMenuItems(): void {
-    console.log('updateMenuItems', this.authService.isLoggedIn());
     this.items = [
       {
         label: 'Home',

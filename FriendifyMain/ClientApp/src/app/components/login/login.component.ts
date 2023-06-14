@@ -18,14 +18,9 @@ export class LoginComponent {
     this.authService.login(username, password, rememberMe).subscribe(
       (response: HttpResponse<any>) => {
 
-
-            // Save user data in local storage
-            localStorage.setItem('user', JSON.stringify(response.body));
-
             // Emit the authentication status
             this.authService.isLoggedInSubject.next(true);
             this.authService.user$ = response.body;
-            console.log('auth user', this.authService.user$);
       },
       (error) => {
         // Handle login error

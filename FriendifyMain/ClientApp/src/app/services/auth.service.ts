@@ -61,6 +61,8 @@ export class AuthService {
   logout(): void {
     // Perform any necessary cleanup or logout logic here
     localStorage.removeItem('token'); // Remove token from local storage
+    // Remove user data from local storage
+    localStorage.removeItem('user');
     // Emit the authentication status
     this.isLoggedInSubject.next(false);
     // Emit null as the user data
