@@ -37,7 +37,7 @@ namespace FriendifyMain.Controllers
             _mapper = mapper;
             _configuration = configuration;
 
-            _secretKey = _configuration["SecretKey"];
+            _secretKey = _configuration["Secretkey"];
             _securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
             _signingCredentials = new SigningCredentials(_securityKey, SecurityAlgorithms.HmacSha256);
 

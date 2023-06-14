@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FriendifyMain.Models;
 using FriendifyMain.ViewModels;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
@@ -14,6 +15,7 @@ namespace FriendifyMain.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(JwtBearerDefaults.AuthenticationScheme)]
     public class HomeController : ControllerBase
     {
         // Inject the database context and the user manager

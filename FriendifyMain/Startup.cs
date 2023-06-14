@@ -41,14 +41,18 @@ namespace FriendifyMain
             // Add authentication using JWT only
 
             // Create a symmetric security key from the secret key in configuration
-            var secretKey = Configuration["SecretKey"];
+            var secretKey = Configuration["Secretkey"];
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 
             // Create a signing credentials object from the security key
             var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            services.AddAuthentication(cfg =>
+            {
+                cfg.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                cfg.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
             .AddJwtBearer(options =>
                {
                    options.TokenValidationParameters = new TokenValidationParameters()
@@ -59,17 +63,36 @@ namespace FriendifyMain
                        ValidateIssuerSigningKey = true,
                        ValidIssuer = Configuration["Jwt:JwtIssuer"], // Get the issuer name from configuration
                        ValidAudience = Configuration["Jwt:JwtAudience"], // Get the audience URL from configuration
-                       IssuerSigningKey = signingCredentials.Key,
-                       AuthenticationType = "Bearer"
+                       IssuerSigningKey = signingCredentials.Key
                    };
                });
 
             // Add authorization policies based on roles or claims
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("Admin", policy => policy.RequireRole("Admin")); // Require the Admin role for some actions
-                options.AddPolicy("Moderator", policy => policy.RequireRole("Moderator")); // Require the Admin role for some actions
-                options.AddPolicy("User", policy => policy.RequireClaim(ClaimTypes.Role, "User")); // Require the User claim for some actions
+                options.AddPolicy("Bearer", policy =>
+                {
+                    policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
+                    policy.RequireAuthenticatedUser();
+                });
+    
+                options.AddPolicy("Admin", policy =>
+                {
+                    policy.RequireRole("Admin");
+                    policy.AuthenticationSchemes.Add("Bearer"); // Add Bearer authentication scheme
+                });
+    
+                options.AddPolicy("Moderator", policy =>
+                {
+                    policy.RequireRole("Moderator");
+                    policy.AuthenticationSchemes.Add("Bearer"); // Add Bearer authentication scheme
+                });
+    
+                options.AddPolicy("User", policy =>
+                {
+                    policy.RequireClaim(ClaimTypes.Role, "User");
+                    policy.AuthenticationSchemes.Add("Bearer"); // Add Bearer authentication scheme
+                });
             });
             
 
