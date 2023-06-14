@@ -38,6 +38,7 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.baseUrl}/login`, loginData, { responseType: 'json' }).pipe(
       tap(response=>{ // Add a colon and specify the type
         // Save token and user data to local storage
+        console.log('response', response);
         localStorage.setItem('token', response.token);
         localStorage.setItem('user', JSON.stringify(response.user));
         // Emit the authentication status

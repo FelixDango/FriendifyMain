@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from "../../services/auth.service";
-import { Router } from "@angular/router";
 import {HttpResponse} from "@angular/common/http";
-import {HttpClient} from "@angular/common/http";
 
 @Component({
   selector: 'app-login',
@@ -14,13 +12,11 @@ export class LoginComponent {
   password: string = "";
   rememberMe: boolean = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService) {}
 
   signIn(username: string, password: string, rememberMe: boolean): void {
     this.authService.login(username, password, rememberMe).subscribe(
       (response: HttpResponse<any>) => {
-
-        document.cookie = response.headers.get('Set-Cookie') || '';
 
 
             // Save user data in local storage
@@ -38,12 +34,4 @@ export class LoginComponent {
     );
   }
 
-
-
-  private setCookie(name: string, value: string, expiresInDays: number) {
-    const expires = new Date();
-    expires.setDate(expires.getDate() + expiresInDays);
-    const cookieValue = encodeURIComponent(value) + (expires ? '; expires=' + expires.toUTCString() : '');
-    document.cookie = name + '=' + cookieValue + '; path=/';
-  }
 }
