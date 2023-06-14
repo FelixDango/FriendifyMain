@@ -19,8 +19,6 @@ export class HttpService {
   post(url: string, data: any): Observable<any> {
     const fullUrl = this.baseUrl + url;
     const headers = this.getHeadersWithAuthorization();
-    console.log(fullUrl);
-    console.log(headers);
     return this.http.post(fullUrl, data, { headers, withCredentials: true });
   }
 
@@ -38,7 +36,7 @@ export class HttpService {
 
 
 private getHeadersWithAuthorization(): HttpHeaders {
-  const token = document.cookie.match('(^|;)\\s*' + '.AspNetCore.Identity.Application' + '\\s*=\\s*([^;]+)');
+  const token = localStorage.getItem('token');
   if (token) {
     return new HttpHeaders().set('Authorization', `Bearer ${token}`);
   }

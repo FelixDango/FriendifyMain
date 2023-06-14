@@ -27,7 +27,7 @@ namespace FriendifyMain.Controllers
         private readonly SymmetricSecurityKey _securityKey;
 
         // Create a signing credentials object from the security key
-        private readonly SigningCredentials _signingCredentials;
+        private SigningCredentials _signingCredentials;
 
         public AccountController(UserManager<User> userManager, SignInManager<User> signInManager,
                                  IMapper mapper, IConfiguration configuration)
@@ -36,9 +36,7 @@ namespace FriendifyMain.Controllers
             _signInManager = signInManager;
             _mapper = mapper;
             _configuration = configuration;
-
-            _secretKey = _configuration["Secretkey"];
-            _securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
+            _securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             _signingCredentials = new SigningCredentials(_securityKey, SecurityAlgorithms.HmacSha256);
 
         }
@@ -150,8 +148,8 @@ namespace FriendifyMain.Controllers
 
             // Create a JWT token for the user with the specified claims and expiration time
             var token = new JwtSecurityToken(
-                issuer: "dotnet-user-jwts",
-                audience: "https://localhost:7073",
+                issuer: _configuration["Jwt:JwtIssuer"],
+                audience: _configuration["Jwt:JwtAudience"],
                 claims: claims,
                 expires: DateTime.UtcNow.AddHours(1),
                 signingCredentials: _signingCredentials);
@@ -159,6 +157,7 @@ namespace FriendifyMain.Controllers
             // Write the token to a string and return it
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenString = tokenHandler.WriteToken(token);
+            Console.WriteLine(tokenString);
             return tokenString;
         }
     }

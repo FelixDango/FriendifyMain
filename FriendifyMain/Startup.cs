@@ -30,6 +30,10 @@ namespace FriendifyMain
             {
                 logging.AddConsole(); // Configure logging to write to the console
                 logging.AddDebug();   // Optionally, add additional logging providers
+
+                // Add authentication logging
+                logging.AddFilter("Microsoft.AspNetCore.Authentication", LogLevel.Debug);
+                logging.AddFilter("System.Security.Claims", LogLevel.Debug);
                 // Add more logging providers as needed
             });
 
@@ -38,11 +42,8 @@ namespace FriendifyMain
 
             services.AddIdentity<User, Role>().AddEntityFrameworkStores<FriendifyContext>();
 
-            // Add authentication using JWT only
-
             // Create a symmetric security key from the secret key in configuration
-            var secretKey = Configuration["Secretkey"];
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]));
 
             // Create a signing credentials object from the security key
             var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -120,7 +121,7 @@ namespace FriendifyMain
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             if (env.IsDevelopment())
             {
@@ -136,6 +137,17 @@ namespace FriendifyMain
             app.UseCors("AllowMySPA");
             app.UseAuthentication(); // Enable authentication middleware
             app.UseAuthorization(); // Enable authorization middleware
+            
+            // Add authentication logging middleware
+            app.Use(async (context, next) =>
+            {
+                await next();
+
+                if (context.User.Identity?.IsAuthenticated == true)
+                {
+                    logger.LogInformation("User authenticated: {UserName}", context.User.Identity.Name);
+                }
+            });
 
             app.UseEndpoints(endpoints =>
             {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Xml;
 using FriendifyMain.Models;
 using FriendifyMain.ViewModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -92,7 +93,13 @@ namespace FriendifyMain.Controllers
                 // Get the current user from the user manager
                 var currentUser = await _userManager.GetUserAsync(User);
 
-                if (currentUser == null || _context == null) { return BadRequest(); }
+                if (currentUser == null)
+                {
+                    Console.WriteLine(currentUser == null);
+
+                    return BadRequest();
+                }
+                
 
                 // Check if the user is suspended
                 if (currentUser.Suspended)
@@ -128,6 +135,8 @@ namespace FriendifyMain.Controllers
                 }
 
                 // If the model is not valid, return a bad request response with the model state errors as the data 
+                // log the error
+                Console.WriteLine("bad request");
                 return BadRequest(ModelState);
             }
             catch (Exception ex)

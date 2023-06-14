@@ -40,7 +40,7 @@ export class ComposePostComponent {
 
   submitPost() {
     // Perform post submission logic here
-    this.httpService.post('/Home/createpost', { Content: this.text, Pictures: [], Videos: []}).subscribe((response) => {
+    this.httpService.post('/Home/createpost', { content: this.text, pictures: [], videos: []}).subscribe((response) => {
       console.log('response', response);
     }, (error) => {
       console.log('error', error);
