@@ -5,11 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace FriendifyMain.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(JwtBearerDefaults.AuthenticationScheme)]
     public class SearchController : Controller
     {
         // Inject the database context and the user manager

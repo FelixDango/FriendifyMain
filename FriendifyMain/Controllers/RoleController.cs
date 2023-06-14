@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FriendifyMain.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,7 @@ namespace FriendifyMain.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(JwtBearerDefaults.AuthenticationScheme)]
     public class RoleController : Controller
     {
         // Inject the database context, the user manager and the role manager
@@ -39,9 +41,14 @@ namespace FriendifyMain.Controllers
         {
             try
             {
-                
-                // Get the current user from the user manager 
-                var currentUser = await _userManager.GetUserAsync(User);
+
+                // Get the current user from the user manager
+                if (User == null || User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
+                {
+                    return BadRequest();
+                }
+
+                var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
 
                 // return 403 if current user is not Admin
                 if (currentUser == null || !currentUser.IsAdmin)
@@ -95,8 +102,13 @@ namespace FriendifyMain.Controllers
             try
             {
 
-                // Get the current user from the user manager 
-                var currentUser = await _userManager.GetUserAsync(User);
+                // Get the current user from the user manager
+                if (User == null || User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
+                {
+                    return BadRequest();
+                }
+
+                var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
 
                 // return 403 if current user is not Admin
                 if (currentUser == null || !currentUser.IsAdmin)

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FriendifyMain.Models;
 using FriendifyMain.ViewModels;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +11,7 @@ namespace FriendifyMain.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(JwtBearerDefaults.AuthenticationScheme)]
     public class ProfileController : Controller
     {
         // Inject the database context and the user manager
@@ -33,7 +35,12 @@ namespace FriendifyMain.Controllers
         public async Task<IActionResult> GetCrit(int id) // Indicate that the id is bound from route data
         {
             // Get the current user from the user manager
-            var currentUser = await _userManager.GetUserAsync(User);
+            if (User == null || User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
+            {
+                return BadRequest();
+            }
+
+            var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
 
             if (currentUser == null || _context == null) { return BadRequest(); }
 
@@ -88,7 +95,12 @@ namespace FriendifyMain.Controllers
         public async Task<IActionResult> Get(int id) // Indicate that the id is bound from route data
         {
             // Get the current user from the user manager
-            var currentUser = await _userManager.GetUserAsync(User);
+            if (User == null || User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
+            {
+                return BadRequest();
+            }
+
+            var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
 
             if (currentUser == null || _context == null) { return BadRequest(); }
 
@@ -155,7 +167,13 @@ namespace FriendifyMain.Controllers
         public async Task<IActionResult> Update(int id, [FromBody] UpdateViewModel model)
         {
             // Get the current user from the user manager
-            var currentUser = await _userManager.GetUserAsync(User);
+            if (User == null || User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
+            {
+                return BadRequest();
+            }
+
+            var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
+
             if (currentUser == null || _context == null) { return BadRequest(); }
 
             await _context.Users
@@ -208,7 +226,12 @@ namespace FriendifyMain.Controllers
         public async Task<IActionResult> Delete(int id) // Indicate that the id is bound from route data
         {
             // Get the current user from the user manager
-            var currentUser = await _userManager.GetUserAsync(User);
+            if (User == null || User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
+            {
+                return BadRequest();
+            }
+
+            var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
 
             // Check if the current user is an admin or deleting their own profile
             if (currentUser != null && (currentUser.IsAdmin || currentUser.Id == id))
@@ -240,7 +263,12 @@ namespace FriendifyMain.Controllers
         public async Task<IActionResult> Get([FromQuery] string name) // Indicate that the name from query string
         {
             // Get the current user from the user manager
-            var currentUser = await _userManager.GetUserAsync(User);
+            if (User == null || User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
+            {
+                return BadRequest();
+            }
+
+            var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
 
             // Check if the current user is an admin or a moderator
             if (currentUser != null && (currentUser.IsAdmin || currentUser.IsModerator))
@@ -272,7 +300,12 @@ namespace FriendifyMain.Controllers
             try
             {
                 // Get the current user from the user manager
-                var currentUser = await _userManager.GetUserAsync(User);
+                if (User == null || User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
+                {
+                    return BadRequest();
+                }
+
+                var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
 
                 if (currentUser == null || _context == null) { return BadRequest(); }
 
@@ -325,7 +358,12 @@ namespace FriendifyMain.Controllers
             try
             {
                 // Get the current user from the user manager
-                var currentUser = await _userManager.GetUserAsync(User);
+                if (User == null || User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
+                {
+                    return BadRequest();
+                }
+
+                var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
 
                 if (currentUser == null || _context == null) { return BadRequest(); }
 
