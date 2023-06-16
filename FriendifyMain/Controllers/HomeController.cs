@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.IO;
 
 namespace FriendifyMain.Controllers
 {
@@ -81,30 +82,25 @@ namespace FriendifyMain.Controllers
         [HttpPost("createpost")] // Accept only POST requests and append the route to the controller route
         public async Task<ActionResult<Post>> Create([FromBody] PostViewModel postModel)
         {
-
             try
             {
                 // Get the current user from the user manager
                 if (User.Identity.IsAuthenticated)
                 {
-                    Console.WriteLine(User.Identity.Name);
-
                     var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
-
 
                     if (currentUser == null)
                     {
-                        Console.WriteLine(currentUser == null);
-
                         return BadRequest();
                     }
-
 
                     // Check if the user is suspended
                     if (currentUser.Suspended)
                     {
                         return BadRequest("You are suspended"); // Return a bad request response with an error message
                     }
+                    
+                    Console.Write(ModelState.IsValid);
 
                     // Validate the post model using data annotations and custom logic
                     if (ModelState.IsValid && !string.IsNullOrEmpty(postModel.Content))
@@ -122,8 +118,34 @@ namespace FriendifyMain.Controllers
                             Pictures = new List<Picture>(),
                             Videos = new List<Video>()
                         };
-                        postModel.Pictures.ForEach(e => post.Pictures.Add(new Picture { Id = 0, Url = e, User = currentUser, UserId = currentUser.Id }));
-                        postModel.Videos.ForEach(e => post.Videos.Add(new Video { Id = 0, Url = e, User = currentUser, UserId = currentUser.Id }));
+
+                        // Save the uploaded pictures
+                        foreach (var pictureFile in postModel.PictureFiles)
+                        {
+                            var pictureUrl = await SaveFile(pictureFile);
+                            if (pictureUrl != null)
+                            {
+                                post.Pictures.Add(new Picture { Id = 0, Url = pictureUrl, User = currentUser, UserId = currentUser.Id });
+                            }
+                            else
+                            {
+                                return BadRequest("Failed to save picture file"); // Return a bad request response with an error message
+                            }
+                        }
+
+                        // Save the uploaded videos
+                        foreach (var videoFile in postModel.VideoFiles)
+                        {
+                            var videoUrl = await SaveFile(videoFile);
+                            if (videoUrl != null)
+                            {
+                                post.Videos.Add(new Video { Id = 0, Url = videoUrl, User = currentUser, UserId = currentUser.Id });
+                            }
+                            else
+                            {
+                                return BadRequest("Failed to save video file"); // Return a bad request response with an error message
+                            }
+                        }
 
                         // Add the post to the database context and save changes
                         _context.Posts.Add(post);
@@ -134,10 +156,7 @@ namespace FriendifyMain.Controllers
                     }
                 }
 
-
                 // If the model is not valid, return a bad request response with the model state errors as the data 
-                // log the error
-                Console.WriteLine("bad request");
                 return BadRequest(ModelState);
             }
             catch (Exception ex)
@@ -146,6 +165,33 @@ namespace FriendifyMain.Controllers
                 return StatusCode(500, ex.Message); // Return an internal server error response with the error message
             }
         }
+
+        private async Task<string> SaveFile(IFormFile file)
+        {
+            // Generate a unique file name
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+
+            // Define the server storage location for the file
+            var filePath = Path.Combine("wwwroot", "assets", "media", fileName);
+            
+            try
+            {
+                // Save the file to the server
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                // Return the URL of the saved file
+                return "/assets/media/" + fileName;
+            }
+            catch (Exception)
+            {
+                // Handle any file saving errors
+                return null;
+            }
+        }
+
 
         // The like action allows the current user to like or unlike a post by its id
         [Authorize] // Require authentication
@@ -408,7 +454,10 @@ namespace FriendifyMain.Controllers
 
                 var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
 
-                if (currentUser == null || _context == null) { return BadRequest(); }
+                if (currentUser == null || _context == null)
+                {
+                    return BadRequest();
+                }
 
                 // Check if the user is suspended
                 if (currentUser.Suspended)
@@ -439,32 +488,51 @@ namespace FriendifyMain.Controllers
                     {
                         // If yes, update the original post properties that can be edited by the user input
                         originalPost.Content = postModel.Content;
-                        originalPost.Pictures = new();
-                        originalPost.Videos = new();
-                        postModel.Pictures.ForEach(e => originalPost.Pictures.Add(new Picture { Id = 0, Url = e, User = currentUser, UserId = currentUser.Id }));
-                        postModel.Videos.ForEach(e => originalPost.Videos.Add(new Video { Id = 0, Url = e, User = currentUser, UserId = currentUser.Id }));
 
-                        // Save changes to database context and reload original post to reflect any changes made by triggers or computed columns in database 
+                        // Update the pictures
+                        originalPost.Pictures = new List<Picture>();
+                        foreach (var pictureFile in postModel.PictureFiles)
+                        {
+                            // Save the picture file to the server and get the URL
+                            var pictureUrl = await SaveFile(pictureFile);
+
+                            // Create a new Picture object and add it to the post's Pictures collection
+                            originalPost.Pictures.Add(new Picture { Url = pictureUrl, User = currentUser, UserId = currentUser.Id });
+                        }
+
+                        // Update the videos
+                        originalPost.Videos = new List<Video>();
+                        foreach (var videoFile in postModel.VideoFiles)
+                        {
+                            // Save the video file to the server and get the URL
+                            var videoUrl = await SaveFile(videoFile);
+
+                            // Create a new Video object and add it to the post's Videos collection
+                            originalPost.Videos.Add(new Video { Url = videoUrl, User = currentUser, UserId = currentUser.Id });
+                        }
+
+                        // Save changes to the database context and reload the original post to reflect any changes made by triggers or computed columns in the database
                         _context.Posts.Update(originalPost);
                         await _context.SaveChangesAsync();
                         await _context.Entry(originalPost).ReloadAsync();
 
-                        // Return a no content response indicating success 
+                        // Return a no content response indicating success
                         return NoContent();
                     }
 
-                    // If no, return a 403 forbidden response 
+                    // If no, return a 403 forbidden response
                     return Forbid();
                 }
 
-                // If model is not valid, return a bad request response with model state errors as data 
+                // If the model is not valid, return a bad request response with model state errors as data
                 return BadRequest(ModelState);
             }
             catch (Exception ex)
             {
-                //Handle any possible exceptions
-                return StatusCode(500, ex.Message); //Return internal server error response with error message
+                // Handle any possible exceptions
+                return StatusCode(500, ex.Message); // Return internal server error response with an error message
             }
         }
+
     }
 }

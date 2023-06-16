@@ -1,3 +1,22 @@
 .p-fluid {
   margin-bottom: 20px;
+  .p-fileupload {
+    .p-button {
+      width: 3rem;
+    }
+  }
+}
+.ui-fileupload-buttonbar > :nth-child(2) {
+  display: none !important;
+}
+:host {
+  ::ng-deep .p-fluid {
+    .p-fileupload {
+      .p-button {
+        &.remove-upload {
+        width: 3rem;
+        }
+      }
+    }
+  }
 }

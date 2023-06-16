@@ -9,7 +9,6 @@ import { ButtonModule } from 'primeng/button';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
 import { HomeComponent } from './views/home/home.component';
-import { FetchDataComponent } from './views/fetch-data/fetch-data.component';
 import { UserPostComponent } from './components/user-post/user-post.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
@@ -31,7 +30,6 @@ import { TokenInterceptor } from './services/TokenInterceptor.service';
     AppComponent,
     NavMenuComponent,
     HomeComponent,
-    FetchDataComponent,
     UserPostComponent,
     LoginComponent,
     RegisterComponent,
@@ -49,7 +47,6 @@ import { TokenInterceptor } from './services/TokenInterceptor.service';
     ButtonModule,
     RouterModule.forRoot([
       {path: '', component: HomeComponent, pathMatch: 'full'},
-      {path: 'fetch-data', component: FetchDataComponent},
       {path: 'login', component: LoginComponent},
       {path: 'register', component: RegisterComponent},
       {path: 'profile-page', component: ProfilePageComponent},
