@@ -133,6 +133,7 @@ namespace FriendifyMain
                 });
             }
 
+            app.UseStaticFiles();
             app.UseRouting();
             app.UseCors("AllowMySPA");
             app.UseAuthentication(); // Enable authentication middleware

@@ -191,9 +191,12 @@ namespace FriendifyMain.Controllers
                 // Copy the file to the file stream
                 await file.CopyToAsync(fileStream);
             }
+            
+            var strippedFilePath = Path.Combine( "assets", "media", file.FileName);
+
 
             // Return the file path
-            return filePath;
+            return strippedFilePath;
         }
 
         
