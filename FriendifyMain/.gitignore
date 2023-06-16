@@ -235,3 +235,4 @@ _Pvt_Extensions
 
 # JetBrains
 /.idea/
+/wwwroot/assets/media/*

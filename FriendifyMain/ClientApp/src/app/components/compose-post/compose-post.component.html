@@ -14,7 +14,7 @@
 
       <div class="p-fluid">
         <div class="p-field">
-        <p-fileUpload id="fileUpload" name="upload[]" [multiple]="true" [styleClass]="'f-upload'" [removeStyleClass]="'remove-upload'"  [customUpload]="true" accept="image/*,video/*" url="assets/media/" (uploadHandler)="handleFileInput($event)" chooseLabel="Upload Image or Video" [auto]="true">
+        <p-fileUpload id="fileUpload" name="upload[]" [multiple]="true" [styleClass]="'f-upload'" [removeStyleClass]="'remove-upload'"  [customUpload]="true" accept="image/*,video/*" (uploadHandler)="handleFileInput($event)" chooseLabel="Upload Image or Video" [auto]="true">
 
         </p-fileUpload>
         <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>

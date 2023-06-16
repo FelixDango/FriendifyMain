@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.IO;
-
 namespace FriendifyMain.Controllers
 {
     [Route("api/[controller]")]
@@ -72,7 +70,7 @@ namespace FriendifyMain.Controllers
             }
             catch (Exception ex)
             {
-                // Handle any possible exceptions 
+                // Handle any possible exceptions
                 return StatusCode(500, ex.Message); // Return an internal server error response with the error message 
             }
         }
@@ -80,7 +78,7 @@ namespace FriendifyMain.Controllers
         // The create action allows the current user to create a new post with optional pictures and videos
         [Authorize] // Require authentication
         [HttpPost("createpost")] // Accept only POST requests and append the route to the controller route
-        public async Task<ActionResult<Post>> Create([FromBody] PostViewModel postModel)
+        public async Task<ActionResult<Post>> Create([FromForm] PostViewModel postModel)
         {
             try
             {
@@ -99,8 +97,6 @@ namespace FriendifyMain.Controllers
                     {
                         return BadRequest("You are suspended"); // Return a bad request response with an error message
                     }
-                    
-                    Console.Write(ModelState.IsValid);
 
                     // Validate the post model using data annotations and custom logic
                     if (ModelState.IsValid && !string.IsNullOrEmpty(postModel.Content))
@@ -119,33 +115,43 @@ namespace FriendifyMain.Controllers
                             Videos = new List<Video>()
                         };
 
-                        // Save the uploaded pictures
-                        foreach (var pictureFile in postModel.PictureFiles)
+                        if (postModel.PictureFiles != null)
                         {
-                            var pictureUrl = await SaveFile(pictureFile);
-                            if (pictureUrl != null)
+                            foreach (var pictureFile in postModel.PictureFiles)
                             {
-                                post.Pictures.Add(new Picture { Id = 0, Url = pictureUrl, User = currentUser, UserId = currentUser.Id });
+                                var pictureUrl = await SaveFile(pictureFile);
+                                if (pictureUrl != null)
+                                {
+                                    post.Pictures.Add(new Picture { Id = 0, Url = pictureUrl, User = currentUser, UserId = currentUser.Id });
+                                }
+                                else
+                                {
+                                    return BadRequest("Failed to save picture file"); // Return a bad request response with an error message
+                                }
                             }
-                            else
-                            {
-                                return BadRequest("Failed to save picture file"); // Return a bad request response with an error message
-                            }
-                        }
 
-                        // Save the uploaded videos
-                        foreach (var videoFile in postModel.VideoFiles)
-                        {
-                            var videoUrl = await SaveFile(videoFile);
-                            if (videoUrl != null)
-                            {
-                                post.Videos.Add(new Video { Id = 0, Url = videoUrl, User = currentUser, UserId = currentUser.Id });
-                            }
-                            else
-                            {
-                                return BadRequest("Failed to save video file"); // Return a bad request response with an error message
-                            }
                         }
+                        // Save the uploaded pictures
+                        
+                        // if VideoFiles is not null
+                        
+                        if (postModel.VideoFiles != null)
+                        {
+                            foreach (var videoFile in postModel.VideoFiles)
+                            {
+                                var videoUrl = await SaveFile(videoFile);
+                                if (videoUrl != null)
+                                {
+                                    post.Videos.Add(new Video { Id = 0, Url = videoUrl, User = currentUser, UserId = currentUser.Id });
+                                }
+                                else
+                                {
+                                    return BadRequest("Failed to save video file"); // Return a bad request response with an error message
+                                }
+                            }
+
+                        }
+                        // Save the uploaded videos
 
                         // Add the post to the database context and save changes
                         _context.Posts.Add(post);
@@ -162,37 +168,35 @@ namespace FriendifyMain.Controllers
             catch (Exception ex)
             {
                 // Handle any possible exceptions
+                
+                _logger.LogError(ex, "An error occurred while creating a post.");
                 return StatusCode(500, ex.Message); // Return an internal server error response with the error message
             }
         }
-
-        private async Task<string> SaveFile(IFormFile file)
+        
+        public async Task<string> SaveFile(IFormFile file)
         {
-            // Generate a unique file name
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-
-            // Define the server storage location for the file
-            var filePath = Path.Combine("wwwroot", "assets", "media", fileName);
-            
-            try
+            var filePath = Path.Combine("wwwroot", "assets", "media", file.FileName);
+            if (file == null || file.Length == 0)
             {
-                // Save the file to the server
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await file.CopyToAsync(stream);
-                }
+                throw new ArgumentException("Invalid file");
+            }
 
-                // Return the URL of the saved file
-                return "/assets/media/" + fileName;
-            }
-            catch (Exception)
+            // Create the directory if it doesn't exist
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+            // Open a file stream for writing
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
-                // Handle any file saving errors
-                return null;
+                // Copy the file to the file stream
+                await file.CopyToAsync(fileStream);
             }
+
+            // Return the file path
+            return filePath;
         }
 
-
+        
         // The like action allows the current user to like or unlike a post by its id
         [Authorize] // Require authentication
         [HttpPost("{PostId}/like")] // Only respond to POST requests with a PostId parameter in the route 
