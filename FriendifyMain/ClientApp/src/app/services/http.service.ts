@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class HttpService {
   private baseUrl = 'https://localhost:7073/api';
+  public assetsUrl = 'https://localhost:7073/';
 
   constructor(public http: HttpClient) {}
 

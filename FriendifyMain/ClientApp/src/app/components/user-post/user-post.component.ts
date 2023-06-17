@@ -12,6 +12,7 @@ import {Post} from "../../models/post";
 export class UserPostComponent implements OnInit {
   user: any = this.authService.user$;
   postingUser: User | undefined;
+  assetsUrl: string = this.httpService.assetsUrl;
   dummypost: any = {
     id: 1,
     userId: 1,

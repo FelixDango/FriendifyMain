@@ -1,1 +1,58 @@
 
+
+.p-card-subtitle {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.p-card-text {
+  font-size: 1.1rem;
+  line-height: 1.4;
+  margin-bottom: 1.5rem;
+}
+
+.p-media-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.p-card-media {
+  flex: 0 0 48%;
+  margin-bottom: 1rem;
+}
+
+.p-card-media img,
+.p-card-media video {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.p-d-flex.p-ai-center {
+  align-items: center;
+}
+
+.p-button {
+  margin-right: 0.5rem;
+  border-radius: 30px;
+  font-size: 0.9rem;
+}
+
+.p-button-text {
+  color: #5a5a5a;
+}
+
+.p-button-text:hover {
+  color: #00aced;
+}
+
+.p-button-success {
+  background-color: #00aced;
+  color: white;
+}
+
+.p-button-success:hover {
+  background-color: #0084b4;
+}
