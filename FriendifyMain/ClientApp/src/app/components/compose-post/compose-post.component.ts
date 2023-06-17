@@ -62,7 +62,7 @@ import {HttpService} from "../../services/http.service";
         console.log('response', response);
       },
       (error) => {
-        console.log('error', error);
+        if (error.status === 401) this.authService.logout();
       }
     );
   }

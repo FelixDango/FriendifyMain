@@ -23,7 +23,7 @@ import {ImageModule} from "primeng/image";
 import {AvatarModule} from "primeng/avatar";
 import {MenubarModule} from "primeng/menubar";
 import { LogoutComponent } from './components/logout/logout.component';
-import { TokenInterceptor } from './services/TokenInterceptor.service';
+import { TokenInterceptor } from './services/token-interceptor.service';
 
 @NgModule({
   declarations: [
