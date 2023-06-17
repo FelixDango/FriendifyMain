@@ -4,13 +4,13 @@
       <img src="assets/media/profile.png">
     </div>
     <div class="info">
-      <h2 class="name">{{ user.firstName }} {{ user.lastName }}</h2>
-      <h3 class="username">@{{ user.username }}</h3>
-      <p class="location">{{ user.city }}, {{ user.country }}</p>
-      <p class="bio">{{ user.bio }}</p>
+      <h2 class="name">{{ user?.firstName }} {{ user?.lastName }}</h2>
+      <h3 class="username">@{{ user?.id }}</h3>
+      <p class="location">{{ user?.city }}, {{ user?.country }}</p>
+      <p class="bio">{{ user?.biography }}</p>
       <div class="follow-stats">
-        <span class="followers">{{ user.follewers.length }} followers</span>
-        <span class="following">{{ user.follows.length }} following</span>
+        <span class="followers">{{ user?.followers?.length || 0 }} followers</span>
+        <span class="following">{{ user?.following?.length || 0 }} following</span>
       </div>
     </div>
     <div>
