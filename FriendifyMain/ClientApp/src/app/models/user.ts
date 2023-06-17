@@ -1,39 +1,45 @@
 import {Picture} from "./picture";
 import {Follower} from "./follower";
 import {Post} from "./post";
+import {Video} from "./video";
+import {Message} from "./message";
+import {Like} from "./like";
 
 export interface User {
   id: number;
-  username: string;
   firstName: string;
   lastName: string;
-  password: string;
   birthDate: Date;
-  bio: string;
-  email: string;
-  suspended: boolean;
   sex: SexEnum;
   status: StatusEnum;
-  picture: Picture | null;
-  country: string | null;
-  phoneNumber: string | null;
-  follows: Follower[];
-  followedBy: Follower[];
+  biography: string;
+  suspended: boolean;
+  picture: Picture;
+  country?: string;
+  phoneNumber?: string;
+  following: Follower[];
+  followers: Follower[];
   posts: Post[];
-  address: string | null;
-  city: string | null;
+  comments: Comment[];
+  images: Picture[];
+  videos: Video[];
+  messages: Message[];
+  likes: Like[];
+  registeredAt: Date;
+  address?: string;
+  city?: string;
   isModerator: boolean;
   isAdmin: boolean;
 }
 
 export enum SexEnum {
-  Male = 'Male',
-  Female = 'Female',
-  Other = 'Other',
+  Male,
+  Female,
+  Other
 }
 
 export enum StatusEnum {
-  Single = 'Single',
-  Relationship = 'Relationship',
-  Married = 'Married',
+  Single,
+  Relationship,
+  Married
 }

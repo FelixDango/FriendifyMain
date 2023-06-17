@@ -4,7 +4,6 @@ export interface Role {
   id: number;
   name: string;
   assignedRoles: AssignedRole[];
-  // Add other properties as needed
 }
 
 export interface AssignedRole {

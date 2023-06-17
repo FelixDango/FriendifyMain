@@ -1,35 +1,39 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {Observable, of} from "rxjs";
+import {Post} from "../../models/post";
+import {AuthService} from "../../services/auth.service";
+import {Profile} from "oidc-client";
+import {PostsService} from "../../services/posts.service";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-profile-page',
   templateUrl: './profile-page.component.html',
   styleUrls: ['./profile-page.component.scss']
 })
-export class ProfilePageComponent {
-  userPosts = [
-    {
-      title: 'First post',
-      content: 'This is the first Twitter post.',
-      image: 'assets/media/cat.jpg',
-      likes: 10,
-      profilePicture: 'assets/media/profile.png',
-      username: 'John Doe'
-    },
-    {
-      title: 'Second post',
-      content: 'This is the second Twitter post.',
-      video: 'assets/media/cat.mp4',
-      likes: 5,
-      profilePicture: 'assets/media/profile.png',
-      username: 'Jane Smith'
-    },
-    {
-      title: 'Third post',
-      content: 'This is the third Twitter post.',
-      image: 'assets/media/cat.jpg',
-      likes: 2,
-      profilePicture: 'assets/media/profile.png',
-      username: 'Alex Johnson'
+export class ProfilePageComponent implements OnInit {
+  userProfile$: Observable<Profile> | undefined;
+  userPosts: Post[] = [];
+  id: number | undefined;
+  constructor(public authService: AuthService, private postsService: PostsService, private route : ActivatedRoute) {
+    let routeString = this.route.snapshot.paramMap.get('id');
+    if (routeString) this.id = parseInt(routeString, 10);
+  }
+
+  ngOnInit() {
+    if (this.authService.isLoggedIn()) {
+      // Get the user posts
+      this.postsService.userPosts$.subscribe((posts: Post[]) => {
+        this.userPosts = posts;
+        console.log('POSTS..', this.userPosts);
+      });
+      if (this.id) this.postsService.loadUserPosts(this.id);
+
     }
-  ];
+  }
+
+
+
+
+
 }

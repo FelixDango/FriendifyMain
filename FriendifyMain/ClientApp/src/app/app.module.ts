@@ -49,7 +49,7 @@ import { TokenInterceptor } from './services/token-interceptor.service';
       {path: '', component: HomeComponent, pathMatch: 'full'},
       {path: 'login', component: LoginComponent},
       {path: 'register', component: RegisterComponent},
-      {path: 'profile-page', component: ProfilePageComponent},
+      {path: 'profile/:id', component: ProfilePageComponent},
       {path: 'logout', component: LogoutComponent},
     ]),
     CheckboxModule,

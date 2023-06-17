@@ -1,37 +1,58 @@
-import { Component, Input } from '@angular/core';
+import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import {HttpService} from "../../services/http.service";
 import {AuthService} from "../../services/auth.service";
+import {User} from "../../models/user";
+import {Post} from "../../models/post";
 
 @Component({
   selector: 'app-user-post',
   templateUrl: './user-post.component.html',
   styleUrls: ['./user-post.component.scss']
 })
-export class UserPostComponent {
+export class UserPostComponent implements OnInit {
   user: any = this.authService.user$;
+  postingUser: User | undefined;
+  dummypost: any = {
+    id: 1,
+    userId: 1,
+    liked: false
+  }
+  @Input() post: Post | undefined; // Change the type as per your data structure
   constructor(private httpService: HttpService, private authService: AuthService) {
   }
-  @Input() post: any; // Change the type as per your data structure
+
+  ngOnInit(): void {
+    console.log('POST',this.post);
+
+    if (this.post) {
+      this.getUserById(this.post.userId);
+    }
+  }
 
   likePost() {
     // Implement the logic to like the post here
   }
 
-  // create post method
-  createPost( post: any, user: any) {
-    // Implement the logic to create the post here
-
+  getUserById(id: number) {
+    this.httpService.get('/Profile/' + id + '/view').subscribe(
+      (response: any) => {
+        this.postingUser = response;
+      },
+      (error: any) => {
+        console.log(error);
+      }
+    );
   }
 
   toggleLikePost() {
-    if (this.post.liked) {
+    if (this.dummypost.liked) {
       // Unlike the post
-      this.post.likesCount--;
-      this.post.liked = false;
+      this.dummypost.likesCount--;
+      this.dummypost.liked = false;
     } else {
       // Like the post
-      this.post.likesCount++;
-      this.post.liked = true;
+      this.dummypost.likesCount++;
+      this.dummypost.liked = true;
     }
   }
 

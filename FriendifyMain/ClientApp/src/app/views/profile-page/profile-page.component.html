@@ -1,6 +1,11 @@
-<app-profile></app-profile>
-<ng-container class="user-posts">
-  <div *ngFor="let post of userPosts">
-    <app-user-post [post]="post"></app-user-post>
+<app-profile [id]=id></app-profile>
+  <div *ngIf="userPosts.length > 0; else noPosts">
+    <div *ngFor="let post of userPosts">
+      <div class="shadow-3 mb-4">
+        <app-user-post [post]="post"></app-user-post>
+      </div>
+    </div>
   </div>
-</ng-container>
+  <ng-template #noPosts>
+    <p>No posts available.</p>
+  </ng-template>

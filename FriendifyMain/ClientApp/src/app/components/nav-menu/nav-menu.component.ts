@@ -15,7 +15,6 @@ export class NavMenuComponent implements OnInit {
 
   constructor(private authService: AuthService) {
     this.isLoggedIn$ = this.authService.isLoggedIn$;
-
   }
 
   ngOnInit() {
@@ -46,8 +45,8 @@ export class NavMenuComponent implements OnInit {
         routerLink: '/'
       },
       {
-        label: 'Profile',
-        routerLink: '/profile-page',
+        label: 'My Profile',
+        routerLink: '/profile/' + this.authService.getUserId(),
         visible: this.authService.isLoggedIn()
       },
       {

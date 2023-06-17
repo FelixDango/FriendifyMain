@@ -33,7 +33,7 @@ namespace FriendifyMain.Controllers
             try
             {
                 // Get the current user from the user manager 
-                var currentUser = await _userManager.GetUserAsync(User);
+                var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
 
                 if (currentUser == null || _context == null) { return BadRequest(); }
 
@@ -174,6 +174,7 @@ namespace FriendifyMain.Controllers
             }
         }
         
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<string> SaveFile(IFormFile file)
         {
             var filePath = Path.Combine("wwwroot", "assets", "media", file.FileName);

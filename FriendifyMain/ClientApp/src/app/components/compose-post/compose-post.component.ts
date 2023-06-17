@@ -1,6 +1,7 @@
 import {Component, Injectable} from '@angular/core';
 import {AuthService} from "../../services/auth.service";
 import {HttpService} from "../../services/http.service";
+import {PostsService} from "../../services/posts.service";
 
 @Component({
   selector: 'app-compose-post',
@@ -20,7 +21,7 @@ import {HttpService} from "../../services/http.service";
   formData = new FormData();
 
 
-  constructor(private httpService: HttpService, private authService: AuthService) {
+  constructor(private httpService: HttpService, private authService: AuthService, private postsService: PostsService) {
   }
 
   handleFileInput(event: any) {
@@ -60,6 +61,20 @@ import {HttpService} from "../../services/http.service";
     this.httpService.post('/Home/createpost', this.formData).subscribe(
       (response) => {
         console.log('response', response);
+        if (response.status === 200) {
+          this.text = '';
+          this.characterCount = 0;
+          this.isOverLimit = false;
+          this.postContent = '';
+          this.errorMessage = '';
+          this.uploadedImages = [];
+          this.uploadedVideos = [];
+          this.formData = new FormData();
+        }
+        // reload page
+        this.postsService.loadPosts();
+
+
       },
       (error) => {
         if (error.status === 401) this.authService.logout();
