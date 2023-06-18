@@ -7,7 +7,7 @@
 
 /* Provide sufficient contrast against white background */
 a {
-  color: #0366d6;
+  color: #5FDFF1;
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
@@ -20,6 +20,23 @@ code {
 
 .btn-primary {
   color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+  background-color: #5FDFF1;
+  border-color: #5FDFF1;
+}
+:root {
+  .p-button {
+    background: #5FDFF1;
+    color: black;
+    border: none;
+    font-weight: bold;
+    &:hover {
+      background: rgb(47, 150, 177);
+      color: black;
+    }
+    &.p-button-success {
+      background: rgb(47, 150, 177);
+      color: white;
+      font-weight: bold;
+    }
+  }
 }
