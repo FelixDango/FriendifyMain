@@ -20,39 +20,25 @@ export class ProfilePageComponent implements OnInit {
     if (routeString) this.id = parseInt(routeString, 10);
 
     this.postsService.userPosts$.subscribe((posts: Post[]) => {
-
         if (posts.length > 0) {
-          console.log('POSTS 8888', posts.length);
           this.posts = posts;
-
         }
     });
-
-
     this.userPosts$ = this.postsService.userPosts$;
   }
 
   ngOnInit() {
     if (this.authService.isLoggedIn()) {
-
-
       // get user posts from posts service
       this.postsService.userPosts$.subscribe((posts: Post[]) => {
         if (posts.length > 0) {
-          console.log('POSTS', posts);
           this.userPosts$ = this.postsService.userPosts$;
         }
       });
       // Get the user posts
       if (this.id) {
-        console.log('LOADING USER POSTS', this.id);
         this.postsService.loadUserPosts(this.id);
       }
     }
   }
-
-
-
-
-
 }

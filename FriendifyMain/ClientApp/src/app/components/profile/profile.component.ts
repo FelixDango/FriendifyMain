@@ -21,7 +21,6 @@ export class ProfileComponent implements OnInit {
     // Add code to load user data
     this.authService.user$.subscribe((user: User) => {
         this.loggedInUser = user;
-        console.log('LOGGED IN USER', this.loggedInUser);
       },
       (error: any) => {
         console.log(error);
@@ -57,16 +56,13 @@ export class ProfileComponent implements OnInit {
   // check if the user follows this profile
   checkFollow(id: number) {
     const followers = this.user$?.value?.followers;
-    console.log('followers', followers);
     if (followers) {
       for (let i = 0; i < followers.length; i++) {
         if (followers[i].followerId === id) {
           this.isFollowing$.next(true);
-          console.log('isFollowing', this.isFollowing$.value);
           break;
         } else {
           this.isFollowing$.next(false);
-          console.log('isFollowing', this.isFollowing$.value);
         }
       }
     }
@@ -76,7 +72,6 @@ export class ProfileComponent implements OnInit {
   followUser(id: number) {
     this.httpService.post('/Profile/' + id + '/follow', null).subscribe(
       (response) => {
-        console.log('follow res:',response);
         this.isFollowing$.next(true);
         this.loadUser(id);
       }

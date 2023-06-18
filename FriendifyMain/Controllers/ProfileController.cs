@@ -59,6 +59,7 @@ namespace FriendifyMain.Controllers
                             .Include(p => p.Pictures)
                             .Include(p => p.Videos)
                             .Include(p => p.Comments)
+                            .Include(p => p.Likes)
                             .OrderByDescending(p => p.Date)
                             .ToListAsync();
 
@@ -119,6 +120,7 @@ namespace FriendifyMain.Controllers
                             .Include(p => p.Pictures)
                             .Include(p => p.Videos)
                             .Include(p => p.Comments)
+                            .Include(p => p.Likes)
                             .OrderByDescending(p => p.Date)
                             .ToListAsync();
 

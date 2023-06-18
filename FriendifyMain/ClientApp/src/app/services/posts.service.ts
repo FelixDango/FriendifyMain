@@ -47,7 +47,6 @@ export class PostsService {
 
         posts = response.posts as Post[];
         this.userPostsSubject.next(posts);
-        console.log('USER POSTS', this.userPostsSubject);
       },
       (error: any) => {
         if (error.status === 401) {
