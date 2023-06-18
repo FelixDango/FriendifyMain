@@ -30,7 +30,6 @@ export class HomeComponent implements OnInit {
       // Get the user posts
       this.postsService.posts$.subscribe((posts: Post[]) => {
         this.userPosts = posts;
-        console.log('POSTS', this.userPosts);
       });
       this.postsService.loadPosts();
     }

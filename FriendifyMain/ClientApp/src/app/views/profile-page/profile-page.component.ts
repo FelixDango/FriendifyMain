@@ -25,7 +25,6 @@ export class ProfilePageComponent implements OnInit {
       // Get the user posts
       this.postsService.userPosts$.subscribe((posts: Post[]) => {
         this.userPosts = posts;
-        console.log('POSTS..', this.userPosts);
       });
       if (this.id) this.postsService.loadUserPosts(this.id);
 

@@ -19,14 +19,18 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
+  updateUser() {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    this.user$.next(user);
+  }
+
+
   private baseUrl = 'https://localhost:7073/api/Account';
   isLoggedInSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public isLoggedIn$: Observable<boolean> = this.isLoggedInSubject.asObservable();
   public user$: ReplaySubject<User> = new ReplaySubject<User>(1); // Replay the last value to new subscribers
 
   constructor(private http: HttpClient, private router: Router) { }
-
-  // ...
 
   login(username: string, password: string, rememberMe: boolean): Observable<LoginResponse> {
     const loginData = {
@@ -107,6 +111,15 @@ export class AuthService {
 
     // Check if the token is present
     const isLoggedIn = !!token;
+
+    this.user$ = new ReplaySubject<User>(1);
+    // If the user is logged in, emit the user data
+    if (isLoggedIn) {
+      this.user$.next(JSON.parse(localStorage.getItem('user') || '{}'));
+    } else {
+      // If the user is not logged in, emit null
+      this.user$.next(null as any);
+    }
 
     return isLoggedIn;
   }

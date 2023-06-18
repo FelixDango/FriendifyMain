@@ -23,8 +23,6 @@ export class UserPostComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('POST',this.post);
-
     if (this.post) {
       this.getUserById(this.post.userId);
     }
