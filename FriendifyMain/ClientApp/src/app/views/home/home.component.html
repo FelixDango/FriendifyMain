@@ -9,7 +9,7 @@
 </ng-container>
 <h1 *ngIf="user === undefined">Here are public posts for you!</h1>
 
-<div>
+<ng-container *ngIf="userPosts$ | async as userPosts">
   <div *ngIf="userPosts.length > 0; else noPosts">
     <div *ngFor="let post of userPosts">
       <div class="shadow-3 mb-4">
@@ -20,5 +20,4 @@
   <ng-template #noPosts>
     <p>No posts available.</p>
   </ng-template>
-</div>
-
+</ng-container>

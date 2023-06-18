@@ -157,7 +157,8 @@ namespace FriendifyMain.Controllers
                         _context.Posts.Add(post);
                         await _context.SaveChangesAsync();
 
-                        // Return a created at action response with the post as the data and a location header pointing to the index action 
+                        // Return a created at action response with the post as the data and a location header pointing to the index action
+                        // set status code to 201
                         return CreatedAtAction(nameof(Index), post);
                     }
                 }

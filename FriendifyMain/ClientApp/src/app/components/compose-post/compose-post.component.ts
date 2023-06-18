@@ -19,12 +19,13 @@ import {PostsService} from "../../services/posts.service";
   uploadedImages: Blob[] = [];
   uploadedVideos: Blob[] = [];
   formData = new FormData();
+  fileUpload: any;
 
 
   constructor(private httpService: HttpService, private authService: AuthService, private postsService: PostsService) {
   }
 
-  handleFileInput(event: any) {
+  handleFileInput(event: any, fileUpload: any) {
     const files: Blob[] = event.files;
     const allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
     const allowedVideoTypes = ['video/mp4', 'video/avi'];
@@ -38,9 +39,7 @@ import {PostsService} from "../../services/posts.service";
         this.errorMessage = 'Invalid file format. Only images (JPEG, PNG, GIF) and videos (MP4, AVI) are allowed.';
       }
     }
-
-    console.log('this.uploadedImages', this.uploadedImages);
-    console.log('this.uploadedVideos', this.uploadedVideos);
+    this.fileUpload = fileUpload;
   }
 
 
@@ -59,22 +58,19 @@ import {PostsService} from "../../services/posts.service";
       this.formData.append('pictureFiles', file);
     }
     this.httpService.post('/Home/createpost', this.formData).subscribe(
-      (response) => {
-        console.log('response', response);
-        if (response.status === 200) {
-          this.text = '';
-          this.characterCount = 0;
-          this.isOverLimit = false;
-          this.postContent = '';
-          this.errorMessage = '';
-          this.uploadedImages = [];
-          this.uploadedVideos = [];
-          this.formData = new FormData();
-        }
-        // reload page
+      (response: any) => {
+        this.text = '';
+        this.characterCount = 0;
+        this.isOverLimit = false;
+        this.postContent = '';
+        this.errorMessage = '';
+        this.uploadedImages = [];
+        this.uploadedVideos = [];
+        this.formData = new FormData();
+        const textarea = document.getElementById('postContent') as HTMLTextAreaElement;
+        textarea.value = '';
         this.postsService.loadPosts();
-
-
+        this.fileUpload.clear();
       },
       (error) => {
         if (error.status === 401) this.authService.logout();
