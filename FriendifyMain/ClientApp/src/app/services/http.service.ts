@@ -20,7 +20,8 @@ export class HttpService {
   post(url: string, data: any): Observable<any> {
     const fullUrl = this.baseUrl + url;
     const headers = this.getHeadersWithAuthorization();
-    return this.http.post(fullUrl, data, { headers, withCredentials: true });
+    return this.http.post(fullUrl, data, { headers });
+
   }
 
   put(url: string, data: any): Observable<any> {

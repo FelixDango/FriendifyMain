@@ -11,7 +11,7 @@ import {BehaviorSubject} from "rxjs";
 })
 export class ProfileComponent implements OnInit {
   @Input() id: number | undefined;
-  user: User | undefined = undefined;
+  user$: BehaviorSubject<User | undefined> = new BehaviorSubject<User | undefined>(undefined);
   loggedInUser: User | undefined = undefined;
 
   isFollowing$ = new BehaviorSubject(<boolean>false);
@@ -44,8 +44,7 @@ export class ProfileComponent implements OnInit {
     // Add code to load user data
     this.httpService.get('/Profile/' + userId + '/view').subscribe(
       (response: any) => {
-        this.user = response;
-        console.log('this USER', this.user?.followers);
+        this.user$.next(response);
         if (this.loggedInUser) this.checkFollow(this.loggedInUser?.id);
 
       },
@@ -57,7 +56,7 @@ export class ProfileComponent implements OnInit {
 
   // check if the user follows this profile
   checkFollow(id: number) {
-    const followers = this.user?.followers;
+    const followers = this.user$?.value?.followers;
     console.log('followers', followers);
     if (followers) {
       for (let i = 0; i < followers.length; i++) {
@@ -75,26 +74,22 @@ export class ProfileComponent implements OnInit {
 
   // follow
   followUser(id: number) {
-    this.httpService.post('/Profile/' + id + '/follow', {}).subscribe(
-      (response: any) => {
+    this.httpService.post('/Profile/' + id + '/follow', null).subscribe(
+      (response) => {
         console.log('follow res:',response);
         this.isFollowing$.next(true);
-      },
-      (error: any) => {
-        console.log(error);
+        this.loadUser(id);
       }
     );
   }
 
   // unfollow
   unfollowUser(id: number) {
-    this.httpService.post('/Profile/' + id + '/unfollow', {}).subscribe(
-      (response: any) => {
+    this.httpService.post('/Profile/' + id + '/unfollow',null).subscribe(
+      (response) => {
         console.log('unfollow res:',response);
         this.isFollowing$.next(false);
-      },
-      (error: any) => {
-        console.log(error);
+        this.loadUser(id);
       }
     );
   }
@@ -103,9 +98,13 @@ export class ProfileComponent implements OnInit {
 
   toggleFollow() {
     if (this.isFollowing$.value) {
-      this.unfollowUser(this.user?.id || 0);
+      this.unfollowUser(this.user$.value?.id || 0);
+      console.log('this follow', this.isFollowing$.value);
+
     } else {
-      this.followUser(this.user?.id || 0);
+      this.followUser(this.user$.value?.id || 0);
+      console.log('this follow', this.isFollowing$.value);
+
     }
   }
 

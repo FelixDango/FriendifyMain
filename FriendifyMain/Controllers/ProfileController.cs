@@ -338,8 +338,9 @@ namespace FriendifyMain.Controllers
                 currentUser.Following.Add(new Follower() { UserId = otherUser.Id, FollowerId = currentUser.Id, DateTime = DateTime.Now });
                 await _context.SaveChangesAsync();
 
+                var response = new { Message = $"You have followed {otherUser.UserName}." };
                 // Return a 200 OK response with a message
-                return Ok($"You are now following {otherUser.UserName}.");
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -397,9 +398,9 @@ namespace FriendifyMain.Controllers
                 otherUser.Followers = otherUser.Followers.Where(e => e.UserId != currentUser.Id).ToList(); // Remove the current user from the followers list of the other user
 
                 await _context.SaveChangesAsync();
-
+                var response = new { Message = $"You have unfollowed {otherUser.UserName}." };
                 // Return a 200 OK response with a message
-                return Ok($"You have unfollowed {otherUser.UserName}.");
+                return Ok(response);
             }
             catch (Exception ex)
             {
