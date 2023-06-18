@@ -11,13 +11,13 @@ import {PostsService} from "../../services/posts.service";
   templateUrl: './home.component.html',
 })
 export class HomeComponent implements OnInit {
-  userPosts$: Observable<Post[]> = of([]);
+  posts$: Observable<Post[]> = of([]);
   user: User | undefined;
 
   constructor(public authService: AuthService, private postsService: PostsService) {
-    // get user from local storage
+    // get user posts from posts service
     this.postsService.posts$.subscribe((posts: Post[]) => {
-      this.userPosts$ = this.postsService.posts$.pipe(
+      this.posts$ = this.postsService.posts$.pipe(
         map((posts: Post[]) => {
           // Sort the posts by date in descending order
           return posts.sort((a, b) => {

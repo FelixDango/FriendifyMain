@@ -44,8 +44,10 @@ export class PostsService {
 
     this.httpService.get('/Profile/'+id+'/view').subscribe(
       (response: any) => {
-        posts = response.posts;
+
+        posts = response.posts as Post[];
         this.userPostsSubject.next(posts);
+        console.log('USER POSTS', this.userPostsSubject);
       },
       (error: any) => {
         if (error.status === 401) {

@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {Observable, of} from "rxjs";
 import {Post} from "../../models/post";
 import {AuthService} from "../../services/auth.service";
-import {Profile} from "oidc-client";
 import {PostsService} from "../../services/posts.service";
 import {ActivatedRoute} from "@angular/router";
 
@@ -12,22 +11,43 @@ import {ActivatedRoute} from "@angular/router";
   styleUrls: ['./profile-page.component.scss']
 })
 export class ProfilePageComponent implements OnInit {
-  userProfile$: Observable<Profile> | undefined;
-  userPosts: Post[] = [];
+  userPosts$: Observable<Post[]> = of([] as Post[]);
+  posts : Post[] = [];
   id: number | undefined;
+
   constructor(public authService: AuthService, private postsService: PostsService, private route : ActivatedRoute) {
     let routeString = this.route.snapshot.paramMap.get('id');
     if (routeString) this.id = parseInt(routeString, 10);
+
+    this.postsService.userPosts$.subscribe((posts: Post[]) => {
+
+        if (posts.length > 0) {
+          console.log('POSTS 8888', posts.length);
+          this.posts = posts;
+
+        }
+    });
+
+
+    this.userPosts$ = this.postsService.userPosts$;
   }
 
   ngOnInit() {
     if (this.authService.isLoggedIn()) {
-      // Get the user posts
-      this.postsService.userPosts$.subscribe((posts: Post[]) => {
-        this.userPosts = posts;
-      });
-      if (this.id) this.postsService.loadUserPosts(this.id);
 
+
+      // get user posts from posts service
+      this.postsService.userPosts$.subscribe((posts: Post[]) => {
+        if (posts.length > 0) {
+          console.log('POSTS', posts);
+          this.userPosts$ = this.postsService.userPosts$;
+        }
+      });
+      // Get the user posts
+      if (this.id) {
+        console.log('LOADING USER POSTS', this.id);
+        this.postsService.loadUserPosts(this.id);
+      }
     }
   }
 

@@ -39,6 +39,7 @@ export class UserPostComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.post) {
+      console.log('post', this.post);
       this.getUserById(this.post.userId);
       this.postId = this.post.id;
       this.post$.next(this.post);

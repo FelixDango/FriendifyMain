@@ -1,5 +1,6 @@
 <app-profile [id]=id></app-profile>
-  <div *ngIf="userPosts.length > 0; else noPosts">
+<ng-container *ngIf="userPosts$ | async as userPosts; else noPosts">
+  <div *ngIf="userPosts && userPosts.length > 0; else noPosts">
     <div *ngFor="let post of userPosts">
       <div class="shadow-3 mb-4">
         <app-user-post [post]="post"></app-user-post>
@@ -9,3 +10,7 @@
   <ng-template #noPosts>
     <p>No posts available.</p>
   </ng-template>
+</ng-container>
+<ng-template #noPosts>
+  <p>No posts available.</p>
+</ng-template>
