@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {BehaviorSubject} from "rxjs";
 import {Message} from "../models/message";
+import {HttpService} from "./http.service";
 
 
 @Injectable({
@@ -11,5 +12,12 @@ export class MessagesService {
   messages$ = new BehaviorSubject<Message[]>([]);
 
 
-  constructor() { }
+  constructor(private httpService: HttpService) { }
+
+  getMessages() {
+    this.httpService.get('/Message').subscribe((messages: any) => {
+      console.log(messages);
+      this.messages$.next(messages);
+    })
+  }
 }

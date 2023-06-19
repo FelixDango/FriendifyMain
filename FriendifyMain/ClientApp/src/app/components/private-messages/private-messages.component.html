@@ -1,33 +1,21 @@
 <div class="chat-content">
   <div class="messages-container">
     <div class="messages">
-      <div class="message">
-        <div class="message-content">
-          <p>Hello there!</p>
-        </div>
-      </div>
-      <div class="message self">
-        <div class="message-content self">
-          <p>Hi! How can I assist you today?</p>
-        </div>
-      </div>
-      <div class="message">
-        <div class="message-content">
-          <p>I have a question about your product.</p>
-        </div>
-      </div>
-      <div class="message self">
-        <div class="message-content self">
-          <p>Sure, feel free to ask!</p>
+      <div *ngFor="let message of messages$ | async" [ngClass]="{ 'message': true, 'self': message.userId === user?.id }">
+        <div class="message-content" [ngClass]="{'self': message.userId === user?.id }">
+          <p>{{ message.content }}</p>
         </div>
       </div>
       <!-- Add more messages as needed -->
     </div>
   </div>
-  <div class="input-container">
-    <input class="message-input" type="text" placeholder="Type a message..." />
-    <button class="send-button">
-      Send
-    </button>
-  </div>
+
+    <form (ngSubmit)="sendMessage()">
+      <div class="input-container">
+      <input [(ngModel)]="m" class="message-input" type="text" placeholder="Type a message..." />
+      <button class="send-button" type="submit">
+        Send
+      </button>
+      </div>
+    </form>
 </div>
