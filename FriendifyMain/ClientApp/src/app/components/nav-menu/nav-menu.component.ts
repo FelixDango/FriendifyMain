@@ -57,6 +57,11 @@ export class NavMenuComponent implements OnInit {
         label: 'Register',
         routerLink: '/register',
         visible: !this.authService.isLoggedIn()
+      },
+      {
+        label: 'Admin',
+        routerLink: '/admin',
+        visible: this.authService.isLoggedIn()
       }
     ];
   }

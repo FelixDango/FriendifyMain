@@ -24,6 +24,7 @@ import {AvatarModule} from "primeng/avatar";
 import {MenubarModule} from "primeng/menubar";
 import { LogoutComponent } from './components/logout/logout.component';
 import { TokenInterceptor } from './services/token-interceptor.service';
+import { AdminComponent } from './views/admin/admin.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { TokenInterceptor } from './services/token-interceptor.service';
     ProfilePageComponent,
     ProfileComponent,
     ComposePostComponent,
-    LogoutComponent
+    LogoutComponent,
+    AdminComponent
   ],
   imports: [
     BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
@@ -51,6 +53,7 @@ import { TokenInterceptor } from './services/token-interceptor.service';
       {path: 'register', component: RegisterComponent},
       {path: 'profile/:id', component: ProfilePageComponent},
       {path: 'logout', component: LogoutComponent},
+      {path: 'admin', component: AdminComponent},
     ]),
     CheckboxModule,
     FileUploadModule,
