@@ -40,7 +40,9 @@
               "node_modules/primeng/resources/themes/lara-light-blue/theme.css",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/chart.js/dist/Chart.js"
+            ]
           },
           "configurations": {
             "production": {

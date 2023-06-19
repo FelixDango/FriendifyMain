@@ -29,6 +29,7 @@ import { MessagesComponent } from './views/messages/messages.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { PrivateMessagesComponent } from './components/private-messages/private-messages.component';
 import {SidebarModule} from "primeng/sidebar";
+import {ChartModule} from "primeng/chart";
 
 @NgModule({
   declarations: [
@@ -70,7 +71,8 @@ import {SidebarModule} from "primeng/sidebar";
     ImageModule,
     AvatarModule,
     MenubarModule,
-    SidebarModule
+    SidebarModule,
+    ChartModule
   ],
   providers: [
     {
