@@ -94,11 +94,12 @@ namespace FriendifyMain.Controllers
                         UserId = currentUser.Id, // The sender is the current user
                         ReceiverId = receiverUser.Id, // Assign the ID of the receiver user
                         Date = DateTime.Now, // The date is the current date and time
-                        Pictures = new List<Picture>(),
-                        Videos = new List<Video>()
+                        // init empty list
+                        Pictures = new List<Picture>() { },
+                        Videos = new List<Video>() { }
                     };
-                    messageModel.Pictures.ForEach(e => message.Pictures.Add(new Picture { Id = 0, Url = e, User = currentUser, UserId = currentUser.Id }));
-                    messageModel.Videos.ForEach(e => message.Videos.Add(new Video { Id = 0, Url = e, User = currentUser, UserId = currentUser.Id }));
+                    //messageModel.Pictures.ForEach(e => message.Pictures.Add(new Picture { Id = 0, Url = e, User = currentUser, UserId = currentUser.Id }));
+                    //messageModel.Videos.ForEach(e => message.Videos.Add(new Video { Id = 0, Url = e, User = currentUser, UserId = currentUser.Id }));
 
 
                     // Add the message to the database context and save changes

@@ -20,8 +20,6 @@ export class EditProfileComponent implements OnInit{
   status: number | undefined;
   biography: string | undefined;
   picture: Blob | undefined;
-
-  uploadedImages: Blob[] = [];
   fileUpload: any;
 
 
@@ -39,16 +37,17 @@ export class EditProfileComponent implements OnInit{
     }
   }
 
+
   handleFileInput(event: any, fileUpload: any) {
-    const files: Blob[] = event.files;
+    const file: Blob = event.files;
     const allowedImageTypes = ['image/jpeg', 'image/png','image/jpg' ];
 
-    for (let file of files) {
-      if (allowedImageTypes.includes(file.type)) {
-        this.uploadedImages.push(file)
-      }
+    if (allowedImageTypes.includes(file.type)) {
+      this.picture = file;
     }
+
     this.fileUpload = fileUpload;
+    console.log(this.picture);
   }
 
   updateProfile() {
@@ -62,7 +61,7 @@ export class EditProfileComponent implements OnInit{
       sex: parseInt(String(this.sex), 10),
       status: 0,
       biography: this.biography,
-      picture: this.fileUpload,
+      pictureUrl: this.picture,
     };
 
     this.httpService.put('/Profile/' + this.user?.userName + '/update', updateData).subscribe(
