@@ -1,7 +1,6 @@
 ﻿using FriendifyMain.Mappers;
 using FriendifyMain.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -47,7 +46,7 @@ namespace FriendifyMain
 
             // Create a signing credentials object from the security key
             var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            
+
 
             services.AddAuthentication(cfg =>
             {
@@ -76,26 +75,26 @@ namespace FriendifyMain
                     policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
                     policy.RequireAuthenticatedUser();
                 });
-    
+
                 options.AddPolicy("Admin", policy =>
                 {
                     policy.RequireRole("Admin");
                     policy.AuthenticationSchemes.Add("Bearer"); // Add Bearer authentication scheme
                 });
-    
+
                 options.AddPolicy("Moderator", policy =>
                 {
                     policy.RequireRole("Moderator");
                     policy.AuthenticationSchemes.Add("Bearer"); // Add Bearer authentication scheme
                 });
-    
+
                 options.AddPolicy("User", policy =>
                 {
                     policy.RequireClaim(ClaimTypes.Role, "User");
                     policy.AuthenticationSchemes.Add("Bearer"); // Add Bearer authentication scheme
                 });
             });
-            
+
 
             services.AddCors(options =>
             {
@@ -117,6 +116,28 @@ namespace FriendifyMain
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API Name", Version = "v1" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey
+                });
+                // Add a security requirement that applies the security scheme globally
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }   
+                        },
+                        Array.Empty<string>()
+                    }
+                });
             });
         }
 
@@ -130,6 +151,7 @@ namespace FriendifyMain
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API Name v1");
+
                 });
             }
 
@@ -138,7 +160,7 @@ namespace FriendifyMain
             app.UseCors("AllowMySPA");
             app.UseAuthentication(); // Enable authentication middleware
             app.UseAuthorization(); // Enable authorization middleware
-            
+
             // Add authentication logging middleware
             app.Use(async (context, next) =>
             {
@@ -155,7 +177,7 @@ namespace FriendifyMain
                 endpoints.MapControllers();
             });
 
-            
+
         }
     }
 }
