@@ -1,1 +1,82 @@
-<p>admin works!</p>
+<div class="p-grid p-fluid dashboard">
+  <!-- Display a card with total interactions -->
+  <div class="p-col-12 p-md-6 p-xl-3">
+    <div class="highlight-box">
+      <div class="initials" style="background-color:#007be5;color:#00448f">
+        <span>TI</span>
+      </div>
+      <div class="highlight-details ">
+        <i class="pi pi-search"></i>
+        <span>Total Interactions</span>
+        <span class="count">{{ adminData?.totalInteractions }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Display a card with total accounts -->
+  <div class="p-col-12 p-md-6 p-xl-3">
+    <div class="highlight-box">
+      <div class="initials" style="background-color:#ef6262;color:#a83d3b">
+        <span>TA</span>
+      </div>
+      <div class="highlight-details ">
+        <i class="pi pi-users"></i>
+        <span>Total Accounts</span>
+        <span class="count">{{ adminData?.totalAccounts }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Display a card with total posts -->
+  <div class="p-col-12 p-md-6 p-xl-3">
+    <div class="highlight-box">
+      <div class="initials" style="background-color:#20d077;color:#038d4a">
+        <span>TP</span>
+      </div>
+      <div class="highlight-details ">
+        <i class="pi pi-pencil"></i>
+        <span>Total Posts</span>
+        <span class="count">{{ adminData?.totalPosts }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Display a card with average interactions -->
+  <div class="p-col-12 p-md-6 p-xl-3">
+    <div class="highlight-box">
+      <div class="initials" style="background-color:#f9c851;color:#b58c2b">
+        <span>AI</span>
+      </div>
+      <div class="highlight-details ">
+        <i class="pi pi-star"></i>
+        <span>Average Interactions</span>
+        <span class="count">{{ adminData?.averageInteractions | number:'1.0-0' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Display a chart with new registrations -->
+  <div class="p-col-12 p-lg-6">
+    <div class="card">
+      <h1 class="centerText">New Registrations</h1>
+      <p-chart type="line" [data]="registrationChart.data" [options]="registrationChart.options"></p-chart>
+    </div>
+  </div>
+
+  <!-- Display a chart with new posts -->
+  <div class="p-col-12 p-lg-6">
+    <div class="card">
+      <h1 class="centerText">New Posts</h1>
+      <p-chart type="bar" [data]="postsChart.data" [options]="postsChart.options"></p-chart>
+    </div>
+  </div>
+
+  <!-- Display a chart with gender distribution -->
+  <div class="p-col-12 p-lg-6">
+    <div class="card">
+      <h1 class="centerText">Gender Distribution</h1>
+      <p-chart type="pie" [data]="genderChart.data" [options]="genderChart.options"></p-chart>
+    </div>
+  </div>
+
+</div>
