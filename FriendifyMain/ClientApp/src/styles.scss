@@ -24,6 +24,14 @@ code {
   border-color: #5FDFF1;
 }
 :root {
+  .user-container {
+    flex-direction: row;
+  }
+  .p-avatar {
+    border-radius: 50%;
+    overflow: hidden;
+
+  }
   .p-button {
     background: #5FDFF1;
     color: black;

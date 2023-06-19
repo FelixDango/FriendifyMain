@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit} from '@angular/core';
+import {AfterViewInit, Component, Input, OnChanges, OnInit, ViewChild, ElementRef} from '@angular/core';
 import {HttpService} from "../../services/http.service";
 import {AuthService} from "../../services/auth.service";
 import {User} from "../../models/user";
@@ -12,7 +12,12 @@ import {Like} from "../../models/like";
   templateUrl: './user-post.component.html',
   styleUrls: ['./user-post.component.scss']
 })
-export class UserPostComponent implements OnInit {
+export class UserPostComponent implements OnInit, AfterViewInit {
+  @ViewChild('cardText', { static: true }) cardTextRef!: ElementRef;
+  private readonly minFontSize = 3;
+  private readonly maxFontSize = 1.5;
+  private readonly minCharacters = 20;
+  private readonly maxCharacters = 281;
   user: any = this.authService.user$;
   postingUser: User | undefined;
   assetsUrl: string = this.httpService.assetsUrl;
@@ -35,6 +40,34 @@ export class UserPostComponent implements OnInit {
       this.user = user;
     })
 
+  }
+
+  private adjustFontSize(): void {
+    const cardText = this.cardTextRef.nativeElement;
+    const characters = cardText.textContent.trim().length;
+
+    if (characters < this.minCharacters) {
+      cardText.style.fontSize = `${this.minFontSize}rem`;
+    } else if (characters > this.maxCharacters) {
+      cardText.style.fontSize = `${this.maxFontSize}rem`;
+    } else {
+      const fontSize = this.calculateFontSize(characters);
+      cardText.style.fontSize = `${fontSize}rem`;
+    }
+  }
+
+
+  private calculateFontSize(characters: number): number {
+    const fontSizeRange = this.maxFontSize - this.minFontSize;
+    const charactersRange = this.maxCharacters - this.minCharacters;
+    const fontSizeIncrement = fontSizeRange / charactersRange;
+    const fontSize = this.minFontSize + (fontSizeIncrement * (characters - this.minCharacters));
+    return fontSize;
+  }
+
+
+  ngAfterViewInit(): void {
+    this.adjustFontSize();
   }
 
   ngOnInit(): void {
