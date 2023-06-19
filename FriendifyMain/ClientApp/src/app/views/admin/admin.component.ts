@@ -58,12 +58,30 @@ export class AdminComponent implements OnInit {
   createRegistrationChart(): void {
     // Check if the admin data is available
     if (this.adminData) {
-      // Get the registration dates from the admin data
-      const dates = this.adminData.registrationDates;
-      // Create an array of labels for each month in the selected time range
-      const labels = dates.map(date => date.toLocaleString('en-US', { month: 'short' }));
-      // Create an array of values for each month in the selected time range
-      const values = dates.map(date => date.getDate());
+      // Create an empty object to store the counts for each date
+      const tempcounts: { [key: string]: number } = {};
+
+      // Loop through the registration dates array and increment the count for each date
+      this.adminData.registrationDates.forEach(date => {
+        // Create a Date object from the date variable
+        const dateObject = new Date(date);
+        // Get the date as a string in the format yyyy-mm-dd
+        const dateString = dateObject.toISOString().slice(0, 10);
+        // If the date is not in the counts object, initialize it to zero
+        if (!tempcounts[dateString]) {
+          tempcounts[dateString] = 0;
+        }
+        // Increment the count for the date by one
+        tempcounts[dateString]++;
+      });
+
+      // Create an array of values for each date with the registration count
+      const values = Object.entries(tempcounts).map(([date, count]) => ({ date, count }));
+
+      // Map the values array to an array of numbers, using only the count property
+      const counts = values.map(value => value.count);
+      const labels = values.map(value => value.date);
+
       // Create a chart object with options and data
       this.registrationChart = {
         type: 'line', // Use a line chart
@@ -84,7 +102,7 @@ export class AdminComponent implements OnInit {
           datasets: [
             {
               label: 'Registrations', // Set the label for the dataset
-              data: values, // Use the values array for the y-axis
+              data: counts, // Use the counts array for the y-axis
               fill: false, // Do not fill the area under the line
               borderColor: '#42A5F5', // Set the line color to blue
               tension: 0.4 // Set the line tension to smooth it out
@@ -99,12 +117,32 @@ export class AdminComponent implements OnInit {
   createPostsChart(): void {
     // Check if the admin data is available
     if (this.adminData) {
-      // Get the posts creation dates from the admin data
-      const dates = this.adminData.postsCreationDates;
-      // Create an array of labels for each day in the selected time range
-      const labels = dates.map(date => date.toLocaleString('en-US', { day: 'numeric' }));
-      // Create an array of values for each day in the selected time range
-      const values = dates.map(date => date.getHours());
+      // Create an empty object to store the counts for each date
+      const tempcounts: { [key: string]: number } = {};
+
+      // Loop through the posts creation dates array and increment the count for each date
+      this.adminData.postsCreationDates.forEach(date => {
+        // Create a Date object from the date variable
+        const dateObject = new Date(date);
+        // Get the date as a string in the format yyyy-mm-dd
+        const dateString = dateObject.toISOString().slice(0, 10);
+        // If the date is not in the counts object, initialize it to zero
+        if (!tempcounts[dateString]) {
+          tempcounts[dateString] = 0;
+        }
+        // Increment the count for the date by one
+        tempcounts[dateString]++;
+      });
+
+      // Create an array of values for each date with the post count
+      const values = Object.entries(tempcounts).map(([date, count]) => ({ date, count }));
+
+      // Map the values array to an array of numbers, using only the count property
+      const counts = values.map(value => value.count);
+
+      // Create an array of labels for each date in the selected time range
+      const labels = values.map(value => value.date);
+
       // Create a chart object with options and data
       this.postsChart = {
         type: 'bar', // Use a bar chart
@@ -125,7 +163,7 @@ export class AdminComponent implements OnInit {
           datasets: [
             {
               label: 'Posts', // Set the label for the dataset
-              data: values, // Use the values array for the y-axis
+              data: counts, // Use the counts array for the y-axis
               backgroundColor: '#66BB6A', // Set the bar color to green
               borderColor: '#66BB6A', // Set the border color to green
               borderWidth: 1 // Set the border width to 1 pixel
@@ -135,6 +173,7 @@ export class AdminComponent implements OnInit {
       };
     }
   }
+
 
   // Define a method to create the gender chart using Chart.js
   createGenderChart(): void {
