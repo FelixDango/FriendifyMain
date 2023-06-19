@@ -19,6 +19,12 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
+  getUserName(): string{
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (user) return user.userName;
+    return '';
+  }
+
   updateUser() {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     this.user$.next(user);
