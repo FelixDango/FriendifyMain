@@ -1,9 +1,14 @@
 <div class="p-card mb-5">
   <div class="p-card-body">
     <div class="p-d-flex user-container p-ai-center mb-3">
-      <p-avatar [routerLink]="'/profile/'+ post?.username"  [image]="assetsUrl + post?.profilePicture" size="large" class="mr-2"></p-avatar>
+      <p-avatar [routerLink]="postIsPublic ? null : ('/profile/' + post?.username)" [image]="assetsUrl + post?.profilePicture" size="large" class="mr-2"></p-avatar>
       <div>
-        <p [routerLink]="'/profile/'+ post?.username" class="p-card-subtitle link">@{{ post?.username }}</p>
+        <p [routerLink]="postIsPublic ? null : ('/profile/' + post?.username)" [ngClass]="{'p-card-subtitle': !postIsPublic, 'p-card-subtitle link': !postIsPublic}" *ngIf="!postIsPublic">
+          @{{ post?.username }}
+        </p>
+        <p class="p-card-subtitle" *ngIf="postIsPublic">
+          @{{ post?.username }}
+        </p>
       </div>
     </div>
     <p class="p-card-text" #cardText>{{ post?.content }}</p>

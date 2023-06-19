@@ -30,6 +30,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { PrivateMessagesComponent } from './components/private-messages/private-messages.component';
 import {SidebarModule} from "primeng/sidebar";
 import {ChartModule} from "primeng/chart";
+import { EditProfileComponent } from './views/edit-profile/edit-profile.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import {ChartModule} from "primeng/chart";
     AdminComponent,
     MessagesComponent,
     SidebarComponent,
-    PrivateMessagesComponent
+    PrivateMessagesComponent,
+    EditProfileComponent
   ],
   imports: [
     BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
@@ -63,6 +65,7 @@ import {ChartModule} from "primeng/chart";
       {path: 'logout', component: LogoutComponent},
       {path: 'admin', component: AdminComponent},
       {path: 'messages', component: MessagesComponent},
+      {path: 'edit-profile', component: EditProfileComponent},
     ]),
     CheckboxModule,
     FileUploadModule,

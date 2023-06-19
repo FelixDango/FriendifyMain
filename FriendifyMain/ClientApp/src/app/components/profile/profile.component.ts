@@ -88,9 +88,6 @@ export class ProfileComponent implements OnInit {
       }
     );
   }
-
-
-
   toggleFollow() {
     if (this.isFollowing$.value) {
       this.unfollowUser(this.user$.value?.userName || '');
@@ -102,5 +99,4 @@ export class ProfileComponent implements OnInit {
 
     }
   }
-
 }

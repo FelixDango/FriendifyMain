@@ -1,0 +1,40 @@
+<div class="container-fluid d-flex justify-content-center align-items-center">
+  <div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">
+    <div class="text-center mb-5">
+      <img src="assets/media/logo.png" alt="Image" height="50" class="mb-3">
+      <div class="text-900 text-3xl font-medium mb-3">Edit Profile</div>
+    </div>
+
+    <form (ngSubmit)="updateProfile()">
+      <div class="form-group">
+        <label for="firstName" class="block text-900 font-medium mb-2">First Name</label>
+        <input type="text" [(ngModel)]="firstName" name="firstName" id="firstName" class="w-full mb-3" placeholder="Enter your first name" required>
+      </div>
+      <div class="form-group">
+        <label for="lastName" class="block text-900 font-medium mb-2">Last Name</label>
+        <input type="text" [(ngModel)]="lastName" name="lastName" id="lastName" class="w-full mb-3" placeholder="Enter your last name" required>
+      </div>
+      <div class="form-group">
+        <label for="birthdate" class="block text-900 font-medium mb-2">Birthdate</label>
+        <input type="date" [(ngModel)]="birthdate" name="birthdate" id="birthdate" class="w-full mb-3" required>
+      </div>
+      <div class="form-group">
+        <label for="sex" class="block text-900 font-medium mb-2">Sex</label>
+        <select class="w-full mb-3" [(ngModel)]="sex" name="sex" id="sex" required>
+          <option [value]="0">Male</option>
+          <option [value]="1">Female</option>
+          <option [value]="2">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="biography" class="block text-900 font-medium mb-2">Biography</label>
+        <textarea [(ngModel)]="biography" name="biography" id="biography" class="w-full mb-3" placeholder="Enter your biography"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="picture" class="block text-900 font-medium mb-2">Profile Picture</label>
+        <p-fileUpload [auto]="true" name="picture" id="picture" chooseLabel="Upload picture" [styleClass]="'f-upload'" [removeStyleClass]="'remove-upload'"  [customUpload]="true" accept="image/*,video/*" (uploadHandler)="handleFileInput($event, fileUpload)" class="w-full mb-3"></p-fileUpload>
+      </div>
+      <button type="submit" class="w-full btn btn-primary">Update Profile</button>
+    </form>
+  </div>
+</div>
