@@ -12,12 +12,26 @@ import {PostsService} from "../../services/posts.service";
 })
 export class HomeComponent implements OnInit {
   posts$: Observable<Post[]> = of([]);
+  publicPosts$: Observable<Post[]> = of([]);
   user: User | undefined;
 
   constructor(public authService: AuthService, private postsService: PostsService) {
     // get user posts from posts service
     this.postsService.posts$.subscribe((posts: Post[]) => {
       this.posts$ = this.postsService.posts$.pipe(
+        map((posts: Post[]) => {
+          // Sort the posts by date in descending order
+          return posts.sort((a, b) => {
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            return dateB.getTime() - dateA.getTime();
+          });
+        })
+      );
+    });
+
+    this.postsService.publicPosts$.subscribe((posts: Post[]) => {
+      this.publicPosts$ = this.postsService.publicPosts$.pipe(
         map((posts: Post[]) => {
           // Sort the posts by date in descending order
           return posts.sort((a, b) => {
@@ -41,7 +55,9 @@ export class HomeComponent implements OnInit {
     if (this.authService.isLoggedIn()) {
       // Get the user posts
       this.postsService.loadPosts();
-
+    } else {
+      this.postsService.loadPublicPosts();
+      console.log('Not logged in');
     }
   }
 

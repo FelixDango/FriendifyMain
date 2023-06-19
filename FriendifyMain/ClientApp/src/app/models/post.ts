@@ -13,4 +13,6 @@ export interface Post {
   comments: Comment[];
   pictures: Picture[];
   videos: Video[];
+  username: string;
+  profilePicture: string;
 }

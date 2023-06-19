@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-12">
-    <h1>Welcome {{ user?.firstName }}!</h1>
+    <h1>Welcome {{ user?.firstName??'Friend' }}!</h1>
   </div>
 </div>
 <ng-container *ngIf="user">
@@ -8,8 +8,17 @@
   <h1>Your Timeline!</h1>
 </ng-container>
 <h1 *ngIf="user === undefined">Here are public posts for you!</h1>
+<ng-container *ngIf="user === undefined">
+  <div *ngIf="publicPosts$ | async as publicPosts">
+    <div *ngFor="let post of publicPosts">
+      <div class="shadow-3 mb-4">
+        <app-user-post [postIsPublic]=true [post]="post"></app-user-post>
+      </div>
+    </div>
+  </div>
+</ng-container>
 
-<ng-container *ngIf="posts$ | async as userPosts">
+<ng-container *ngIf="user && posts$ | async as userPosts">
   <div *ngIf="userPosts.length > 0; else noPosts">
     <div *ngFor="let post of userPosts">
       <div class="shadow-3 mb-4">

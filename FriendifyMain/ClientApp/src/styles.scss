@@ -30,7 +30,10 @@ code {
   .p-avatar {
     border-radius: 50%;
     overflow: hidden;
-
+    cursor: pointer;
+  }
+  .link {
+    cursor: pointer;
   }
   .p-button {
     background: #5FDFF1;

@@ -19,9 +19,9 @@ export class UserPostComponent implements OnInit, AfterViewInit {
   private readonly minCharacters = 20;
   private readonly maxCharacters = 281;
   user: any = this.authService.user$;
-  postingUser: User | undefined;
   assetsUrl: string = this.httpService.assetsUrl;
   postId: number = 0;
+  @Input() postIsPublic: boolean = false;
   // post as behavior subject
   post$: BehaviorSubject<Post>  = new BehaviorSubject<Post>( {} as Post);
   likedByUser$: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -33,19 +33,18 @@ export class UserPostComponent implements OnInit, AfterViewInit {
       if ( post.likes !== undefined) {
         this.likedByUser$.next(post.likes.some(obj => obj.userId === this.user.id));
       }
-
     })
 
+    // get logged in user from auth service
     this.authService.user$.subscribe((user: User) => {
       this.user = user;
     })
-
   }
 
+  // style code
   private adjustFontSize(): void {
     const cardText = this.cardTextRef.nativeElement;
     const characters = cardText.textContent.trim().length;
-
     if (characters < this.minCharacters) {
       cardText.style.fontSize = `${this.minFontSize}rem`;
     } else if (characters > this.maxCharacters) {
@@ -56,7 +55,7 @@ export class UserPostComponent implements OnInit, AfterViewInit {
     }
   }
 
-
+  // style code
   private calculateFontSize(characters: number): number {
     const fontSizeRange = this.maxFontSize - this.minFontSize;
     const charactersRange = this.maxCharacters - this.minCharacters;
@@ -65,37 +64,27 @@ export class UserPostComponent implements OnInit, AfterViewInit {
     return fontSize;
   }
 
-
+  // style code
   ngAfterViewInit(): void {
     this.adjustFontSize();
   }
 
   ngOnInit(): void {
+    console.log('user', this.post);
     if (this.post) {
-      this.getUserById(this.post.userId);
       this.postId = this.post.id;
       this.post$.next(this.post);
     }
   }
 
 
-  getUserById(id: number) {
-    this.httpService.get('/Profile/' + id + '/view').subscribe(
-      (response: any) => {
-        this.postingUser = response;
-      },
-      (error: any) => {
-        console.log(error);
-      }
-    );
-  }
-
   toggleLikePost() {
+    console.log('like post', this.postId);
+    console.log('liked by user', this.likedByUser$.value);
     if (this.likedByUser$.value) {
       // Unlikelike post
       this.httpService.post('/Home/' + this.postId + '/like', {}).subscribe(
         (response: any) => {
-          console.log(response, 'unlike post');
           this.likedByUser$.next(false);
           // remove like by user
           this.post$.value.likes.splice(this.post$.value.likes.findIndex(obj => obj.userId === this.user.id), 1);
@@ -108,7 +97,6 @@ export class UserPostComponent implements OnInit, AfterViewInit {
       // like post
       this.httpService.post('/Home/' + this.postId + '/like', {}).subscribe(
         (response: any) => {
-          console.log(response, 'like post');
           this.likedByUser$.next(true);
           var like: Like = {
             userId: this.user.id,

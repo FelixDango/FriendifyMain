@@ -10,6 +10,8 @@ import {AuthService} from "./auth.service";
 export class PostsService {
   private postsSubject = new BehaviorSubject<Post[]>([]);
   public posts$ = this.postsSubject.asObservable();
+  private publicPostsSubject = new BehaviorSubject<Post[]>([]);
+  public publicPosts$ = this.publicPostsSubject.asObservable();
   private userPostsSubject = new BehaviorSubject<Post[]>([]);
   public userPosts$ = this.userPostsSubject.asObservable();
 
@@ -31,6 +33,25 @@ export class PostsService {
         if (error.status === 401) {
           this.authService.logout();
         }
+      }
+    )
+  }
+
+  loadPublicPosts() {
+
+    // clear the posts
+    this.publicPostsSubject.next([]);
+
+    let posts : Post[] = [];
+
+    this.httpService.get('/Home/getallposts').subscribe(
+      (response: any) => {
+        console.log(response as Post[]);
+        posts = response;
+        this.publicPostsSubject.next(posts);
+      },
+      (error: any) => {
+        console.log(error);
       }
     )
   }
