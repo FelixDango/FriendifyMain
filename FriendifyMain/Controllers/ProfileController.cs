@@ -28,12 +28,17 @@ namespace FriendifyMain.Controllers
         }
 
         // The get action allows an authenticated user to get their own profile or an admin to get any profile by id
-        [HttpGet("{id}/CriticalData")]
+        [HttpGet("{username}/CriticalData")]
         [Authorize] // Require authentication
         [ProducesResponseType(typeof(User), 200)] // Specify possible response type and status code
         [ProducesResponseType(typeof(string), 404)] // Specify possible response type and status code
-        public async Task<IActionResult> GetCrit(int id) // Indicate that the id is bound from route data
+        public async Task<IActionResult> GetCrit(string username) // Indicate that the username is bound from route data
         {
+            if (username is null)
+            {
+                throw new ArgumentNullException(nameof(username));
+            }
+
             // Get the current user from the user manager
             if (User == null || User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
             {
@@ -41,8 +46,9 @@ namespace FriendifyMain.Controllers
             }
 
             var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
+            var selectedUser = await _userManager.FindByNameAsync(username);
 
-            if (currentUser == null || _context == null) { return BadRequest(); }
+            if (currentUser == null || selectedUser == null || _context == null) { return BadRequest(); }
 
             // Check if the user is suspended
             if (currentUser.Suspended)
@@ -51,9 +57,9 @@ namespace FriendifyMain.Controllers
             }
 
             // Load the related data explicitly
-            await _context.Entry(currentUser).Collection(u => u.Followers).LoadAsync();
-            await _context.Entry(currentUser).Collection(u => u.Following).LoadAsync();
-            await _context.Entry(currentUser).Collection(u => u.Posts).LoadAsync();
+            await _context.Entry(selectedUser).Collection(u => u.Followers).LoadAsync();
+            await _context.Entry(selectedUser).Collection(u => u.Following).LoadAsync();
+            await _context.Entry(selectedUser).Collection(u => u.Posts).LoadAsync();
 
             await _context.Posts
                             .Include(p => p.Pictures)
@@ -61,27 +67,21 @@ namespace FriendifyMain.Controllers
                             .Include(p => p.Comments)
                             .Include(p => p.Likes)
                             .OrderByDescending(p => p.Date)
+                            .Where(p => p.UserId == selectedUser.Id)
                             .ToListAsync();
 
             await _context.Users
                      .Include(u => u.Picture) // Include the Picture navigation property
-                     .FirstOrDefaultAsync(u => u.Id == id); // Filter by id
+                     .Include(u => u.Images)
+                     .Include(u => u.Videos)
+                     .FirstOrDefaultAsync(u => u.Id == selectedUser.Id); // Filter by id
 
 
             // Check if the current user is an admin or requesting their own profile
-            if (currentUser.IsAdmin || currentUser.Id == id)
+            if (currentUser.IsAdmin || currentUser.Id == selectedUser.Id)
             {
-                // Get the user by id from the database context
-                var user = await _context.Users.FindAsync(id);
-
-                // Check if the user exists
-                if (user == null)
-                {
-                    return NotFound("User not found."); // Return a 404 not found response with an error message
-                }
-
                 // Return a 200 OK response with the user data
-                return Ok(user);
+                return Ok(selectedUser);
             }
 
             // If not, return a 403 forbidden response
@@ -89,12 +89,16 @@ namespace FriendifyMain.Controllers
         }
 
         // The get action allows an authenticated user to get their own profile or an admin to get any profile by id
-        [HttpGet("{id}/view")]
+        [HttpGet("{username}/view")]
         [Authorize] // Require authentication
         [ProducesResponseType(typeof(User), 200)] // Specify possible response type and status code
         [ProducesResponseType(typeof(string), 404)] // Specify possible response type and status code
-        public async Task<IActionResult> Get(int id) // Indicate that the id is bound from route data
+        public async Task<IActionResult> Get(string username) // Indicate that the username is bound from route data
         {
+            if (username is null)
+            {
+                throw new ArgumentNullException(nameof(username));
+            }
             // Get the current user from the user manager
             if (User == null || User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
             {
@@ -102,8 +106,9 @@ namespace FriendifyMain.Controllers
             }
 
             var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
+            var selectedUser = await _userManager.FindByNameAsync(username);
 
-            if (currentUser == null || _context == null) { return BadRequest(); }
+            if (currentUser == null || selectedUser == null || _context == null) { return BadRequest(); }
 
             // Check if the user is suspended
             if (currentUser.Suspended)
@@ -112,9 +117,9 @@ namespace FriendifyMain.Controllers
             }
 
             // Load the related data explicitly
-            await _context.Entry(currentUser).Collection(u => u.Followers).LoadAsync();
-            await _context.Entry(currentUser).Collection(u => u.Following).LoadAsync();
-            await _context.Entry(currentUser).Collection(u => u.Posts).LoadAsync();
+            await _context.Entry(selectedUser).Collection(u => u.Followers).LoadAsync();
+            await _context.Entry(selectedUser).Collection(u => u.Following).LoadAsync();
+            await _context.Entry(selectedUser).Collection(u => u.Posts).LoadAsync();
 
             await _context.Posts
                             .Include(p => p.Pictures)
@@ -122,52 +127,47 @@ namespace FriendifyMain.Controllers
                             .Include(p => p.Comments)
                             .Include(p => p.Likes)
                             .OrderByDescending(p => p.Date)
+                            .Where(p => p.UserId == selectedUser.Id)
                             .ToListAsync();
 
             await _context.Users
                      .Include(u => u.Picture) // Include the Picture navigation property
-                     .FirstOrDefaultAsync(u => u.Id == id); // Filter by id
-
-
-
-            // Get the user by id from the database context
-            var user = await _context.Users.FindAsync(id);
-
-            // Check if the user exists
-            if (user == null)
-            {
-                return NotFound("User not found."); // Return a 404 not found response with an error message
-            }
+                     .FirstOrDefaultAsync(u => u.Id == selectedUser.Id); // Filter by id
 
             // Remove Critical fields from response
-            user.PasswordHash = "Censored";
-            user.Email = "Censored";
-            user.Address = "Censored";
-            user.Country = "Censored";
-            user.Likes = new();
-            user.Comments = new();
-            user.NormalizedEmail = "Censored";
-            user.SecurityStamp = "Censored";
-            user.City = "Censored";
-            user.PhoneNumber = "Censored";
-            user.Images = new();
-            user.Messages = new();
-            user.Videos = new();
+            selectedUser.PasswordHash = "Censored";
+            selectedUser.Email = "Censored";
+            selectedUser.Address = "Censored";
+            selectedUser.Country = "Censored";
+            selectedUser.Likes = new();
+            selectedUser.Comments = new();
+            selectedUser.NormalizedEmail = "Censored";
+            selectedUser.SecurityStamp = "Censored";
+            selectedUser.City = "Censored";
+            selectedUser.PhoneNumber = "Censored";
+            selectedUser.Images = new();
+            selectedUser.Messages = new();
+            selectedUser.Videos = new();
 
             // Return a 200 OK response with the user data
-            return Ok(user);
+            return Ok(selectedUser);
 
         }
 
 
         // The update action allows an authenticated user to update their own profile or an admin to update any profile by id
-        [HttpPut("{id}")]
+        [HttpPut("{username}/update")]
         [Authorize] // Require authentication
         [ProducesResponseType(typeof(User), 200)] // Specify possible response type and status code
         [ProducesResponseType(typeof(IdentityError[]), 400)] // Specify possible response type and status code
         [ProducesResponseType(typeof(string), 404)] // Specify possible response type and status code
-        public async Task<IActionResult> Update(int id, [FromBody] UpdateViewModel model)
+        public async Task<IActionResult> Update(string username, [FromBody] UpdateViewModel model)
         {
+            if (username is null)
+            {
+                throw new ArgumentNullException(nameof(username));
+            }
+
             // Get the current user from the user manager
             if (User == null || User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
             {
@@ -175,80 +175,66 @@ namespace FriendifyMain.Controllers
             }
 
             var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
+            var selectedUser = await _userManager.FindByNameAsync(username);
 
-            if (currentUser == null || _context == null) { return BadRequest(); }
+            if (currentUser == null || selectedUser == null || _context == null) { return BadRequest(); }
 
             await _context.Users
                      .Include(u => u.Picture) // Include the Picture navigation property
-                     .FirstOrDefaultAsync(u => u.Id == id); // Filter by id
+                     .FirstOrDefaultAsync(u => u.Id == selectedUser.Id); // Filter by id
 
             // Check if the current user is an admin or updating their own profile
-            if (currentUser.IsAdmin || currentUser.Id == id)
+            if (currentUser.IsAdmin || currentUser.Id == selectedUser.Id)
             {
-                // Get the user by id from the database context
-                var user = await _context.Users.FindAsync(id);
-
-                // Check if the user exists
-                if (user == null)
+                if (model != null)
                 {
-                    return NotFound("User not found.");
+                    // Use AutoMapper to update the user properties from the model
+                    _mapper.Map(model, selectedUser);
+
+                    if (model.PictureUrl != null)
+                    {
+                        selectedUser.Picture.Url = model.PictureUrl;
+                    }
+                    // Update the user in the database context and save changes
+                    var result = await _userManager.UpdateAsync(selectedUser);
+                    // Check if the update was successful
+                    if (result.Succeeded)
+                    {
+                        // Return a 200 OK response with the updated user data
+                        return Ok(selectedUser);
+                    }
+                    else
+                    {
+                        // If not, return a 400 Bad Request response with the errors
+                        return BadRequest(result.Errors);
+                    }
                 }
-
-                // Use AutoMapper to update the user properties from the model
-                _mapper.Map(model, user);
-
-                if (model != null && model.PictureUrl != null)
-                {
-                    user.Picture.Url = model.PictureUrl;
-                }
-
-                // Update the user in the database context and save changes
-                var result = await _userManager.UpdateAsync(user);
-
-                // Check if the update was successful
-                if (result.Succeeded)
-                {
-                    // Return a 200 OK response with the updated user data
-                    return Ok(user);
-                }
-
-                // If not, return a 400 Bad Request response with the errors
-                return BadRequest(result.Errors);
             }
-
             // If not, return a 403 forbidden response
             return Forbid();
         }
 
         // The delete action allows an authenticated user to delete their own profile or an admin to delete any profile by id
-        [HttpDelete("{id}")]
+        [HttpDelete("{username}")]
         [Authorize] // Require authentication
         [ProducesResponseType(200)] // Specify possible response status code
         [ProducesResponseType(typeof(string), 404)] // Specify possible response type and status code
-        public async Task<IActionResult> Delete(int id) // Indicate that the id is bound from route data
+        public async Task<IActionResult> Delete(string username) // Indicate that the id is bound from route data
         {
             // Get the current user from the user manager
-            if (User == null || User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
+            if (User == null || username == null ||User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
             {
                 return BadRequest();
             }
 
             var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
+            var selectedUser = await _userManager.FindByNameAsync(username);
 
             // Check if the current user is an admin or deleting their own profile
-            if (currentUser != null && (currentUser.IsAdmin || currentUser.Id == id))
+            if ((currentUser != null && selectedUser != null ) && (currentUser.IsAdmin || currentUser.Id == selectedUser.Id))
             {
-                // Get the user by id from the database context
-                var user = await _context.Users.FindAsync(id);
-
-                // Check if the user exists
-                if (user == null)
-                {
-                    return NotFound("User not found."); // Return a 404 not found response with an error message
-                }
-
                 // Delete the user from the database context and save changes
-                await _userManager.DeleteAsync(user);
+                await _userManager.DeleteAsync(selectedUser);
 
                 // Return a 200 OK response
                 return Ok();
@@ -262,7 +248,7 @@ namespace FriendifyMain.Controllers
         [HttpGet]
         [Authorize] // Require authentication
         [ProducesResponseType(typeof(List<User>), 200)] // Specify possible response type and status code
-        public async Task<IActionResult> Get([FromQuery] string name) // Indicate that the name from query string
+        public async Task<IActionResult> FindByName([FromQuery] string name) // Indicate that the name from query string
         {
             // Get the current user from the user manager
             if (User == null || User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
@@ -293,16 +279,16 @@ namespace FriendifyMain.Controllers
         }
 
         // The follow action allows the current user to follow another user by their id
-        [HttpPost("{id}/follow")]
+        [HttpPost("{username}/follow")]
         [Authorize] // Require authentication
         [ProducesResponseType(200)] // Specify possible response status code
         [ProducesResponseType(typeof(string), 404)] // Specify possible response type and status code
-        public async Task<IActionResult> Follow(int id) // Indicate that the id is bound from route data
+        public async Task<IActionResult> Follow(string username) // Indicate that the id is bound from route data
         {
             try
             {
                 // Get the current user from the user manager
-                if (User == null || User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
+                if (User == null || username == null || User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
                 {
                     return BadRequest();
                 }
@@ -322,7 +308,7 @@ namespace FriendifyMain.Controllers
                 }
 
                 // Get the other user by their id from the database context
-                var otherUser = await _context.Users.FindAsync(id);
+                var otherUser = await _userManager.FindByNameAsync(username);
 
                 // Check if the other user exists
                 if (otherUser == null)
@@ -352,16 +338,16 @@ namespace FriendifyMain.Controllers
         }
 
         // The unfollow action allows the current user to unfollow another user by their id
-        [HttpPost("{id}/unfollow")]
+        [HttpPost("{username}/unfollow")]
         [Authorize] // Require authentication
         [ProducesResponseType(200)] // Specify possible response status code
         [ProducesResponseType(typeof(string), 404)] // Specify possible response type and status code
-        public async Task<IActionResult> Unfollow(int id) // Indicate that the id is bound from route data
+        public async Task<IActionResult> Unfollow(string username) // Indicate that the id is bound from route data
         {
             try
             {
                 // Get the current user from the user manager
-                if (User == null || User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
+                if (User == null || username == null ||User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
                 {
                     return BadRequest();
                 }
@@ -381,7 +367,7 @@ namespace FriendifyMain.Controllers
                 }
 
                 // Get the other user by their id from the database context
-                var otherUser = await _context.Users.FindAsync(id);
+                var otherUser = await _userManager.FindByNameAsync(username);
 
                 // Check if the other user exists
                 if (otherUser == null)
