@@ -1,0 +1,11 @@
+.chat-container {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+}
+
+app-sidebar {
+  height: 100%;
+  display: block;
+  width: 30%;
+}

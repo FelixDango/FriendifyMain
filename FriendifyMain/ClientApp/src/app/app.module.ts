@@ -25,6 +25,10 @@ import {MenubarModule} from "primeng/menubar";
 import { LogoutComponent } from './components/logout/logout.component';
 import { TokenInterceptor } from './services/token-interceptor.service';
 import { AdminComponent } from './views/admin/admin.component';
+import { MessagesComponent } from './views/messages/messages.component';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { PrivateMessagesComponent } from './components/private-messages/private-messages.component';
+import {SidebarModule} from "primeng/sidebar";
 
 @NgModule({
   declarations: [
@@ -38,7 +42,10 @@ import { AdminComponent } from './views/admin/admin.component';
     ProfileComponent,
     ComposePostComponent,
     LogoutComponent,
-    AdminComponent
+    AdminComponent,
+    MessagesComponent,
+    SidebarComponent,
+    PrivateMessagesComponent
   ],
   imports: [
     BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
@@ -54,6 +61,7 @@ import { AdminComponent } from './views/admin/admin.component';
       {path: 'profile/:id', component: ProfilePageComponent},
       {path: 'logout', component: LogoutComponent},
       {path: 'admin', component: AdminComponent},
+      {path: 'messages', component: MessagesComponent},
     ]),
     CheckboxModule,
     FileUploadModule,
@@ -61,7 +69,8 @@ import { AdminComponent } from './views/admin/admin.component';
     RippleModule,
     ImageModule,
     AvatarModule,
-    MenubarModule
+    MenubarModule,
+    SidebarModule
   ],
   providers: [
     {
