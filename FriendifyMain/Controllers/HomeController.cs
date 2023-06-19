@@ -75,6 +75,40 @@ namespace FriendifyMain.Controllers
             }
         }
 
+        // The GetAllPosts action returns the home page with all posts ordered by date for anonymous users
+        [AllowAnonymous] // Allow access by non-authenticated users
+        [HttpGet("getallposts")] // Accept only GET requests and append the route to the controller route
+        public async Task<ActionResult<IEnumerable<Post>>> GetAllPosts(int pageNumber = 1, int pageSize = 0)
+        {
+            try
+            {
+                // Get all posts ordered by date in descending order
+                var posts = await _context.Posts
+                    .Include(p => p.Pictures)
+                    .Include(p => p.Videos)
+                    .Include(p => p.Comments)
+                    .Include(p => p.Likes)
+                    .OrderByDescending(p => p.Date)
+                    .ToListAsync();
+
+                // Check if paging is enabled
+                if (pageSize > 0)
+                {
+                    // Skip the previous pages and take only the current page
+                    posts = posts.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                }
+
+                // Return an OK response with the posts as the data
+                return Ok(posts.ToList());
+            }
+            catch (Exception ex)
+            {
+                // Handle any possible exceptions
+                return StatusCode(500, ex.Message); // Return an internal server error response with the error message
+            }
+        }
+
+
         // The create action allows the current user to create a new post with optional pictures and videos
         [Authorize] // Require authentication
         [HttpPost("createpost")] // Accept only POST requests and append the route to the controller route
