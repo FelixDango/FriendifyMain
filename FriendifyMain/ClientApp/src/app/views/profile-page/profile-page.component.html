@@ -1,4 +1,4 @@
-<app-profile [id]=id></app-profile>
+<app-profile [username]=username></app-profile>
 <ng-container *ngIf="userPosts$ | async as userPosts; else noPosts">
   <div *ngIf="userPosts && userPosts.length > 0; else noPosts">
     <div *ngFor="let post of userPosts">

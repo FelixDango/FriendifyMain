@@ -35,14 +35,14 @@ export class PostsService {
     )
   }
 
-  loadUserPosts(id: number) {
+  loadUserPosts(username: string) {
 
     // clear the posts
     this.userPostsSubject.next([]);
 
     let posts : Post[] = [];
 
-    this.httpService.get('/Profile/'+id+'/view').subscribe(
+    this.httpService.get('/Profile/'+username+'/view').subscribe(
       (response: any) => {
 
         posts = response.posts as Post[];

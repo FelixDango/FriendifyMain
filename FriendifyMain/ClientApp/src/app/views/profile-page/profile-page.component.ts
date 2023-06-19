@@ -13,11 +13,11 @@ import {ActivatedRoute} from "@angular/router";
 export class ProfilePageComponent implements OnInit {
   userPosts$: Observable<Post[]> = of([] as Post[]);
   posts : Post[] = [];
-  id: number | undefined;
+  username: string | undefined;
 
   constructor(public authService: AuthService, private postsService: PostsService, private route : ActivatedRoute) {
-    let routeString = this.route.snapshot.paramMap.get('id');
-    if (routeString) this.id = parseInt(routeString, 10);
+    let name = this.route.snapshot.paramMap.get('username');
+    if (name) this.username = name;
 
     this.postsService.userPosts$.subscribe((posts: Post[]) => {
         if (posts.length > 0) {
@@ -36,8 +36,8 @@ export class ProfilePageComponent implements OnInit {
         }
       });
       // Get the user posts
-      if (this.id) {
-        this.postsService.loadUserPosts(this.id);
+      if (this.username) {
+        this.postsService.loadUserPosts(this.username);
       }
     }
   }

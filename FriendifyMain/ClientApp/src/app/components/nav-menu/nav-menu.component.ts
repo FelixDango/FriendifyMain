@@ -46,7 +46,7 @@ export class NavMenuComponent implements OnInit {
       },
       {
         label: 'My Profile',
-        routerLink: '/profile/' + this.authService.getUserId(),
+        routerLink: '/profile/' + this.authService.getUserName(),
         visible: this.authService.isLoggedIn()
       },
       {

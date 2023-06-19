@@ -59,7 +59,7 @@ import {ChartModule} from "primeng/chart";
       {path: '', component: HomeComponent, pathMatch: 'full'},
       {path: 'login', component: LoginComponent},
       {path: 'register', component: RegisterComponent},
-      {path: 'profile/:id', component: ProfilePageComponent},
+      {path: 'profile/:username', component: ProfilePageComponent},
       {path: 'logout', component: LogoutComponent},
       {path: 'admin', component: AdminComponent},
       {path: 'messages', component: MessagesComponent},

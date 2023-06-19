@@ -10,7 +10,7 @@ import {BehaviorSubject} from "rxjs";
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
-  @Input() id: number | undefined;
+  @Input() username: string | undefined;
   user$: BehaviorSubject<User | undefined> = new BehaviorSubject<User | undefined>(undefined);
   loggedInUser: User | undefined = undefined;
 
@@ -30,8 +30,8 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.authService.isLoggedIn()) {
-      if (this.id) {
-        this.loadUser(this.id)
+      if (this.username) {
+        this.loadUser(this.username);
         this.authService.updateUser();
       }
 
@@ -39,9 +39,9 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  loadUser(userId: number) {
+  loadUser(username: string) {
     // Add code to load user data
-    this.httpService.get('/Profile/' + userId + '/view').subscribe(
+    this.httpService.get('/Profile/' + username + '/view').subscribe(
       (response: any) => {
         this.user$.next(response);
         if (this.loggedInUser) this.checkFollow(this.loggedInUser?.id);
@@ -69,22 +69,22 @@ export class ProfileComponent implements OnInit {
   }
 
   // follow
-  followUser(id: number) {
-    this.httpService.post('/Profile/' + id + '/follow', null).subscribe(
+  followUser(username: string) {
+    this.httpService.post('/Profile/' + username + '/follow', null).subscribe(
       (response) => {
         this.isFollowing$.next(true);
-        this.loadUser(id);
+        this.loadUser(username);
       }
     );
   }
 
   // unfollow
-  unfollowUser(id: number) {
-    this.httpService.post('/Profile/' + id + '/unfollow',null).subscribe(
+  unfollowUser(username: string) {
+    this.httpService.post('/Profile/' + username + '/unfollow',null).subscribe(
       (response) => {
         console.log('unfollow res:',response);
         this.isFollowing$.next(false);
-        this.loadUser(id);
+        this.loadUser(username);
       }
     );
   }
@@ -93,11 +93,11 @@ export class ProfileComponent implements OnInit {
 
   toggleFollow() {
     if (this.isFollowing$.value) {
-      this.unfollowUser(this.user$.value?.id || 0);
+      this.unfollowUser(this.user$.value?.userName || '');
       console.log('this follow', this.isFollowing$.value);
 
     } else {
-      this.followUser(this.user$.value?.id || 0);
+      this.followUser(this.user$.value?.userName || '');
       console.log('this follow', this.isFollowing$.value);
 
     }
