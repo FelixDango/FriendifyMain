@@ -10,6 +10,7 @@ namespace FriendifyMain.Models
 
         public int UserId { get; set; }
         public string Username { get; set; }
+        public string ProfilePicture { get; set; }
         [JsonIgnore]
         public User User { get; set; }
         public string Content { get; set; }
