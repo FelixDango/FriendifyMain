@@ -323,7 +323,7 @@ namespace FriendifyMain.Controllers
                 var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
                 
 
-                if (currentUser == null || _context == null) { return BadRequest(); }
+                if (currentUser == null || currentUser.UserName == null || _context == null) { return BadRequest(); }
 
                 //Check if user is suspended
                 if (currentUser.Suspended)
@@ -347,6 +347,7 @@ namespace FriendifyMain.Controllers
                     Date = DateTime.Now,
                     UserId = currentUser.Id,
                     PostId = post.Id,
+                    Username = currentUser.UserName,
                     Id = 0,
                 };
 

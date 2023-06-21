@@ -21,5 +21,6 @@ namespace FriendifyMain.Models
         public User User { get; set; }
         public string Text { get; set; }
         public DateTime Date { get; set; }
+        public string Username { get; set; } 
     }
 }

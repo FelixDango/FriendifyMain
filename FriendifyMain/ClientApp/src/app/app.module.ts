@@ -33,6 +33,7 @@ import {ChartModule} from "primeng/chart";
 import { EditProfileComponent } from './views/edit-profile/edit-profile.component';
 import { CommentSectionComponent } from './components/user-post/comment-section/comment-section.component';
 import { CommentComponent } from './components/user-post/comment/comment.component';
+import { MenuModule } from 'primeng/menu'; 
 
 @NgModule({
   declarations: [
@@ -79,7 +80,8 @@ import { CommentComponent } from './components/user-post/comment/comment.compone
     AvatarModule,
     MenubarModule,
     SidebarModule,
-    ChartModule
+    ChartModule,
+    MenuModule,
   ],
   providers: [
     {
