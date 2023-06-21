@@ -1,11 +1,11 @@
-import {AfterViewInit, Component, Input, OnChanges, OnInit, ViewChild, ElementRef} from '@angular/core';
+import {AfterViewInit, Component, Input, OnInit, ViewChild, ElementRef} from '@angular/core';
 import {HttpService} from "../../services/http.service";
 import {AuthService} from "../../services/auth.service";
 import {User} from "../../models/user";
 import {Post} from "../../models/post";
-import {BehaviorSubject, Observable} from "rxjs";
-import {PostsService} from "../../services/posts.service";
+import {BehaviorSubject} from "rxjs";
 import {Like} from "../../models/like";
+import {Comment} from "../../models/comment";
 
 @Component({
   selector: 'app-user-post',
@@ -20,7 +20,9 @@ export class UserPostComponent implements OnInit, AfterViewInit {
   private readonly maxCharacters = 281;
   user: any = this.authService.user$;
   assetsUrl: string = this.httpService.assetsUrl;
+  showComments = false;
   postId: number = 0;
+  comments: Comment[] = [] as Comment[];
   @Input() postIsPublic: boolean = false;
   // post as behavior subject
   post$: BehaviorSubject<Post>  = new BehaviorSubject<Post>( {} as Post);
@@ -30,7 +32,10 @@ export class UserPostComponent implements OnInit, AfterViewInit {
     this.user = this.authService.user$;
     this.post$.subscribe((post: Post) => {
       // if user liked the post
-      if ( post.likes !== undefined) {
+      if ( post.comments) {
+        this.comments = post.comments as Comment[];
+      }
+      if ( post.likes !== undefined && this.user != null) {
         this.likedByUser$.next(post.likes.some(obj => obj.userId === this.user.id));
       }
     })
@@ -70,17 +75,22 @@ export class UserPostComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    console.log('user', this.post);
     if (this.post) {
       this.postId = this.post.id;
       this.post$.next(this.post);
     }
   }
 
+  toggleComments(button: { disabled: boolean; }) {
+    this.showComments = !this.showComments;
+    button.disabled = true;
+    setTimeout(()=>{                           // <<<---using ()=> syntax
+      button.disabled = false;
+    }, 400);
+  }
+
 
   toggleLikePost() {
-    console.log('like post', this.postId);
-    console.log('liked by user', this.likedByUser$.value);
     if (this.likedByUser$.value) {
       // Unlikelike post
       this.httpService.post('/Home/' + this.postId + '/like', {}).subscribe(
@@ -90,6 +100,9 @@ export class UserPostComponent implements OnInit, AfterViewInit {
           this.post$.value.likes.splice(this.post$.value.likes.findIndex(obj => obj.userId === this.user.id), 1);
         },
         (error: any) => {
+          if (error.status === 401) {
+            this.authService.logout();
+          }
           console.log(error);
         }
       );
@@ -108,6 +121,9 @@ export class UserPostComponent implements OnInit, AfterViewInit {
           this.post$.value.likes.push(like);
         },
         (error: any) => {
+          if (error.status === 401) {
+            this.authService.logout();
+          }
           console.log(error);
         }
       );

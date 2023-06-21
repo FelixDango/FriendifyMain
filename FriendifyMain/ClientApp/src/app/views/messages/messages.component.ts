@@ -18,7 +18,6 @@ export class MessagesComponent implements OnInit {
   constructor(private httpService: HttpService, private authService: AuthService, private messageService: MessagesService) {
     this.authService.user$.subscribe((user: User) => {
       this.user = user;
-      console.log('user',this.user);
     })
 
 

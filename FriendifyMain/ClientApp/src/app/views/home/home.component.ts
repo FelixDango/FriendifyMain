@@ -57,7 +57,6 @@ export class HomeComponent implements OnInit {
       this.postsService.loadPosts();
     } else {
       this.postsService.loadPublicPosts();
-      console.log('Not logged in');
     }
   }
 

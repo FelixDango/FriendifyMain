@@ -16,8 +16,22 @@ export class MessagesService {
 
   getMessages() {
     this.httpService.get('/Message').subscribe((messages: any) => {
-      console.log(messages);
+      console.log('res get message',messages);
       this.messages$.next(messages);
     })
+  }
+
+  postMessage(message: string, receiverUsername: string) {
+    this.httpService.post('/Message', {content: message, ReceiverUsername: receiverUsername}).subscribe((response: any) => {
+        console.log('res post message',response);
+        this.getMessages();
+      }, (error: any) => {
+        console.log(error);
+      }
+    )
+  }
+
+  getMessagedUsernames() {
+
   }
 }

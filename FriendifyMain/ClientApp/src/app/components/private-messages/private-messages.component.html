@@ -12,7 +12,7 @@
 
     <form (ngSubmit)="sendMessage()">
       <div class="input-container">
-      <input [(ngModel)]="m" class="message-input" type="text" placeholder="Type a message..." />
+      <input [(ngModel)]="message" name="message" class="message-input" type="text" placeholder="Type a message..." />
       <button class="send-button" type="submit">
         Send
       </button>

@@ -13,7 +13,7 @@ import {MessagesService} from "../../services/messages.service";
 export class PrivateMessagesComponent {
   messages$: BehaviorSubject<Message[]> = new BehaviorSubject<Message[]>([])
   user: User | undefined = undefined;
-  m: string | undefined;
+  message: string | undefined;
 
 
   constructor(private authService: AuthService, private messageService: MessagesService) {
@@ -32,7 +32,11 @@ export class PrivateMessagesComponent {
 
   sendMessage() {
     // Add code to send a message
-    console.log('message',this.m);
+    console.log('message',this.message);
+    if (this.message != undefined) {
+      this.messageService.postMessage(this.message, 'Test12345');
+      this.message = '';
+    }
   }
 
 }

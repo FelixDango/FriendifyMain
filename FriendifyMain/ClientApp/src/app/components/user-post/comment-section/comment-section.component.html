@@ -1,0 +1,33 @@
+<div class="card">
+  <div class="card-body">
+    <div class="p-d-flex p-ai-center p-mb-3">
+      <div class="p-d-flex p-ai-center mb-3">
+        <h2>Comments</h2>
+        <form *ngIf="!postIsPublic" >
+          <div class="p-fluid mb-2">
+            <div class="p-field">
+              <label for="postComment">Add comment</label>
+              <input pInputText [(ngModel)]="comment" name="postComment" id="postComment" [maxLength]="281"/>
+            </div>
+
+          </div>
+          <div class="d-flex justify-content-end">
+            <button pButton type="button" label="Comment" class="p-button-primary" [disabled]="comment.length === 0 || comment.length > 281" (click)="addComment()"></button>
+          </div>
+        </form>
+      </div>
+
+      <div class="p-d-flex p-ai-center p-mb-3">
+        <ng-container *ngIf="comments?.length !== 0; else noComments">
+          <app-comment *ngFor="let comment of comments;" [comment]="comment"></app-comment>
+        </ng-container>
+      </div>
+
+      <ng-template #noComments>
+        <div class="p-d-flex p-ai-center p-mb-3">
+          <p>No comments yet</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

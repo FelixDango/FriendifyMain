@@ -31,6 +31,8 @@ import { PrivateMessagesComponent } from './components/private-messages/private-
 import {SidebarModule} from "primeng/sidebar";
 import {ChartModule} from "primeng/chart";
 import { EditProfileComponent } from './views/edit-profile/edit-profile.component';
+import { CommentSectionComponent } from './components/user-post/comment-section/comment-section.component';
+import { CommentComponent } from './components/user-post/comment/comment.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +50,9 @@ import { EditProfileComponent } from './views/edit-profile/edit-profile.componen
     MessagesComponent,
     SidebarComponent,
     PrivateMessagesComponent,
-    EditProfileComponent
+    EditProfileComponent,
+    CommentSectionComponent,
+    CommentComponent
   ],
   imports: [
     BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),

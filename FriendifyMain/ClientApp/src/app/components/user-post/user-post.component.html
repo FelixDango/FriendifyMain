@@ -18,11 +18,14 @@
       <video *ngFor="let video of post?.videos" [src]="assetsUrl + video?.url" class="p-mr-2 p-card-media" controls width="100%" height="auto"></video>
     </div>
 
-    <p class="p-card-date">{{ post?.date | date }}</p>
+    <p class="p-card-date">{{ post?.date | date:'dd.MM.yyyy, HH:mm' }}</p>
 
     <div class="p-d-flex p-ai-center">
       <button pButton pRipple type="button" [label]="post$.value.likes.length + ''" icon="pi pi-thumbs-up" [ngClass]="{'p-button-text p-button-rounded p-button-success': likedByUser$.value, 'p-button-text p-button-rounded': !likedByUser$.value}" (click)="toggleLikePost()"></button>
-      <button pButton pRipple type="button" icon="pi pi-share-alt" class="p-button-text p-button-rounded"></button>
+      <button pButton pRipple #toggleCommentsButton type="button" [label]="post$.value.comments.length + ''" icon="pi pi-comments" class="p-button-text p-button-rounded" (click)="toggleComments(toggleCommentsButton)"></button>
     </div>
+    <app-comment-section [postIsPublic]="postIsPublic" [postId]="post$.value.id" [comments]="comments" *ngIf="showComments"></app-comment-section>
+
   </div>
+
 </div>
