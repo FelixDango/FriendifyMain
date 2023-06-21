@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 namespace FriendifyMain.Controllers
 {
@@ -161,7 +162,7 @@ namespace FriendifyMain.Controllers
         [ProducesResponseType(typeof(User), 200)] // Specify possible response type and status code
         [ProducesResponseType(typeof(IdentityError[]), 400)] // Specify possible response type and status code
         [ProducesResponseType(typeof(string), 404)] // Specify possible response type and status code
-        public async Task<IActionResult> Update(string username, [FromBody] UpdateViewModel model)
+        public async Task<IActionResult> Update(string username, [FromForm] UpdateViewModel model)
         {
             if (username is null)
             {
@@ -191,9 +192,17 @@ namespace FriendifyMain.Controllers
                     // Use AutoMapper to update the user properties from the model
                     _mapper.Map(model, selectedUser);
 
-                    if (model.PictureUrl != null)
+                    if (model.PictureFile != null)
                     {
-                        selectedUser.Picture.Url = model.PictureUrl;
+                        var pictureUrl = await SaveFile(model.PictureFile);
+                        if (pictureUrl != null)
+                        {
+                            selectedUser.Picture = new Picture { Id = 0, Url = pictureUrl, User = selectedUser, UserId = selectedUser.Id };
+                        }
+                        else
+                        {
+                            return BadRequest("Failed to save picture file"); // Return a bad request response with an error message
+                        }
                     }
                     // Update the user in the database context and save changes
                     var result = await _userManager.UpdateAsync(selectedUser);
@@ -212,6 +221,32 @@ namespace FriendifyMain.Controllers
             }
             // If not, return a 403 forbidden response
             return Forbid();
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public async Task<string> SaveFile(IFormFile file)
+        {
+            var filePath = Path.Combine("wwwroot", "assets", "media", file.FileName);
+            if (file == null || file.Length == 0)
+            {
+                throw new ArgumentException("Invalid file");
+            }
+
+            // Create the directory if it doesn't exist
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+            // Open a file stream for writing
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                // Copy the file to the file stream
+                await file.CopyToAsync(fileStream);
+            }
+
+            var strippedFilePath = Path.Combine("assets", "media", file.FileName);
+
+
+            // Return the file path
+            return strippedFilePath;
         }
 
         // The delete action allows an authenticated user to delete their own profile or an admin to delete any profile by id
