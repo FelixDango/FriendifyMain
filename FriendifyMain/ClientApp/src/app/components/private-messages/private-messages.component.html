@@ -1,7 +1,7 @@
 <div class="chat-content">
   <div class="messages-container">
     <div class="messages">
-      <div *ngFor="let message of messages$ | async" [ngClass]="{ 'message': true, 'self': message.userId === user?.id }">
+      <div *ngFor="let message of of(loadedMessages) | async" [ngClass]="{ 'message': true, 'self': message.userId === user?.id }">
         <div class="message-content" [ngClass]="{'self': message.userId === user?.id }">
           <p>{{ message.content }}</p>
         </div>

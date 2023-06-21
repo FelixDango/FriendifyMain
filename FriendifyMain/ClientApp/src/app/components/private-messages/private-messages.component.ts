@@ -1,9 +1,9 @@
 import {Component, Input} from '@angular/core';
 import {Message} from "../../models/message";
-import {BehaviorSubject} from "rxjs";
 import {User} from "../../models/user";
 import {AuthService} from "../../services/auth.service";
 import {MessagesService} from "../../services/messages.service";
+import {async, of} from "rxjs";
 
 @Component({
   selector: 'app-private-messages',
@@ -11,7 +11,7 @@ import {MessagesService} from "../../services/messages.service";
   styleUrls: ['./private-messages.component.scss']
 })
 export class PrivateMessagesComponent {
-  messages$: BehaviorSubject<Message[]> = new BehaviorSubject<Message[]>([])
+  loadedMessages: Message[] = [] as Message[];
   user: User | undefined = undefined;
   message: string | undefined;
 
@@ -20,14 +20,18 @@ export class PrivateMessagesComponent {
     this.authService.user$.subscribe((user: User) => {
       this.user = user;
     })
-    this.messageService.messages$.subscribe((messages: any) => {
+    this.messageService.loadedMessages$.subscribe((messages: any) => {
         console.log('messages',messages);
-        this.messages$.next(messages);
+        this.loadedMessages = messages;
       },
       (error: any) => {
         console.log('error',error);
       }
     )
+  }
+
+  ngOnInit(): void {
+    this.messageService.loadFollowers();
   }
 
   sendMessage() {
@@ -39,4 +43,6 @@ export class PrivateMessagesComponent {
     }
   }
 
+  protected readonly async = async;
+  protected readonly of = of;
 }

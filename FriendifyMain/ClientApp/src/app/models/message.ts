@@ -12,4 +12,5 @@ export interface Message {
   date: Date;
   pictures: Picture[];
   videos: Video[];
+  username: string;
 }

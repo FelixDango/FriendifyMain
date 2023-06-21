@@ -1,7 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {PostsService} from "../../../services/posts.service";
 import {Comment} from "../../../models/comment";
-import {User} from "../../../models/user";
 import {AuthService} from "../../../services/auth.service";
 
 @Component({
@@ -15,9 +14,11 @@ export class CommentSectionComponent implements OnInit {
   @Input() postIsPublic: boolean = false;
   comment: string = '';
   userId: number;
+  username: string;
 
   constructor(private postService: PostsService, private authService: AuthService) {
     this.userId = this.authService.getUserId();
+    this.username = this.authService.getUserName();
   }
 
   ngOnInit(): void {
@@ -37,6 +38,7 @@ export class CommentSectionComponent implements OnInit {
         text: this.comment,
         date: new Date(),
         postId: this.postId,
+        username: this.username,
         userId: this.userId} as Comment);
       this.comment = '';
     }

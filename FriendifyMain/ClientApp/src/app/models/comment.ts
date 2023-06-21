@@ -9,4 +9,5 @@ export interface Comment {
   user: User;
   text: string;
   date: Date;
+  username: string;
 }
