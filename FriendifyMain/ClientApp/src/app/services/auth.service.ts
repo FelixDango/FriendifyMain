@@ -24,6 +24,14 @@ export class AuthService {
     if (user) return user.userName;
     return '';
   }
+  // get user id from local storage
+  getUserId(): number {
+    // Retrieve the token from local storage
+    const user = localStorage.getItem('user');
+    if (user) return JSON.parse(user).id;
+    return 0;
+  }
+
 
   updateUser() {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -103,13 +111,6 @@ export class AuthService {
     );
   }
 
-  // get user id from local storage
-  getUserId(): number {
-    // Retrieve the token from local storage
-    const user = localStorage.getItem('user');
-    if (user) return JSON.parse(user).id;
-    return 0;
-  }
 
   isLoggedIn(): boolean {
     // Retrieve the token from local storage
@@ -129,4 +130,5 @@ export class AuthService {
 
     return isLoggedIn;
   }
+
 }

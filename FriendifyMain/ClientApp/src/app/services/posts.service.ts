@@ -81,7 +81,6 @@ export class PostsService {
     this.httpService.post('/Home/' + postId + '/comment?text=' +  comment, null).subscribe(
       (response: any) => {
         console.log(response);
-        this.loadPosts();
       },
       (error: any) => {
         console.log(error);

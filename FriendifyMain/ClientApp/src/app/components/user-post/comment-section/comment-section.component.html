@@ -19,7 +19,7 @@
 
       <div class="p-d-flex p-ai-center p-mb-3">
         <ng-container *ngIf="comments?.length !== 0; else noComments">
-          <app-comment *ngFor="let comment of comments;" [comment]="comment"></app-comment>
+          <app-comment *ngFor="let comment of sortedComments();" [comment]="comment"></app-comment>
         </ng-container>
       </div>
 
