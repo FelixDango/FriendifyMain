@@ -22,5 +22,7 @@ namespace FriendifyMain.Models
         public DateTime Date { get; set; }
         public List<Picture> Pictures { get; set; }
         public List<Video> Videos { get; set; }
+        public string Username { get; set; } //sender username
+        public string ReceiverUsername { get; set; } //receiver username
     }
 }

@@ -84,7 +84,7 @@ namespace FriendifyMain.Controllers
 
 
                 // Validate the message model using data annotations and custom logic
-                if (currentUser != null && receiverUser != null && ModelState.IsValid && !string.IsNullOrEmpty(messageModel.Content))
+                if (currentUser != null && receiverUser != null && currentUser.UserName != null && receiverUser.UserName != null && ModelState.IsValid && !string.IsNullOrEmpty(messageModel.Content))
                 {
                     // Set the message properties that are not provided by the user input
                     var message = new Message
@@ -94,6 +94,8 @@ namespace FriendifyMain.Controllers
                         UserId = currentUser.Id, // The sender is the current user
                         ReceiverId = receiverUser.Id, // Assign the ID of the receiver user
                         Date = DateTime.Now, // The date is the current date and time
+                        Username = currentUser.UserName, // The sender username is the current user username
+                        ReceiverUsername = receiverUser.UserName, // The receiver username is the receiver user username
                         // init empty list
                         Pictures = new List<Picture>() { },
                         Videos = new List<Video>() { }
@@ -171,6 +173,46 @@ namespace FriendifyMain.Controllers
                 return View("Error", ex.Message); // Return a view that shows the error message
             }
         }
+
+        // The get by username action allows an authenticated user to get the messages sent or received by a specific user
+        [HttpGet("{username}/messages")]
+        [Authorize] // Require authentication
+        [ProducesResponseType(typeof(List<Message>), 200)] // Specify possible response type and status code
+        [ProducesResponseType(typeof(string), 404)] // Specify possible response type and status code
+        public async Task<IActionResult> GetByUsername(string username) // Indicate that the username is bound from route data
+        {
+            // Get the current user from the user manager
+            if (User == null || User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
+            {
+                return BadRequest();
+            }
+
+            var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
+
+            // Get the target user from the user manager by username
+            var targetUser = await _userManager.FindByNameAsync(username);
+
+            // Check if the current user and the target user are not null
+            if (currentUser != null && targetUser != null)
+            {
+                // Get the messages sent or received by the target user from the database context
+                var messages = await _context.Messages.Include(m => m.Videos)
+                                                      .Include(m => m.Pictures)
+                                                      .Where(m => (m.UserId == targetUser.Id
+                                                               || m.ReceiverId == targetUser.Id) 
+                                                               && 
+                                                               (m.UserId == currentUser.Id
+                                                               || m.ReceiverId == currentUser.Id)
+                                                               ).ToListAsync();
+
+                // Return a 200 OK response with the messages data
+                return Ok(messages);
+            }
+
+            // If either user is null, return a 404 not found response with an error message
+            return NotFound("User not found.");
+        }
+
 
     }
 }
