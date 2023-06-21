@@ -42,12 +42,16 @@ code {
     font-weight: bold;
     &:hover {
       background: rgb(47, 150, 177);
-      color: black;
+      color: white;
     }
     &.p-button-success {
       background: rgb(47, 150, 177);
       color: white;
       font-weight: bold;
+      &:hover {
+        background: #5FDFF1;
+        color: black;
+      }
     }
   }
 }
