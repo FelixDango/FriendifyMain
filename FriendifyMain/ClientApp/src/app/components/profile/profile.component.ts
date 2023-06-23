@@ -13,11 +13,12 @@ export class ProfileComponent implements OnInit {
   @Input() username: string | undefined;
   user$: BehaviorSubject<User | undefined> = new BehaviorSubject<User | undefined>(undefined);
   loggedInUser: User | undefined = undefined;
-
+  assetsUrl: string;
   isFollowing$ = new BehaviorSubject(<boolean>false);
   isHovered: boolean = false;
 
   constructor(private httpService: HttpService, private authService: AuthService) {
+    this.assetsUrl = httpService.assetsUrl;
     // Add code to load user data
     this.authService.user$.subscribe((user: User) => {
         this.loggedInUser = user;
@@ -41,7 +42,7 @@ export class ProfileComponent implements OnInit {
 
   loadUser(username: string) {
     // Add code to load user data
-    this.httpService.get('/Profile/' + username + '/view').subscribe(
+    this.httpService.get('/Profile/' + username + '/CriticalData').subscribe(
       (response: any) => {
         this.user$.next(response);
         if (this.loggedInUser) this.checkFollow(this.loggedInUser?.id);

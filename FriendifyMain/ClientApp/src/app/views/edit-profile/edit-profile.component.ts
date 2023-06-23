@@ -39,7 +39,8 @@ export class EditProfileComponent implements OnInit{
 
 
   handleFileInput(event: any, fileUpload: any) {
-    const file: Blob = event.files;
+    console.log(event);
+    const file: Blob = event.files[0];
     const allowedImageTypes = ['image/jpeg', 'image/png','image/jpg' ];
 
     if (allowedImageTypes.includes(file.type)) {
@@ -47,11 +48,12 @@ export class EditProfileComponent implements OnInit{
     }
 
     this.fileUpload = fileUpload;
-    console.log(this.picture);
+    console.log('pic',this.picture);
   }
 
   updateProfile() {
     // Add code to update the user profile
+
     const updateData = {
       username: this.username,
       firstName: this.firstName,

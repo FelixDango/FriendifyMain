@@ -13,7 +13,6 @@ import {Message} from "../../models/message";
 })
 export class MessagesComponent implements OnInit {
   user: User | undefined = undefined;
-  messages$: BehaviorSubject<Message[]> = new BehaviorSubject<Message[]>([]);
 
   constructor(private httpService: HttpService, private authService: AuthService, private messageService: MessagesService) {
     this.authService.user$.subscribe((user: User) => {

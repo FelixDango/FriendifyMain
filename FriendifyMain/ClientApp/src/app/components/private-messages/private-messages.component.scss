@@ -42,7 +42,8 @@
 
 .message-content.self {
   background-color: #5FDFF1;
-  color: #ffffff;
+  color: #424242;
+  font-weight: normal;
 }
 
 .message-content p {
@@ -69,7 +70,7 @@
 .send-button {
   border: none;
   background-color: #5FDFF1;
-  color: #ffffff;
+  color: #5a5a5a;
   padding: 10px 20px;
   border-radius: 20px;
   cursor: pointer;

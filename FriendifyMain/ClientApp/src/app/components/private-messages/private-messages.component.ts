@@ -14,6 +14,7 @@ export class PrivateMessagesComponent {
   loadedMessages: Message[] = [] as Message[];
   user: User | undefined = undefined;
   message: string | undefined;
+  messagedUser: string = '';
 
 
   constructor(private authService: AuthService, private messageService: MessagesService) {
@@ -28,17 +29,23 @@ export class PrivateMessagesComponent {
         console.log('error',error);
       }
     )
+    this.messageService.activeMessageTab$.subscribe((username: string) => {
+      console.log('username',username);
+      this.messagedUser = username;
+      this.messageService.getMessagesByUsername(username);
+    })
   }
 
   ngOnInit(): void {
     this.messageService.loadFollowers();
   }
 
-  sendMessage() {
+  sendMessage(username: string) {
     // Add code to send a message
     console.log('message',this.message);
     if (this.message != undefined) {
-      this.messageService.postMessage(this.message, 'Test12345');
+      this.messageService.postMessage(this.message, username);
+      this.messageService.getMessagesByUsername(username);
       this.message = '';
     }
   }

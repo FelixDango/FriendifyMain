@@ -18,8 +18,10 @@
   background-color: #f2f2f2;
   margin-bottom: 10px;
   cursor: pointer;
+  &.active {
+    background-color: #5FDFF1;
+    color: black;
+    font-weight: bold;
+  }
 }
 
-.sidebar-item:hover {
-  background-color: #eaeaea;
-}

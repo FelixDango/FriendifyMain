@@ -33,7 +33,8 @@ import {ChartModule} from "primeng/chart";
 import { EditProfileComponent } from './views/edit-profile/edit-profile.component';
 import { CommentSectionComponent } from './components/user-post/comment-section/comment-section.component';
 import { CommentComponent } from './components/user-post/comment/comment.component';
-import { MenuModule } from 'primeng/menu'; 
+import { MenuModule } from 'primeng/menu';
+import {DropdownModule} from "primeng/dropdown";
 
 @NgModule({
   declarations: [
@@ -55,34 +56,35 @@ import { MenuModule } from 'primeng/menu';
     CommentSectionComponent,
     CommentComponent
   ],
-  imports: [
-    BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
-    HttpClientModule,
-    FormsModule,
-    InputTextModule,
-    PasswordModule,
-    ButtonModule,
-    RouterModule.forRoot([
-      {path: '', component: HomeComponent, pathMatch: 'full'},
-      {path: 'login', component: LoginComponent},
-      {path: 'register', component: RegisterComponent},
-      {path: 'profile/:username', component: ProfilePageComponent},
-      {path: 'logout', component: LogoutComponent},
-      {path: 'admin', component: AdminComponent},
-      {path: 'messages', component: MessagesComponent},
-      {path: 'edit-profile', component: EditProfileComponent},
-    ]),
-    CheckboxModule,
-    FileUploadModule,
-    InputTextareaModule,
-    RippleModule,
-    ImageModule,
-    AvatarModule,
-    MenubarModule,
-    SidebarModule,
-    ChartModule,
-    MenuModule,
-  ],
+    imports: [
+        BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
+        HttpClientModule,
+        FormsModule,
+        InputTextModule,
+        PasswordModule,
+        ButtonModule,
+        RouterModule.forRoot([
+            {path: '', component: HomeComponent, pathMatch: 'full'},
+            {path: 'login', component: LoginComponent},
+            {path: 'register', component: RegisterComponent},
+            {path: 'profile/:username', component: ProfilePageComponent},
+            {path: 'logout', component: LogoutComponent},
+            {path: 'admin', component: AdminComponent},
+            {path: 'messages', component: MessagesComponent},
+            {path: 'edit-profile', component: EditProfileComponent},
+        ]),
+        CheckboxModule,
+        FileUploadModule,
+        InputTextareaModule,
+        RippleModule,
+        ImageModule,
+        AvatarModule,
+        MenubarModule,
+        SidebarModule,
+        ChartModule,
+        MenuModule,
+        DropdownModule,
+    ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,

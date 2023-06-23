@@ -45,7 +45,7 @@ export class MessagesService {
   postMessage(message: string, receiverUsername: string) {
     this.httpService.post('/Message', {content: message, ReceiverUsername: receiverUsername}).subscribe((response: any) => {
         console.log('res post message',response);
-        this.getMessages();
+        this.getMessagesByUsername(receiverUsername);
       }, (error: any) => {
         console.log(error);
       }

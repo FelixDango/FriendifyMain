@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from "../../services/auth.service";
 import { MenuItem } from "primeng/api";
 import { Observable } from 'rxjs';
+import {User} from "../../models/user";
+import {HttpService} from "../../services/http.service";
 
 @Component({
   selector: 'app-nav-menu',
@@ -12,12 +14,19 @@ export class NavMenuComponent implements OnInit {
   isExpanded = false;
   items: MenuItem[] = [];
   isLoggedIn$: Observable<boolean>;
+  user: User = {} as User;
+  assetsUrl: string;
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private httpService: HttpService) {
+    this.assetsUrl = this.httpService.assetsUrl;
     this.isLoggedIn$ = this.authService.isLoggedIn$;
+    this.authService.user$.subscribe((user: User) => {
+      this.user = user;
+    })
   }
 
   ngOnInit() {
+    this.authService.updateUser();
     this.updateMenuItems();
 
     // Subscribe to isLoggedIn$ to update the navigation in real time
@@ -61,7 +70,7 @@ export class NavMenuComponent implements OnInit {
       {
         label: 'Admin',
         routerLink: '/admin',
-        visible: this.authService.isLoggedIn()
+        visible: this.authService.isLoggedIn() && this.user.isAdmin
       },
       {
         label: 'Messages',
