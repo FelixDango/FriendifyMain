@@ -24,6 +24,27 @@ code {
   border-color: #5FDFF1;
 }
 :root {
+  header {
+    font-size: 26px;
+  }
+
+  .p-menubar-start {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .p-menubar {
+    .p-element {
+       margin-left: auto;
+    }
+  }
+
+  .p-menubar-end {
+    margin: 0;
+    display: none;
+  }
   .user-container {
     flex-direction: row;
   }

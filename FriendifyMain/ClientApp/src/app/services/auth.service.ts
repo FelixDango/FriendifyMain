@@ -34,6 +34,7 @@ export class AuthService {
 
 
   updateUser() {
+    console.log('updateUser');
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     this.user$.next(user);
   }

@@ -4,6 +4,19 @@ a.navbar-brand {
   word-break: break-all;
 }
 
+
+.search-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  width: 40%;
+  input {
+    width: 100%;
+  }
+}
+
 html {
   font-size: 14px;
 }

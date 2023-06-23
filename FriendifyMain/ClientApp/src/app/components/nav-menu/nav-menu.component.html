@@ -1,11 +1,10 @@
 <header class="mb-5">
   <p-menubar [model]="items">
     <ng-template pTemplate="start">
-      <img src="assets/media/logo.png" height="80" class="mr-2" />
-    </ng-template>
-    <ng-template pTemplate="end">
-      <input type="text" pInputText placeholder="Search" class="w-full" />
-      <p-avatar size="large" class="ml-2" [image]="assetsUrl + user.picture" routerLink="profile/{{user.userName}}"></p-avatar>
+      <img routerLink="/" src="assets/media/logo.png" height="100" class="mr-2" />
+      <div class="flex flex-col search-container">
+        <input type="text" pInputText placeholder="Search" class="w-full" />
+      </div>
     </ng-template>
   </p-menubar>
 </header>
