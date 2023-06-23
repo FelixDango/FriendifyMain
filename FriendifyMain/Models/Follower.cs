@@ -9,6 +9,7 @@ namespace FriendifyMain.Models
         [JsonIgnore]
         public User Following { get; set; }
         public int UserId { get; set; }
+        public string Username { get; set; } //Username of the user 
         public int FollowerId { get; set; }
         public DateTime DateTime { get; set; } //Date and Time when this follower instance has been created
 

@@ -346,7 +346,7 @@ namespace FriendifyMain.Controllers
                 var otherUser = await _userManager.FindByNameAsync(username);
 
                 // Check if the other user exists
-                if (otherUser == null)
+                if (otherUser == null || otherUser.UserName == null)
                 {
                     return NotFound("User not found."); // Return a 404 not found response with an error message
                 }
@@ -358,7 +358,13 @@ namespace FriendifyMain.Controllers
                 }
 
                 // If not, add the other user to the follows list of the current user and save changes to database context
-                currentUser.Following.Add(new Follower() { UserId = otherUser.Id, FollowerId = currentUser.Id, DateTime = DateTime.Now });
+                currentUser.Following.Add(new Follower()
+                {
+                    UserId = otherUser.Id,
+                    FollowerId = currentUser.Id,
+                    DateTime = DateTime.Now,
+                    Username = otherUser.UserName
+                });
                 await _context.SaveChangesAsync();
 
                 var response = new { Message = $"You have followed {otherUser.UserName}." };
