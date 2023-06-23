@@ -31,13 +31,30 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.authService.isLoggedIn()) {
-      if (this.username) {
+      if (this.username && this.username == this.loggedInUser?.userName) {
         this.loadUser(this.username);
+        this.authService.updateUser();
+      } else {
+        this.loadOtherUser(this.username || '');
         this.authService.updateUser();
       }
 
 
     }
+  }
+
+  loadOtherUser(username: string) {
+    // Add code to load user data
+    this.httpService.get('/Profile/' + username + '/View').subscribe(
+      (response: any) => {
+        this.user$.next(response);
+        if (this.loggedInUser) this.checkFollow(this.loggedInUser?.id);
+
+      },
+      (error: any) => {
+        console.log(error);
+      }
+    );
   }
 
   loadUser(username: string) {

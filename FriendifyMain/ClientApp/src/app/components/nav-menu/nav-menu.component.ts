@@ -34,11 +34,6 @@ export class NavMenuComponent implements OnInit {
       this.updateMenuItems();
     });
   }
-
-  collapse() {
-    this.isExpanded = false;
-  }
-
   toggle() {
     this.isExpanded = !this.isExpanded;
   }

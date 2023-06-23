@@ -6,4 +6,5 @@ export interface Follower {
   userId: number;
   followerId: number;
   dateTime: Date;
+  username: string;
 }

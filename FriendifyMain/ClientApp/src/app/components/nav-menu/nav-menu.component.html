@@ -5,7 +5,7 @@
     </ng-template>
     <ng-template pTemplate="end">
       <input type="text" pInputText placeholder="Search" class="w-full" />
-      <p-avatar size="large" class="ml-2" [image]="'assets/media/'+user.picture" routerLink="profile/{{user.userName}}"></p-avatar>
+      <p-avatar size="large" class="ml-2" [image]="assetsUrl + user.picture" routerLink="profile/{{user.userName}}"></p-avatar>
     </ng-template>
   </p-menubar>
 </header>
