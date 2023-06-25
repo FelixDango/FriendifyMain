@@ -139,12 +139,10 @@ namespace FriendifyMain.Controllers
             selectedUser.PasswordHash = "Censored";
             selectedUser.Email = "Censored";
             selectedUser.Address = "Censored";
-            selectedUser.Country = "Censored";
             selectedUser.Likes = new();
             selectedUser.Comments = new();
             selectedUser.NormalizedEmail = "Censored";
             selectedUser.SecurityStamp = "Censored";
-            selectedUser.City = "Censored";
             selectedUser.PhoneNumber = "Censored";
             selectedUser.Images = new();
             selectedUser.Messages = new();

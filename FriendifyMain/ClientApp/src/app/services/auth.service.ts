@@ -95,6 +95,8 @@ export class AuthService {
       tap(response => {
         // Save token to local storage
         localStorage.setItem('token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+
         // Emit the authentication status
         this.isLoggedInSubject.next(true);
         // Emit the user data

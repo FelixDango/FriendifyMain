@@ -3,6 +3,7 @@ import {SexEnum, StatusEnum, User} from "../../models/user";
 import {HttpService} from "../../services/http.service";
 import {AuthService} from "../../services/auth.service";
 import {BehaviorSubject} from "rxjs";
+import {PostsService} from "../../services/posts.service";
 
 @Component({
   selector: 'app-profile',
@@ -15,9 +16,11 @@ export class ProfileComponent implements OnInit {
   loggedInUser: User | undefined = undefined;
   assetsUrl: string;
   isFollowing$ = new BehaviorSubject(<boolean>false);
-  isHovered: boolean = false;
 
-  constructor(private httpService: HttpService, private authService: AuthService) {
+  constructor(
+    private httpService: HttpService,
+    private authService: AuthService
+  ) {
     this.assetsUrl = httpService.assetsUrl;
     // Add code to load user data
     this.authService.user$.subscribe((user: User) => {
@@ -38,8 +41,6 @@ export class ProfileComponent implements OnInit {
         this.loadOtherUser(this.username || '');
         this.authService.updateUser();
       }
-
-
     }
   }
 
@@ -59,7 +60,7 @@ export class ProfileComponent implements OnInit {
 
   loadUser(username: string) {
     // Add code to load user data
-    this.httpService.get('/Profile/' + username + '/CriticalData').subscribe(
+    this.httpService.get('/Profile/' + username + '/View').subscribe(
       (response: any) => {
         this.user$.next(response);
         if (this.loggedInUser) this.checkFollow(this.loggedInUser?.id);
