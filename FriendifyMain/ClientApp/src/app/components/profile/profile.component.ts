@@ -25,6 +25,7 @@ export class ProfileComponent implements OnInit {
     // Add code to load user data
     this.authService.user$.subscribe((user: User) => {
         this.loggedInUser = user;
+        this.checkFollow(this.loggedInUser.id)
       },
       (error: any) => {
         console.log(error);
@@ -32,39 +33,25 @@ export class ProfileComponent implements OnInit {
     );
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     if (this.authService.isLoggedIn()) {
-      if (this.username && this.username == this.loggedInUser?.userName) {
+      this.authService.updateUser();
+      if (this.username) {
         this.loadUser(this.username);
-        this.authService.updateUser();
-      } else {
-        this.loadOtherUser(this.username || '');
-        this.authService.updateUser();
       }
     }
   }
 
-  loadOtherUser(username: string) {
-    // Add code to load user data
-    this.httpService.get('/Profile/' + username + '/View').subscribe(
-      (response: any) => {
-        this.user$.next(response);
-        if (this.loggedInUser) this.checkFollow(this.loggedInUser?.id);
-
-      },
-      (error: any) => {
-        console.log(error);
-      }
-    );
-  }
 
   loadUser(username: string) {
     // Add code to load user data
     this.httpService.get('/Profile/' + username + '/View').subscribe(
-      (response: any) => {
+      (response: User) => {
+        this.authService.updateUser();
         this.user$.next(response);
-        if (this.loggedInUser) this.checkFollow(this.loggedInUser?.id);
-
+        if (this.loggedInUser) {
+          this.checkFollow(this.loggedInUser.id);
+        }
       },
       (error: any) => {
         console.log(error);
@@ -74,12 +61,14 @@ export class ProfileComponent implements OnInit {
 
   // check if the user follows this profile
   checkFollow(id: number) {
-    const followers = this.user$?.value?.followers;
+    const followers = this.user$.value?.followers;
+    console.log('followers', followers);
+    console.log('id to check', id);
+
     if (followers) {
       for (let i = 0; i < followers.length; i++) {
         if (followers[i].followerId === id) {
           this.isFollowing$.next(true);
-          break;
         } else {
           this.isFollowing$.next(false);
         }

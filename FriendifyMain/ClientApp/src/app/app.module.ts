@@ -68,6 +68,7 @@ import {DropdownModule} from "primeng/dropdown";
             {path: 'login', component: LoginComponent},
             {path: 'register', component: RegisterComponent},
             {path: 'profile/:username', component: ProfilePageComponent},
+            {path: 'own-profile/:username', component: ProfilePageComponent},
             {path: 'logout', component: LogoutComponent},
             {path: 'admin', component: AdminComponent},
             {path: 'messages', component: MessagesComponent},

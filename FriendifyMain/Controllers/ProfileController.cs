@@ -414,8 +414,19 @@ namespace FriendifyMain.Controllers
                     return NotFound("User not found."); // Return a 404 not found response with an error message
                 }
 
+
+                var following = false;
+                foreach (var follower in currentUser.Following)
+                {
+                    if (follower.UserId == otherUser.Id)
+                    {
+                        following = true;
+                        break;
+                    }
+                }
+                
                 // Check if the current user is following the other user
-                if (!currentUser.Following.Select(e => e.UserId == otherUser.Id).FirstOrDefault())
+                if (!following)
                 {
                     return Ok("You are not following this user."); // Return a 200 OK response with a message
                 }

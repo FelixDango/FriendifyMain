@@ -87,7 +87,8 @@ export class NavMenuComponent implements OnInit {
           {
             label: 'View Profile',
             icon: 'pi pi-fw pi-user',
-            routerLink: '/profile/' + username
+            routerLink: ['/own-profile/' + username],
+            visible: this.authService.isLoggedIn(),
           },
           {
             label: 'Edit Profile',
