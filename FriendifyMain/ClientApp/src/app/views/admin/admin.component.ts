@@ -2,13 +2,20 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { UIChart } from 'primeng/chart';
 import { AdminData } from '../../models/admin-data';
 import { AdminService } from '../../services/admin.service';
+import { MenuItem } from 'primeng/api';
+import { LayoutService } from '../../layout/service/app.layout.service';
 
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.scss']
+  styleUrls: ['./admin.component.scss'],
 })
 export class AdminComponent implements OnInit {
+
+  // Declare a property for the sidebar visibility
+  visibleSidebar: boolean = false;
+
+  model: any[] = [];
 
   // Declare variables for the admin data and the charts
   adminData: AdminData | null = null;
@@ -23,15 +30,43 @@ export class AdminComponent implements OnInit {
  
 
   // Inject the AdminService in the constructor
-  constructor(private adminService: AdminService) { }
+  constructor(private adminService: AdminService, public layoutService: LayoutService) { }
 
   ngOnInit(): void {
+    this.initMenuItems();
     // Call the getAdminData method on initialization
     this.getAdminData();
     setTimeout(() => {
       this.chart.refresh();
     }, 100);
     
+  }
+
+  // Define a method to initialize the menu items
+  initMenuItems(): void {
+    // Assign an array of menu items to the items property
+    this.model = [
+      {
+        label: 'Home',
+        items: [
+          { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/admin'] }
+        ]
+      },
+
+    ];
+
+  }
+
+  // Define a method to open the sidebar
+  openSidebar(): void {
+    // Set the visibleSidebar property to true
+    this.visibleSidebar = true;
+  }
+
+  // Define a method to close the sidebar
+  closeSidebar(): void {
+    // Set the visibleSidebar property to false
+    this.visibleSidebar = false;
   }
 
   // Define a method to get the admin data from the service

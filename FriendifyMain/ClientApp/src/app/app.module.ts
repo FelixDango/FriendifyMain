@@ -35,6 +35,9 @@ import { CommentSectionComponent } from './components/user-post/comment-section/
 import { CommentComponent } from './components/user-post/comment/comment.component';
 import { MenuModule } from 'primeng/menu';
 import {DropdownModule} from "primeng/dropdown";
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AppLayoutModule } from './layout/app.layout.module';
+import { AppMenuitemComponent } from './layout/app.menuitem.component';
 
 @NgModule({
   declarations: [
@@ -85,6 +88,8 @@ import {DropdownModule} from "primeng/dropdown";
         ChartModule,
         MenuModule,
         DropdownModule,
+      BrowserAnimationsModule,
+      AppLayoutModule,
     ],
   providers: [
     {
