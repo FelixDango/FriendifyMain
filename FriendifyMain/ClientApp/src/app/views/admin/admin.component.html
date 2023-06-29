@@ -1,7 +1,5 @@
-<!-- Add a div element for the side menu -->
-<!-- Use an *ngIf directive to show or hide the side menu based on the visibleSidebar property -->
-<p-sidebar [(visible)]="visibleSidebar" 
-          [baseZIndex]="10000" position="left" class="side-menu" >
+<p-sidebar [(visible)]="visibleSidebar"
+           [baseZIndex]="10000" position="left" class="side-menu">
   <ul class="layout-menu">
     <ng-container *ngFor="let item of model; let i = index;">
       <li app-menuitem *ngIf="!item.separator" [item]="item" [index]="i" [root]="true"></li>
@@ -12,11 +10,12 @@
 
 <!-- Add a button element to open the side menu -->
 <!-- Use a (click) event binding to call the openSidebar method when the button is clicked -->
-<p-button id="open-menu" class="open-menu" (click)="openSidebar()">☰</p-button>
+<p-button id="open-menu" class="open-menu" (click)="openSidebar()"><i class="pi pi-spin pi-cog" style="font-size: 2rem"></i></p-button>
+
 
 <!-- Add your existing code for the page content -->
 <!-- Add a class of "main-content" and a [style.margin-left] attribute to the div element for the main content -->
-<div class="surface-ground px-4 py-5 md:px-6 lg:px-8 main-content" [style.margin-left]="visibleSidebar ? '25%' : '0'">
+<div class="surface-ground px-4 py-5 md:px-6 lg:px-8 main-content" [style.margin-left]="visibleSidebar ? '10%' : '0'">
   <div class="grid">
     <!-- Display a card with total interactions -->
     <div class="col-12 md:col-6 lg:col-3">
@@ -81,11 +80,11 @@
   </div>
 </div>
 
-<div class="p-grid p-fluid dashboard">
+<div class="p-grid p-fluid dashboard container">
 
 
   <!-- Display a chart with new registrations -->
-  <div class="p-col-12 p-lg-6">
+  <div class="p-col-12 p-lg-6 child">
     <div class="card">
       <h1 class="centerText">New Registrations</h1>
       <p-chart type="line" [data]="registrationChart.data" [options]="registrationChart.options"></p-chart>
@@ -93,7 +92,7 @@
   </div>
 
   <!-- Display a chart with new posts -->
-  <div class="p-col-12 p-lg-6">
+  <div class="p-col-12 p-lg-6 child">
     <div class="card">
       <h1 class="centerText">New Posts</h1>
       <p-chart type="bar" [data]="postsChart.data" [options]="postsChart.options"></p-chart>
@@ -101,7 +100,7 @@
   </div>
 
   <!-- Display a chart with gender distribution -->
-  <div class="p-col-12 p-lg-6">
+  <div class="p-col-12 p-lg-6 child">
     <div class="card">
       <h1 class="centerText">Gender Distribution</h1>
       <p-chart type="pie" [data]="genderChart.data" [options]="genderChart.options"></p-chart>

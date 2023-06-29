@@ -47,9 +47,12 @@ export class AdminComponent implements OnInit {
     // Assign an array of menu items to the items property
     this.model = [
       {
-        label: 'Home',
+        label: 'Admin',
         items: [
-          { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/admin'] }
+          { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/admin'] },
+          { label: 'Accounts', icon: 'pi pi-fw pi-users', routerLink: ['/admin/users'] }
+
+
         ]
       },
 
