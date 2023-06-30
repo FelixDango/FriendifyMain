@@ -28,6 +28,34 @@ namespace FriendifyMain.Controllers
             _mapper = mapper;
         }
 
+        // The get action allows an authenticated user to get a list of all users
+        [HttpGet("all")]
+        [Authorize] // Require authentication
+        [ProducesResponseType(typeof(List<User>), 200)] // Specify possible response type and status code
+        public async Task<IActionResult> GetAll()
+        {
+            // Get the current user from the user manager
+            if (User == null || User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
+            {
+                return BadRequest();
+            }
+
+            var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
+
+            // Check if the current user is an admin or a moderator
+            if (currentUser != null && (currentUser.IsAdmin || currentUser.IsModerator))
+            {
+                // Get all users from the database context
+                var users = await _context.Users.ToListAsync();
+
+                // Return a 200 OK response with the users list
+                return Ok(users);
+            }
+
+            // If not, return a 403 forbidden response
+            return Forbid();
+        }
+
         // The get action allows an authenticated user to get their own profile or an admin to get any profile by id
         [HttpGet("{username}/CriticalData")]
         [Authorize] // Require authentication

@@ -37,7 +37,7 @@ namespace FriendifyMain.Controllers
         [Authorize] // Require admin role
         [ProducesResponseType(200)] // Specify possible response status code
         [ProducesResponseType(typeof(string), 404)] // Specify possible response type and status code
-        public async Task<IActionResult> AssignRole(int userId, string roleName) // Indicate that the userId and roleName are bound from form data
+        public async Task<IActionResult> AssignRole(string username, string roleName) // Indicate that the username and roleName are bound from form data
         {
             try
             {
@@ -58,7 +58,7 @@ namespace FriendifyMain.Controllers
 
 
                 // Get the user by id from the user manager
-                var user = await _userManager.FindByIdAsync(userId.ToString());
+                var user = await _userManager.FindByNameAsync(username);
 
                 // Check if the user exists
                 if (user == null)
@@ -97,7 +97,7 @@ namespace FriendifyMain.Controllers
         [Authorize] // Require admin role
         [ProducesResponseType(200)] // Specify possible response status code
         [ProducesResponseType(typeof(string), 404)] // Specify possible response type and status code
-        public async Task<IActionResult> RemoveRole(int userId, string roleName) // Indicate that the userId and roleName are bound from form data
+        public async Task<IActionResult> RemoveRole(string username, string roleName) // Indicate that the username and roleName are bound from form data
         {
             try
             {
@@ -117,7 +117,7 @@ namespace FriendifyMain.Controllers
                 }
 
                 // Get the user by id from the user manager
-                var user = await _userManager.FindByIdAsync(userId.ToString());
+                var user = await _userManager.FindByNameAsync(username);
 
 
                 // Check if the user exists
