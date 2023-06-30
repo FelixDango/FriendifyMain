@@ -38,6 +38,8 @@ import {DropdownModule} from "primeng/dropdown";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppLayoutModule } from './layout/app.layout.module';
 import { AppMenuitemComponent } from './layout/app.menuitem.component';
+import { SelectButtonModule } from 'primeng/selectbutton';
+
 
 @NgModule({
   declarations: [
@@ -90,6 +92,7 @@ import { AppMenuitemComponent } from './layout/app.menuitem.component';
         DropdownModule,
       BrowserAnimationsModule,
       AppLayoutModule,
+      SelectButtonModule,
     ],
   providers: [
     {

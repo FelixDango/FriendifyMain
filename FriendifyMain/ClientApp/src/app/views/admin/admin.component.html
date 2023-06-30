@@ -16,6 +16,8 @@
 <!-- Add your existing code for the page content -->
 <!-- Add a class of "main-content" and a [style.margin-left] attribute to the div element for the main content -->
 <div class="surface-ground px-4 py-5 md:px-6 lg:px-8 main-content" [style.margin-left]="visibleSidebar ? '10%' : '0'">
+  <p-selectButton [options]="timeframes" [(ngModel)]="selectedTimeframe" (onChange)="onTimeframeChange($event)" optionLabel="label" optionValue="value"></p-selectButton>
+  <br />
   <div class="grid">
     <!-- Display a card with total interactions -->
     <div class="col-12 md:col-6 lg:col-3">
@@ -102,7 +104,7 @@
   <!-- Display a chart with gender distribution -->
   <div class="p-col-12 p-lg-6 child">
     <div class="card">
-      <h1 class="centerText">Gender Distribution</h1>
+      <h1 class="centerText">Gender Distribution (Overall)</h1>
       <p-chart type="pie" [data]="genderChart.data" [options]="genderChart.options"></p-chart>
     </div>
   </div>

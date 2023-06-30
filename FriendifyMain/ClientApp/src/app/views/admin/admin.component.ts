@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { UIChart } from 'primeng/chart';
 import { AdminData } from '../../models/admin-data';
 import { AdminService } from '../../services/admin.service';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, SelectItem } from 'primeng/api';
 import { LayoutService } from '../../layout/service/app.layout.service';
 
 @Component({
@@ -10,6 +10,7 @@ import { LayoutService } from '../../layout/service/app.layout.service';
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss'],
 })
+
 export class AdminComponent implements OnInit {
 
   // Declare a property for the sidebar visibility
@@ -22,8 +23,17 @@ export class AdminComponent implements OnInit {
   registrationChart: any;
   postsChart: any;
   genderChart: any;
-  @ViewChild('chart') chart!: UIChart;
 
+  timeframes: SelectItem[] = [
+    { label: '1 day', value: 1 },
+    { label: '1 week', value: 7 },
+    { label: '1 month', value: 30 },
+    { label: '1 year', value: 365 },
+    { label: '5 years', value: 1825 }
+  ];
+
+  @ViewChild('chart') chart!: UIChart;
+  selectedTimeframe: number = 7; // Default to 1 week
 
   data: any;
   options: any;
@@ -253,6 +263,16 @@ export class AdminComponent implements OnInit {
         }
       };
     }
+  }
+  onTimeframeChange(event: any): void {
+    // Get the selected value from the event object
+    const selectedValue = event.value;
+    // Create a new Date object with the current date
+    const currentDate = new Date();
+    // Subtract the selected value (in days) from the current date
+    currentDate.setDate(currentDate.getDate() - selectedValue);
+    // Call the getAdminData method with the new date as an argument
+    this.getAdminData(currentDate);
   }
 
 }
