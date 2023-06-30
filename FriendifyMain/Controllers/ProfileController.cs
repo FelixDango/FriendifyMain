@@ -19,7 +19,7 @@ namespace FriendifyMain.Controllers
         private readonly FriendifyContext _context;
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper; // Declare the _mapper variable
-
+        
         public ProfileController(FriendifyContext context, UserManager<User> userManager,
                                  IMapper mapper)
         {
@@ -47,6 +47,9 @@ namespace FriendifyMain.Controllers
             {
                 // Get all users from the database context
                 var users = await _context.Users.ToListAsync();
+                await _context.Users
+                     .Include(u => u.Picture) // Include the Picture navigation property
+                     .FirstOrDefaultAsync(); 
 
                 // Return a 200 OK response with the users list
                 return Ok(users);
