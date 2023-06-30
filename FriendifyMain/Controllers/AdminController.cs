@@ -103,5 +103,102 @@ namespace FriendifyMain.Controllers
 
         }
 
+        // Suspend a user by username
+        [HttpPost("suspend/{username}")]
+        [Authorize]
+        [ProducesResponseType(200)] // Specify possible response status code
+        [ProducesResponseType(typeof(string), 404)] // Specify possible response type and status code
+        public async Task<IActionResult> SuspendUser(string username)
+        {
+            try
+            {
+                // Get the current user from the user manager
+                if (User == null || User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
+                {
+                    return BadRequest();
+                }
+
+                var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
+
+                // return 403 if current user is not Admin
+                if (currentUser == null || (!currentUser.IsAdmin && !currentUser.IsModerator))
+                {
+                    return Forbid();
+                }
+
+                // Find the user to suspend by username
+                var userToSuspend = await _userManager.FindByNameAsync(username);
+
+                // Return 404 if user not found
+                if (userToSuspend == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                // Set the Suspended property to true
+                userToSuspend.Suspended = true;
+
+                // Update the user in the database
+                await _userManager.UpdateAsync(userToSuspend);
+
+                // Return 200 OK with a message
+                return Ok("User suspended successfully");
+            }
+            catch (Exception ex)
+            {
+                // Handle any possible exceptions
+                return View("Error", ex.Message); // Return a view that shows the error message
+            }
+        }
+
+        // Unsuspend a user by username
+        [HttpPost("unsuspend/{username}")]
+        [Authorize]
+        [ProducesResponseType(200)] // Specify possible response status code
+        [ProducesResponseType(typeof(string), 404)] // Specify possible response type and status code
+        public async Task<IActionResult> UnsuspendUser(string username)
+        {
+            try
+            {
+                // Get the current user from the user manager
+                if (User == null || User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
+                {
+                    return BadRequest();
+                }
+
+                var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
+
+                // return 403 if current user is not Admin
+                if (currentUser == null || (!currentUser.IsAdmin && !currentUser.IsModerator))
+                {
+                    return Forbid();
+                }
+
+                // Find the user to unsuspend by username
+                var userToUnsuspend = await _userManager.FindByNameAsync(username);
+
+                // Return 404 if user not found
+                if (userToUnsuspend == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                // Set the Suspended property to false
+                userToUnsuspend.Suspended = false;
+
+                // Update the user in the database
+                await _userManager.UpdateAsync(userToUnsuspend);
+
+                // Return 200 OK with a message
+                return Ok("User unsuspended successfully");
+            }
+            catch (Exception ex)
+            {
+                // Handle any possible exceptions
+                return View("Error", ex.Message); // Return a view that shows the error message
+            }
+        }
+
+
     }
 }
