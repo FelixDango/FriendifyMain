@@ -142,7 +142,7 @@ namespace FriendifyMain.Controllers
                 await _userManager.UpdateAsync(userToSuspend);
 
                 // Return 200 OK with a message
-                return Ok("User suspended successfully");
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -190,7 +190,7 @@ namespace FriendifyMain.Controllers
                 await _userManager.UpdateAsync(userToUnsuspend);
 
                 // Return 200 OK with a message
-                return Ok("User unsuspended successfully");
+                return Ok();
             }
             catch (Exception ex)
             {

@@ -2,7 +2,7 @@
 
 
 <div class="user-management">
-  
+
   <br />
   <!-- A table that displays the users -->
   <p-table [value]="users" [(selection)]="selectedUser" dataKey="id" [paginator]="true" [rows]="10">
@@ -37,8 +37,14 @@
         <td class="actions">
           <!-- A button that allows to suspend or unsuspend the user -->
           <button pButton icon="pi pi-ban" label="{{user.suspended ? 'Unsuspend' : 'Suspend'}}" (click)="user.suspended ? unsuspendUser(user) : suspendUser(user)"></button>
-          <!-- A dropdown that allows to assign or remove a role from the user -->
-          <p-dropdown [options]="roles" placeholder="Assign Role" (onChange)="assignRole(user, $event.value)"></p-dropdown>
+
+          <p-radioButton name="{{user.id}}" value="User" [(ngModel)]="selectedRole" label="User"></p-radioButton>
+          <p-radioButton name="{{user.id}}" value="Moderator" [(ngModel)]="selectedRole" label="Moderator"></p-radioButton>
+          <p-radioButton name="{{user.id}}" value="Admin" [(ngModel)]="selectedRole" label="Admin"></p-radioButton>
+
+          <!-- A button that allows to assign a role to the user -->
+          <button pButton icon="pi pi-check" label="Assign Role" (click)="assignRole(user, selectedRole)"></button>
+
           <!-- A button that allows to remove a role from the user -->
           <button pButton icon="pi pi-times" label="Remove Role" (click)="removeRole(user, user.isAdmin ? 'Admin' : (user.isModerator ? 'Moderator' : 'User'))"></button>
           <!-- A button that allows to delete the user -->
@@ -76,3 +82,4 @@
 
 </div>
 
+<p-confirmDialog key="confirmWeightTest"></p-confirmDialog>

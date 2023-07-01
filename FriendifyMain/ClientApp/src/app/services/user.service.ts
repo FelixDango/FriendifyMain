@@ -34,22 +34,22 @@ export class UserService {
 
   // A method that returns an observable of a message after suspending a user by their username
   suspendUser(username: string): Observable<any> {
-    return this.http.post(`admin/suspend/${username}`, null); // Use the post method of the HttpService
+    return this.http.post(`/admin/suspend/${username}`, null); // Use the post method of the HttpService
   }
 
   // A method that returns an observable of a message after unsuspending a user by their username
   unsuspendUser(username: string): Observable<any> {
-    return this.http.post(`admin/unsuspend/${username}`, null); // Use the post method of the HttpService
+    return this.http.post(`/admin/unsuspend/${username}`, null); // Use the post method of the HttpService
   }
 
   // A method that returns an observable of a message after assigning a role to a user by their username
   assignRole(username: string, role: string): Observable<any> {
-    return this.http.post(`role/assignrole?username=${username}&roleName=${role}`, null); // Use the post method of the HttpService
+    return this.http.post(`/role/assignrole?username=${username}&roleName=${role}`, null); // Use the post method of the HttpService
   }
 
   // A method that returns an observable of a message after removing a role from a user by their username
   removeRole(username: string, role: string): Observable<any> {
-    return this.http.post(`role/removerole?username=${username}&roleName=${role}`, null); // Use the post method of the HttpService
+    return this.http.post(`/role/removerole?username=${username}&roleName=${role}`, null); // Use the post method of the HttpService
   }
 
 }

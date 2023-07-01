@@ -42,8 +42,10 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { UserManagementComponent } from './views/user-management/user-management.component';
 import { TableModule } from 'primeng/table';
 import { Dialog, DialogModule } from 'primeng/dialog';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { AdminSidebarComponent } from './components/admin-sidebar/admin-sidebar.component';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
 
 @NgModule({
   declarations: [
@@ -103,14 +105,16 @@ import { AdminSidebarComponent } from './components/admin-sidebar/admin-sidebar.
       SelectButtonModule,
       TableModule,
       DialogModule,
-      ConfirmDialogModule
+      ConfirmDialogModule,
+      RadioButtonModule
     ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
       multi: true
-    }
+    },
+    ConfirmationService
   ],
   bootstrap: [AppComponent]
 })
