@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 
 namespace FriendifyMain.Controllers
 {
@@ -19,7 +18,7 @@ namespace FriendifyMain.Controllers
         private readonly FriendifyContext _context;
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper; // Declare the _mapper variable
-        
+
         public ProfileController(FriendifyContext context, UserManager<User> userManager,
                                  IMapper mapper)
         {
@@ -49,7 +48,7 @@ namespace FriendifyMain.Controllers
                 var users = await _context.Users.ToListAsync();
                 await _context.Users
                      .Include(u => u.Picture) // Include the Picture navigation property
-                     .FirstOrDefaultAsync(); 
+                     .FirstOrDefaultAsync();
 
                 // Return a 200 OK response with the users list
                 return Ok(users);
@@ -286,7 +285,7 @@ namespace FriendifyMain.Controllers
         public async Task<IActionResult> Delete(string username) // Indicate that the id is bound from route data
         {
             // Get the current user from the user manager
-            if (User == null || username == null ||User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
+            if (User == null || username == null || User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
             {
                 return BadRequest();
             }
@@ -295,10 +294,35 @@ namespace FriendifyMain.Controllers
             var selectedUser = await _userManager.FindByNameAsync(username);
 
             // Check if the current user is an admin or deleting their own profile
-            if ((currentUser != null && selectedUser != null ) && (currentUser.IsAdmin || currentUser.Id == selectedUser.Id))
+            if ((currentUser != null && selectedUser != null) && (currentUser.IsAdmin || currentUser.Id == selectedUser.Id))
             {
+                // Load the related entities for the selected user
+                await _context.Entry(selectedUser).Collection(u => u.Posts).LoadAsync();
+                // Load the related data explicitly 
+                await _context.Entry(currentUser).Collection(u => u.Followers).LoadAsync();
+                await _context.Entry(currentUser).Collection(u => u.Following).LoadAsync();
+
+                foreach (var post in selectedUser.Posts)
+                {
+                    await _context.Entry(post).Collection(p => p.Videos).LoadAsync();
+                    await _context.Entry(post).Collection(p => p.Pictures).LoadAsync();
+                    await _context.Entry(post).Collection(p => p.Likes).LoadAsync();
+                    await _context.Entry(post).Collection(p => p.Comments).LoadAsync();
+                }
+
+                // Delete the related entities from the database context
+                foreach (var post in selectedUser.Posts)
+                {
+                    _context.Likes.RemoveRange(post.Likes);
+                    _context.Comments.RemoveRange(post.Comments);
+                }
+
+                _context.Followers.RemoveRange(currentUser.Followers);
+                _context.Posts.RemoveRange(selectedUser.Posts);
+
                 // Delete the user from the database context and save changes
                 await _userManager.DeleteAsync(selectedUser);
+                await _context.SaveChangesAsync();
 
                 // Return a 200 OK response
                 return Ok();
@@ -307,6 +331,7 @@ namespace FriendifyMain.Controllers
             // If not, return a 403 forbidden response
             return Forbid();
         }
+
 
         // The get action allows an authenticated user to get a list of all profiles or a filtered list by name
         [HttpGet]
@@ -417,7 +442,7 @@ namespace FriendifyMain.Controllers
             try
             {
                 // Get the current user from the user manager
-                if (User == null || username == null ||User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
+                if (User == null || username == null || User.Identity == null || !User.Identity.IsAuthenticated || User.Identity.Name == null)
                 {
                     return BadRequest();
                 }
@@ -455,7 +480,7 @@ namespace FriendifyMain.Controllers
                         break;
                     }
                 }
-                
+
                 // Check if the current user is following the other user
                 if (!following)
                 {
