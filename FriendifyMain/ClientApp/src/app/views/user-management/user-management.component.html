@@ -1,0 +1,74 @@
+
+<div class="user-management">
+  <!-- A table that displays the users -->
+  <p-table [value]="users" [(selection)]="selectedUser" dataKey="id" [paginator]="true" [rows]="10">
+    <!-- The table header -->
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 3em"></th>
+        <th>Username</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Role</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+    <!-- The table body -->
+    <ng-template pTemplate="body" let-user>
+      <tr [pSelectableRow]="user">
+        <!-- A column that shows the user picture -->
+        <td><img [src]="user?.picture?.url" class="user-picture"></td>
+        <!-- A column that shows the user username -->
+        <td>{{user.userName}}</td>
+        <!-- A column that shows the user first name -->
+        <td>{{user.firstName}}</td>
+        <!-- A column that shows the user last name -->
+        <td>{{user.lastName}}</td>
+        <!-- A column that shows the user role -->
+        <td>{{user.isAdmin ? 'Admin' : (user.isModerator ? 'Moderator' : 'User')}}</td>
+        <!-- A column that shows the user status -->
+        <td>{{user.suspended ? 'Suspended' : 'Active'}}</td>
+        <!-- A column that shows the actions available for the user -->
+        <td class="actions">
+          <!-- A button that allows to suspend or unsuspend the user -->
+          <button pButton icon="pi pi-ban" label="{{user.suspended ? 'Unsuspend' : 'Suspend'}}" (click)="user.suspended ? unsuspendUser(user) : suspendUser(user)"></button>
+          <!-- A dropdown that allows to assign or remove a role from the user -->
+          <p-dropdown [options]="roles" placeholder="Assign Role" (onChange)="assignRole(user, $event.value)"></p-dropdown>
+          <!-- A button that allows to remove a role from the user -->
+          <button pButton icon="pi pi-times" label="Remove Role" (click)="removeRole(user, user.isAdmin ? 'Admin' : (user.isModerator ? 'Moderator' : 'User'))"></button>
+          <!-- A button that allows to delete the user -->
+          <button pButton icon="pi pi-trash" label="Delete" (click)="removeUser(user)"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <!-- A dialog that shows the details of the selected user -->
+  <p-dialog header="{{selectedUser?.userName}}" [(visible)]="selectedUser" [modal]="true" [style]="{width: '50vw'}">
+    <!-- The dialog content -->
+    <div class="user-details">
+      <!-- The user picture -->
+      <img [src]="selectedUser?.picture?.url" class="user-picture">
+      <!-- The user username -->
+      <h2>{{selectedUser?.userName}}</h2>
+      <!-- The user first name -->
+      <p><b>First Name:</b> {{selectedUser?.firstName}}</p>
+      <!-- The user last name -->
+      <p><b>Last Name:</b> {{selectedUser?.lastName}}</p>
+      <!-- The user role -->
+      <p><b>Role:</b> {{selectedUser?.isAdmin ? 'Admin' : (selectedUser?.isModerator ? 'Moderator' : 'User')}}</p>
+      <!-- The user status -->
+      <p><b>Status:</b> {{selectedUser?.suspended ? 'Suspended' : 'Active'}}</p>
+    </div>
+
+    <!-- The dialog footer -->
+    <ng-template pTemplate="footer">
+      <!-- A button that closes the dialog -->
+      <button pButton icon="pi pi-times" label="Close" (click)="selectedUser = undefined"></button>
+    </ng-template>
+
+  </p-dialog>
+
+</div>
+

@@ -39,7 +39,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppLayoutModule } from './layout/app.layout.module';
 import { AppMenuitemComponent } from './layout/app.menuitem.component';
 import { SelectButtonModule } from 'primeng/selectbutton';
-
+import { UserManagementComponent } from './views/user-management/user-management.component';
+import { TableModule } from 'primeng/table';
+import { Dialog, DialogModule } from 'primeng/dialog';
 
 @NgModule({
   declarations: [
@@ -59,7 +61,8 @@ import { SelectButtonModule } from 'primeng/selectbutton';
     PrivateMessagesComponent,
     EditProfileComponent,
     CommentSectionComponent,
-    CommentComponent
+    CommentComponent,
+    UserManagementComponent
   ],
     imports: [
         BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
@@ -77,7 +80,9 @@ import { SelectButtonModule } from 'primeng/selectbutton';
             {path: 'logout', component: LogoutComponent},
             {path: 'admin', component: AdminComponent},
             {path: 'messages', component: MessagesComponent},
-            {path: 'edit-profile', component: EditProfileComponent},
+            {path: 'edit-profile', component: EditProfileComponent },
+            {path: 'admin/users', component: UserManagementComponent },
+
         ]),
         CheckboxModule,
         FileUploadModule,
@@ -93,6 +98,8 @@ import { SelectButtonModule } from 'primeng/selectbutton';
       BrowserAnimationsModule,
       AppLayoutModule,
       SelectButtonModule,
+      TableModule,
+      DialogModule  
     ],
   providers: [
     {
