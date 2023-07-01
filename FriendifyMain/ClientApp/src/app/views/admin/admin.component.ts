@@ -13,11 +13,6 @@ import { LayoutService } from '../../layout/service/app.layout.service';
 
 export class AdminComponent implements OnInit {
 
-  // Declare a property for the sidebar visibility
-  visibleSidebar: boolean = false;
-
-  model: any[] = [];
-
   // Declare variables for the admin data and the charts
   adminData: AdminData | null = null;
   registrationChart: any;
@@ -43,7 +38,7 @@ export class AdminComponent implements OnInit {
   constructor(private adminService: AdminService, public layoutService: LayoutService) { }
 
   ngOnInit(): void {
-    this.initMenuItems();
+    
     // Call the getAdminData method on initialization
     this.getAdminData();
     setTimeout(() => {
@@ -52,35 +47,8 @@ export class AdminComponent implements OnInit {
     
   }
 
-  // Define a method to initialize the menu items
-  initMenuItems(): void {
-    // Assign an array of menu items to the items property
-    this.model = [
-      {
-        label: 'Admin',
-        items: [
-          { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/admin'] },
-          { label: 'Accounts', icon: 'pi pi-fw pi-users', routerLink: ['/admin/users'] }
+  
 
-
-        ]
-      },
-
-    ];
-
-  }
-
-  // Define a method to open the sidebar
-  openSidebar(): void {
-    // Set the visibleSidebar property to true
-    this.visibleSidebar = true;
-  }
-
-  // Define a method to close the sidebar
-  closeSidebar(): void {
-    // Set the visibleSidebar property to false
-    this.visibleSidebar = false;
-  }
 
   // Define a method to get the admin data from the service
   getAdminData(selectedTime?: Date): void {

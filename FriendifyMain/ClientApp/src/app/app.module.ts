@@ -42,6 +42,8 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { UserManagementComponent } from './views/user-management/user-management.component';
 import { TableModule } from 'primeng/table';
 import { Dialog, DialogModule } from 'primeng/dialog';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { AdminSidebarComponent } from './components/admin-sidebar/admin-sidebar.component';
 
 @NgModule({
   declarations: [
@@ -62,7 +64,8 @@ import { Dialog, DialogModule } from 'primeng/dialog';
     EditProfileComponent,
     CommentSectionComponent,
     CommentComponent,
-    UserManagementComponent
+    UserManagementComponent,
+    AdminSidebarComponent
   ],
     imports: [
         BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
@@ -99,7 +102,8 @@ import { Dialog, DialogModule } from 'primeng/dialog';
       AppLayoutModule,
       SelectButtonModule,
       TableModule,
-      DialogModule  
+      DialogModule,
+      ConfirmDialogModule
     ],
   providers: [
     {
