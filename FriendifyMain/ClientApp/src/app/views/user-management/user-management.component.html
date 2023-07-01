@@ -33,7 +33,10 @@
         <!-- A column that shows the user role -->
         <td>{{user.isAdmin ? 'Admin' : (user.isModerator ? 'Moderator' : 'User')}}</td>
         <!-- A column that shows the user status -->
-        <td>{{user.suspended ? 'Suspended' : 'Active'}}</td>
+        <td>
+          <!-- A tag that shows the user status -->
+          <p-tag value="{{user.suspended ? 'Suspended' : 'Active'}}" severity="{{user.suspended ? 'danger' : 'success'}}" [rounded]="true"></p-tag>
+        </td>
         <!-- A column that shows the actions available for the user -->
         <td class="actions">
           <!-- A button that allows to suspend or unsuspend the user -->

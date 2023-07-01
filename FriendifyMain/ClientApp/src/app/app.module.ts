@@ -47,6 +47,8 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { TagModule } from 'primeng/tag';
+
 
 @NgModule({
   declarations: [
@@ -109,6 +111,7 @@ import { ToastModule } from 'primeng/toast';
       ConfirmDialogModule,
       RadioButtonModule,
       ToastModule,
+      TagModule
     ],
   providers: [
     {
