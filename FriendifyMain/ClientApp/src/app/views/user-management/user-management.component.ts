@@ -25,8 +25,6 @@ export class UserManagementComponent implements OnInit {
     { name: 'Moderator' },
     { name: 'Admin' },
   ];
-  selectedRole = this.roles[0].name;
-
 
 
   constructor(

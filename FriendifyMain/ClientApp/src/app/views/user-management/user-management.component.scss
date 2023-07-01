@@ -50,5 +50,51 @@
       }
     }
   }
-}
 
+  
+}
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$border-radius: 0.25rem;
+$padding: 0.375rem 0.75rem;
+
+// Style the select element
+select {
+  // Use a custom appearance
+  appearance: none;
+  // Set the background color to white
+  background-color: white;
+  // Set the border color to the secondary color
+  border-color: $secondary-color;
+  // Set the border radius to the variable value
+  border-radius: $border-radius;
+  // Set the padding to the variable value
+  padding: $padding;
+  // Set the font size to 1rem
+  font-size: 1rem;
+  // Set the cursor to pointer
+  cursor: pointer;
+  // Add a pseudo-element to show an arrow icon
+  &::after {
+    // Use absolute positioning
+    position: absolute;
+    // Set the right and top properties to match the padding
+    right: $padding;
+    top: $padding;
+    // Use a content property to show the icon
+    content: "\25BC";
+    // Set the color to the secondary color
+    color: $secondary-color;
+    // Set the pointer events to none to avoid blocking clicks
+    pointer-events: none;
+  }
+  // Change the style when focused
+  &:focus {
+    // Set the outline to none
+    outline: none;
+    // Set the border color to the primary color
+    border-color: $primary-color;
+    // Set the box shadow to a light blue color
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
+  }
+}

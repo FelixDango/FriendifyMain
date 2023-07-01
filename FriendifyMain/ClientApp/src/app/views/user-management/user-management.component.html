@@ -39,12 +39,14 @@
           <!-- A button that allows to suspend or unsuspend the user -->
           <button pButton icon="pi pi-ban" label="{{user.suspended ? 'Unsuspend' : 'Suspend'}}" (click)="user.suspended ? unsuspendUser(user) : suspendUser(user)"></button>
 
-          <p-radioButton name="{{user.id}}" value="User" [(ngModel)]="selectedRole" label="User"></p-radioButton>
-          <p-radioButton name="{{user.id}}" value="Moderator" [(ngModel)]="selectedRole" label="Moderator"></p-radioButton>
-          <p-radioButton name="{{user.id}}" value="Admin" [(ngModel)]="selectedRole" label="Admin"></p-radioButton>
+          <!-- A select element that allows to choose a role for the user -->
+          <select #roleSelect>
+            <!-- An option for each role -->
+            <option *ngFor="let role of roles" [value]="role.name">{{role.name}}</option>
+          </select>
 
           <!-- A button that allows to assign a role to the user -->
-          <button pButton icon="pi pi-check" label="Assign Role" (click)="assignRole(user, selectedRole)"></button>
+          <button pButton icon="pi pi-check" label="Assign Role" (click)="assignRole(user, roleSelect.value)"></button>
 
           <!-- A button that allows to delete the user -->
           <button pButton icon="pi pi-trash" label="Delete" (click)="removeUser(user)"></button>
