@@ -45,7 +45,8 @@ import { Dialog, DialogModule } from 'primeng/dialog';
 import { AdminSidebarComponent } from './components/admin-sidebar/admin-sidebar.component';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 @NgModule({
   declarations: [
@@ -106,7 +107,8 @@ import { ConfirmationService } from 'primeng/api';
       TableModule,
       DialogModule,
       ConfirmDialogModule,
-      RadioButtonModule
+      RadioButtonModule,
+      ToastModule
     ],
   providers: [
     {
@@ -114,7 +116,8 @@ import { ConfirmationService } from 'primeng/api';
       useClass: TokenInterceptor,
       multi: true
     },
-    ConfirmationService
+    ConfirmationService,
+    MessageService
   ],
   bootstrap: [AppComponent]
 })

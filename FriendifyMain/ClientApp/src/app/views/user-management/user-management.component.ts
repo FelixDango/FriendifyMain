@@ -2,7 +2,6 @@
 import { Component, EventEmitter, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { ConfirmationService } from 'primeng/api'; // A service that provides confirmation dialogs
 import { MessageService } from 'primeng/api'; // A service that provides toast messages
-import { Table } from 'primeng/table';
 import { User } from '../../models/user';
 import { UserService } from '../../services/user.service';
 
@@ -63,7 +62,7 @@ export class UserManagementComponent implements OnInit {
         this.userService.suspendUser(user.userName).subscribe( // Subscribe to the observable returned by the user service
           (response: { message: any; }) => {
             user.suspended = true; // Update the user property
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message }); // Show a success message
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: `User ${user.userName} has been suspended successfully!` }); // Show a success message
 
           },
           (error: { message: any; }) => {
@@ -88,7 +87,7 @@ export class UserManagementComponent implements OnInit {
         this.userService.unsuspendUser(user.userName).subscribe( // Subscribe to the observable returned by the user service
           (response: { message: any; }) => {
             user.suspended = false; // Update the user property
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message }); // Show a success message
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: `User ${user.userName} has been unsuspended successfully!` }); // Show a success message
           },
           (error: { message: any; }) => {
             console.error(error); // Handle any possible errors
