@@ -46,8 +46,6 @@
           <!-- A button that allows to assign a role to the user -->
           <button pButton icon="pi pi-check" label="Assign Role" (click)="assignRole(user, selectedRole)"></button>
 
-          <!-- A button that allows to remove a role from the user -->
-          <button pButton icon="pi pi-times" label="Remove Role" (click)="removeRole(user, user.isAdmin ? 'Admin' : (user.isModerator ? 'Moderator' : 'User'))"></button>
           <!-- A button that allows to delete the user -->
           <button pButton icon="pi pi-trash" label="Delete" (click)="removeUser(user)"></button>
         </td>

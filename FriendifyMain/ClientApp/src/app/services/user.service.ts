@@ -47,9 +47,4 @@ export class UserService {
     return this.http.post(`/role/assignrole?username=${username}&roleName=${role}`, null); // Use the post method of the HttpService
   }
 
-  // A method that returns an observable of a message after removing a role from a user by their username
-  removeRole(username: string, role: string): Observable<any> {
-    return this.http.post(`/role/removerole?username=${username}&roleName=${role}`, null); // Use the post method of the HttpService
-  }
-
 }

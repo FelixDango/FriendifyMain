@@ -114,32 +114,7 @@ export class UserManagementComponent implements OnInit {
           (response: { message: any; }) => {
             user.isAdmin = role === 'Admin'; // Update the user property
             user.isModerator = role === 'Moderator'; // Update the user property
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message }); // Show a success message
-          },
-          (error: { message: any; }) => {
-            console.error(error); // Handle any possible errors
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: error.message }); // Show an error message
-          }
-        );
-      },
-      reject: () => {
-        // Do something when rejected
-      }
-    });
-  }
-
-  removeRole(user: User, role: string): void {
-    this.confirmationService.confirm({ // Use the confirmation service to show a dialog
-      message: `Are you sure you want to remove ${role} role from ${user.userName}?`,
-      header: 'Confirmation',
-      icon: 'pi pi-exclamation-triangle',
-      key: 'confirmWeightTest',
-      accept: () => {
-        this.userService.removeRole(user.userName, role).subscribe( // Subscribe to the observable returned by the user service
-          (response: { message: any; }) => {
-            user.isAdmin = false; // Update the user property
-            user.isModerator = false; // Update the user property
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message }); // Show a success message
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: `Role ${role} assigned successfully to ${user.userName}!` }); // Show a success message
           },
           (error: { message: any; }) => {
             console.error(error); // Handle any possible errors
@@ -164,7 +139,7 @@ export class UserManagementComponent implements OnInit {
         this.userService.deleteUser(user.userName).subscribe( // Subscribe to the observable returned by the user service
           (response: { message: any; }) => {
             this.users = this.users.filter(u => u.id !== user.id); // Remove the user from the users array
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: response.message }); // Show a success message
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: `User ${user.userName} has been deleted successfully!` }); // Show a success message
           },
           (error: { message: any; }) => {
             console.error(error); // Handle any possible errors
