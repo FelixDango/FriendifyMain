@@ -120,7 +120,7 @@ namespace FriendifyMain.Controllers
                 if (User.Identity.IsAuthenticated)
                 {
                     var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
-                    
+
                     if (currentUser == null)
                     {
                         return BadRequest();
@@ -171,9 +171,9 @@ namespace FriendifyMain.Controllers
 
                         }
                         // Save the uploaded pictures
-                        
+
                         // if VideoFiles is not null
-                        
+
                         if (postModel.VideoFiles != null)
                         {
                             foreach (var videoFile in postModel.VideoFiles)
@@ -208,12 +208,12 @@ namespace FriendifyMain.Controllers
             catch (Exception ex)
             {
                 // Handle any possible exceptions
-                
+
                 _logger.LogError(ex, "An error occurred while creating a post.");
                 return StatusCode(500, ex.Message); // Return an internal server error response with the error message
             }
         }
-        
+
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<string> SaveFile(IFormFile file)
         {
@@ -232,15 +232,15 @@ namespace FriendifyMain.Controllers
                 // Copy the file to the file stream
                 await file.CopyToAsync(fileStream);
             }
-            
-            var strippedFilePath = Path.Combine( "assets", "media", file.FileName);
+
+            var strippedFilePath = Path.Combine("assets", "media", file.FileName);
 
 
             // Return the file path
             return strippedFilePath;
         }
 
-        
+
         // The like action allows the current user to like or unlike a post by its id
         [Authorize] // Require authentication
         [HttpPost("{PostId}/like")] // Only respond to POST requests with a PostId parameter in the route 
@@ -321,7 +321,7 @@ namespace FriendifyMain.Controllers
                 }
 
                 var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
-                
+
 
                 if (currentUser == null || currentUser.UserName == null || _context == null) { return BadRequest(); }
 
@@ -374,6 +374,9 @@ namespace FriendifyMain.Controllers
         //The delete action allows current user to delete a post by its id if they are owner or moderator  
         [Authorize] //Require authentication
         [HttpDelete("{PostId}/deletepost")]  //Only respond to DELETE requests with PostId parameter in route  
+        [ProducesResponseType(200)] // Specify possible response status code
+        [ProducesResponseType(typeof(string), 401)] // Specify possible response type and status code
+        [ProducesResponseType(typeof(string), 403)] // Specify possible response type and status code
         public async Task<IActionResult> Delete(int PostId)
         {
             try
@@ -413,11 +416,11 @@ namespace FriendifyMain.Controllers
                 if (post.UserId == currentUser.Id || currentUser.IsModerator || currentUser.IsAdmin)
                 {
                     //If yes, remove post from database context and save changes
-                    _context.Posts.Remove(post);
+                     _context.Posts.Remove(post);
                     await _context.SaveChangesAsync();
 
-                    //Redirect to index action to show updated posts list
-                    return RedirectToAction(nameof(Index));
+                    // Return a 200 OK response
+                    return Ok();
                 }
 
                 //If no, return 403 forbidden response
@@ -538,27 +541,36 @@ namespace FriendifyMain.Controllers
                         // If yes, update the original post properties that can be edited by the user input
                         originalPost.Content = postModel.Content;
 
-                        // Update the pictures
-                        originalPost.Pictures = new List<Picture>();
-                        foreach (var pictureFile in postModel.PictureFiles)
+                        if (postModel.PictureFiles != null)
                         {
-                            // Save the picture file to the server and get the URL
-                            var pictureUrl = await SaveFile(pictureFile);
+                            {
+                                // Update the pictures
+                                originalPost.Pictures = new List<Picture>();
+                                foreach (var pictureFile in postModel.PictureFiles)
+                                {
+                                    // Save the picture file to the server and get the URL
+                                    var pictureUrl = await SaveFile(pictureFile);
 
-                            // Create a new Picture object and add it to the post's Pictures collection
-                            originalPost.Pictures.Add(new Picture { Url = pictureUrl, User = currentUser, UserId = currentUser.Id });
+                                    // Create a new Picture object and add it to the post's Pictures collection
+                                    originalPost.Pictures.Add(new Picture { Url = pictureUrl, User = currentUser, UserId = currentUser.Id });
+                                }
+                            }
                         }
 
-                        // Update the videos
-                        originalPost.Videos = new List<Video>();
-                        foreach (var videoFile in postModel.VideoFiles)
+                        if (postModel.VideoFiles != null)
                         {
-                            // Save the video file to the server and get the URL
-                            var videoUrl = await SaveFile(videoFile);
+                            // Update the videos
+                            originalPost.Videos = new List<Video>();
+                            foreach (var videoFile in postModel.VideoFiles)
+                            {
+                                // Save the video file to the server and get the URL
+                                var videoUrl = await SaveFile(videoFile);
 
-                            // Create a new Video object and add it to the post's Videos collection
-                            originalPost.Videos.Add(new Video { Url = videoUrl, User = currentUser, UserId = currentUser.Id });
+                                // Create a new Video object and add it to the post's Videos collection
+                                originalPost.Videos.Add(new Video { Url = videoUrl, User = currentUser, UserId = currentUser.Id });
+                            }
                         }
+
 
                         // Save changes to the database context and reload the original post to reflect any changes made by triggers or computed columns in the database
                         _context.Posts.Update(originalPost);

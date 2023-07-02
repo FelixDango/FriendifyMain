@@ -20,7 +20,9 @@ export class AdminSidebarComponent {
         label: 'Admin',
         items: [
           { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/admin'] },
-          { label: 'Accounts', icon: 'pi pi-fw pi-users', routerLink: ['/admin/users'] }
+          { label: 'Accounts', icon: 'pi pi-fw pi-users', routerLink: ['/admin/users'] },
+          { label: 'Posts', icon: 'pi pi-fw pi-file', routerLink: ['/admin/posts'] }
+
 
 
         ]

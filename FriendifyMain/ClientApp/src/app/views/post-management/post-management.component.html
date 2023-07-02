@@ -1,0 +1,45 @@
+<app-admin-sidebar></app-admin-sidebar>
+
+<p-toast></p-toast>
+
+<div class="p-grid p-justify-center">
+  <br />
+  <div class="p-col-12 p-lg-10">
+    <p-table [value]="posts" [columns]="cols" selectionMode="single" [(selection)]="selectedPost" (onRowSelect)="onRowSelect($event)">
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns">
+            {{col.header}}
+          </th>
+          <th style="width: 4em"></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-post let-columns="columns">
+        <tr [pSelectableRow]="post">
+          <td *ngFor="let col of columns">
+            {{post[col.field]}}
+          </td>
+          <td>
+            <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="delete(post)"></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    <p-dialog header="Edit Post" [(visible)]="displayDialog" [style]="{width: '50vw'}" [modal]="true" [closable]="false" (onHide)="onHide()">
+      <div class="p-fluid">
+        <div class="p-field">
+          <label for="content">Content</label>
+          <textarea id="content" [(ngModel)]="selectedPost!.content" rows="5" pInputTextarea></textarea>
+        </div>
+      </div>
+      <p-footer>
+        <button pButton label="Save" icon="pi pi-check" (click)="save()"></button>
+        <button pButton label="Cancel" icon="pi pi-times" class="p-button-secondary" (click)="displayDialog=false"></button>
+      </p-footer>
+    </p-dialog>
+
+  </div>
+</div>
+
+<p-confirmDialog key="confirmWeightTest"></p-confirmDialog>

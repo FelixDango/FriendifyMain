@@ -48,6 +48,9 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { TagModule } from 'primeng/tag';
+import { SkeletonModule } from 'primeng/skeleton';
+import { PostManagementComponent } from './views/post-management/post-management.component';
+
 
 
 @NgModule({
@@ -70,7 +73,8 @@ import { TagModule } from 'primeng/tag';
     CommentSectionComponent,
     CommentComponent,
     UserManagementComponent,
-    AdminSidebarComponent
+    AdminSidebarComponent,
+    PostManagementComponent
   ],
     imports: [
         BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
@@ -90,6 +94,7 @@ import { TagModule } from 'primeng/tag';
             {path: 'messages', component: MessagesComponent},
             {path: 'edit-profile', component: EditProfileComponent },
             {path: 'admin/users', component: UserManagementComponent },
+            {path: 'admin/posts', component: PostManagementComponent },
 
         ]),
         CheckboxModule,
@@ -111,7 +116,8 @@ import { TagModule } from 'primeng/tag';
       ConfirmDialogModule,
       RadioButtonModule,
       ToastModule,
-      TagModule
+      TagModule,
+      SkeletonModule
     ],
   providers: [
     {
