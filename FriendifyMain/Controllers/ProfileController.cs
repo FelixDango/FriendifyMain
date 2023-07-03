@@ -92,7 +92,7 @@ namespace FriendifyMain.Controllers
             await _context.Entry(selectedUser).Collection(u => u.Following).LoadAsync();
             await _context.Entry(selectedUser).Collection(u => u.Posts).LoadAsync();
 
-            await _context.Posts
+            selectedUser.Posts =  await _context.Posts
                             .Include(p => p.Pictures)
                             .Include(p => p.Videos)
                             .Include(p => p.Comments)
@@ -152,13 +152,13 @@ namespace FriendifyMain.Controllers
             await _context.Entry(selectedUser).Collection(u => u.Following).LoadAsync();
             await _context.Entry(selectedUser).Collection(u => u.Posts).LoadAsync();
 
-            await _context.Posts
+            selectedUser.Posts = await _context.Posts
                             .Include(p => p.Pictures)
                             .Include(p => p.Videos)
                             .Include(p => p.Comments)
                             .Include(p => p.Likes)
-                            .OrderByDescending(p => p.Date)
                             .Where(p => p.UserId == selectedUser.Id)
+                            .OrderByDescending(p => p.Date)
                             .ToListAsync();
 
             await _context.Users
