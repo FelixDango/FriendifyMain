@@ -4,6 +4,8 @@ import { AdminData } from '../../models/admin-data';
 import { AdminService } from '../../services/admin.service';
 import { MenuItem, SelectItem } from 'primeng/api';
 import { LayoutService } from '../../layout/service/app.layout.service';
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
 
 @Component({
   selector: 'app-admin',
@@ -241,6 +243,79 @@ export class AdminComponent implements OnInit {
     currentDate.setDate(currentDate.getDate() - selectedValue);
     // Call the getAdminData method with the new date as an argument
     this.getAdminData(currentDate);
+  }
+
+
+  exportData(): void {
+    // Get all the canvas elements by tag name
+    // Get all the canvas elements by tag name
+    const elements = document.getElementsByTagName('canvas');
+    // Check if the elements exist
+    if (elements) {
+      // Create a new jsPDF object with the orientation, unit and format
+      const pdf = new jsPDF('l', 'mm', 'a4');
+      // Get the width and height of the PDF page
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      // Define the number of rows and columns for the grid layout
+      const rows = 2;
+      const cols = 2;
+      // Calculate the width and height of each chart
+      const chartWidth = pageWidth / cols;
+      const chartHeight = pageHeight / rows;
+      // Loop through the elements
+      for (let i = 0; i < elements.length; i++) {
+        // Use html2canvas to convert the element to a canvas
+        html2canvas(elements[i]).then((canvas) => {
+          // Get the canvas data as an image
+          const imgData = canvas.toDataURL('image/png');
+          // Calculate the x and y position of the chart based on the grid layout
+          const x = (i % cols) * chartWidth;
+          const y = Math.floor(i / cols) * chartHeight;
+          // Add the image to the PDF document at the calculated position and size
+          pdf.addImage(imgData, 'PNG', x, y, chartWidth, chartHeight);
+          // Save the PDF document as 'data.pdf' after the last element
+          if (i === elements.length - 1) {
+            pdf.save('data.pdf');
+          }
+        });
+      }
+    }
+
+
+
+    // Get the data from the adminData variable as an array of arrays
+    const data = [
+      ['Total Interactions', 'Total Accounts', 'Total Posts', 'Average Interactions'],
+      [
+        this.adminData?.totalInteractions.toFixed(0),
+        this.adminData?.totalAccountsInTimespan.toFixed(0),
+        this.adminData?.totalPosts.toFixed(0),
+        this.adminData?.averageInteractions.toFixed(0),
+      ],
+    ];
+
+    // Create a CSV string from the data array
+    let csv = '';
+    data.forEach((row) => {
+      csv += row.join(';');
+      csv += '\n';
+    });
+
+    // Create a blob object from the CSV string with the type 'text/csv'
+    const blob = new Blob([csv], { type: 'text/csv' });
+    // Create a URL for the blob object
+    const url = window.URL.createObjectURL(blob);
+    // Create a link element with the URL and the download attribute
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'data.csv';
+    // Append the link to the document body and click it
+    document.body.appendChild(link);
+    link.click();
+    // Remove the link from the document body and revoke the URL
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   }
 
 }
