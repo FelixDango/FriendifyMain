@@ -5,36 +5,51 @@
       <div class="text-900 text-3xl font-medium mb-3">Edit Profile</div>
     </div>
 
-    <form (ngSubmit)="updateProfile()">
-      <div class="form-group">
+    <form (ngSubmit)="updateProfile()" class="flex flex-wrap">
+      <div class="form-group w-1/2 px-2">
         <label for="firstName" class="block text-900 font-medium mb-2">First Name</label>
         <input type="text" [(ngModel)]="firstName" name="firstName" id="firstName" class="w-full mb-3" placeholder="Enter your first name" required>
       </div>
-      <div class="form-group">
+      <div class="form-group w-1/2 px-2">
         <label for="lastName" class="block text-900 font-medium mb-2">Last Name</label>
         <input type="text" [(ngModel)]="lastName" name="lastName" id="lastName" class="w-full mb-3" placeholder="Enter your last name" required>
       </div>
-      <div class="form-group">
+      <div class="form-group w-1/2 px-2">
+        <label for="email" class="block text-900 font-medium mb-2">E-Mail</label>
+        <input type="text" [(ngModel)]="email" name="email" id="email" class="w-full mb-3" placeholder="Enter your E-Mail" required>
+      </div>
+      <div class="form-group w-1/2 px-2">
         <label for="birthdate" class="block text-900 font-medium mb-2">Birthdate</label>
         <input type="date" [(ngModel)]="birthdate" name="birthdate" id="birthdate" class="w-full mb-3" required>
       </div>
-      <div class="form-group">
+      <div class="form-group w-1/2 px-2">
         <label for="sex" class="block text-900 font-medium mb-2">Sex</label>
         <select class="w-full mb-3" [(ngModel)]="sex" name="sex" id="sex" required>
+          <option [value]="undefined">Unchanged</option>
           <option [value]="0">Male</option>
           <option [value]="1">Female</option>
           <option [value]="2">Other</option>
         </select>
       </div>
-      <div class="form-group">
+      <div class="form-group w-1/2 px-2">
+        <label for="status" class="block text-900 font-medium mb-2">Status</label>
+        <select class="w-full mb-3" [(ngModel)]="status" name="status" id="status" required>
+          <option [value]="undefined">Unchanged</option>
+          <option [value]="0">Single</option>
+          <option [value]="1">In a relationship</option>
+        </select>
+      </div>
+      <div class="form-group w-full px-2">
         <label for="biography" class="block text-900 font-medium mb-2">Biography</label>
         <textarea [(ngModel)]="biography" name="biography" id="biography" class="w-full mb-3" placeholder="Enter your biography"></textarea>
       </div>
-      <div class="form-group">
+      <div class="form-group w-full px-2">
         <label for="picture" class="block text-900 font-medium mb-2">Profile Picture</label>
         <p-fileUpload [auto]="true" name="picture" id="picture" chooseLabel="Upload picture" [styleClass]="'f-upload'" [removeStyleClass]="'remove-upload'"  [customUpload]="true" accept="image/*,video/*" (uploadHandler)="handleFileInput($event, fileUpload)" class="w-full mb-3"></p-fileUpload>
       </div>
-      <button type="submit" class="w-full btn btn-primary">Update Profile</button>
+      <div class="form-group w-full px-2">
+        <button type="submit" class="w-full btn btn-primary">Update Profile</button>
+      </div>
     </form>
   </div>
 </div>

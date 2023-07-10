@@ -16,11 +16,12 @@ export class EditProfileComponent implements OnInit{
   lastName: string | undefined;
   email: string | undefined;
   birthdate: Date | undefined;
-  sex: number = 0;
-  status: number | undefined;
+  sex: number | undefined = undefined;
+  status: number | undefined = undefined;
   biography: string | undefined;
   picture: Blob | undefined;
   fileUpload: any;
+  formData = new FormData();
 
 
 
@@ -53,20 +54,17 @@ export class EditProfileComponent implements OnInit{
 
   updateProfile() {
     // Add code to update the user profile
+    if (this.username) this.formData.append('Username', this.username);
+    if (this.firstName) this.formData.append('FirstName', this.firstName);
+    if (this.lastName) this.formData.append('LastName', this.lastName);
+    if (this.email) this.formData.append('Email', this.email);
+    if (this.birthdate) this.formData.append('BirthDate', this.birthdate.toISOString());
+    if (this.sex) this.formData.append('Sex', String(this.sex));
+    if (this.status) this.formData.append('Status', String(this.status));
+    if (this.biography) this.formData.append('Biography', this.biography);
+    if (this.picture) this.formData.append('PictureFile', this.picture);
 
-    const updateData = {
-      username: this.username,
-      firstName: this.firstName,
-      lastName: this.lastName,
-      email: this.email,
-      birthdate: this.birthdate,
-      sex: parseInt(String(this.sex), 10),
-      status: 0,
-      biography: this.biography,
-      pictureUrl: this.picture,
-    };
-
-    this.httpService.put('/Profile/' + this.user?.userName + '/update', updateData).subscribe(
+    this.httpService.put('/Profile/' + this.user?.userName + '/update', this.formData).subscribe(
       (response: any) => {
         console.log(response);
         // Handle successful registration response
@@ -74,9 +72,7 @@ export class EditProfileComponent implements OnInit{
       (error: any) => {
         // Handle registration error
         console.error(error);
-
       }
-
     );
   }
 }

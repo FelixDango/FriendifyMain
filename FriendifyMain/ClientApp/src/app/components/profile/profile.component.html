@@ -7,6 +7,19 @@
       <h2 class="name">{{ user$.value?.firstName }} {{ user$.value?.lastName }}</h2>
       <h3 class="username">@{{ user$.value?.userName }}</h3>
       <p *ngIf="user$.value?.city && user$.value?.country" class="location">{{ user$.value?.city }}, {{ user$.value?.country }}</p>
+      <p class="sex">
+        {{
+        user$.value?.sex === 0 ? 'Male' :
+          user$.value?.sex === 1 ? 'Female' :
+            user$.value?.sex === 2 ? 'Other' :
+              ''
+        }} |
+        {{
+        user$.value?.status === 0 ? 'Single' :
+          user$.value?.status === 1 ? 'In a relationship' :
+            ''
+        }}
+      </p>
       <p class="bio">{{ user$.value?.biography }}</p>
       <div class="follow-stats">
         <span class="followers">{{ user$.value?.followers?.length || 0 }} followers</span>

@@ -111,7 +111,7 @@ export class NavMenuComponent implements OnInit {
             label: 'Admin Panel',
             icon: 'pi pi-fw pi-cog',
             routerLink: '/admin',
-            visible: this.authService.isLoggedIn() && this.user?.isAdmin
+            visible: this.authService.isLoggedIn() && this.authService.isAdmin()
           }
           ]
       },
