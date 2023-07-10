@@ -19,9 +19,9 @@
         <ng-template pTemplate="title">
           <div class="flex items-center justify-between">
             <div class="flex items-center">
-              <img (click)="window.location.assign(baseUrl + '/own-profile/' + result.userName)" src="{{backendUrl + '/' + result.picture.url}}" alt="{{result.userName}}" width="50px" height="50px" style="margin-left:10px; margin-right: 15px" />
+              <img (click)="window.location.assign(baseUrl + '/profile/' + result.userName)" src="{{backendUrl + '/' + result.picture.url}}" alt="{{result.userName}}" width="50px" height="50px" style="margin-left:10px; margin-right: 15px" />
 
-              <span (click)="window.location.assign(baseUrl + '/own-profile/' + result.userName)" style="overflow-wrap: anywhere">
+              <span (click)="window.location.assign(baseUrl + '/profile/' + result.userName)" style="overflow-wrap: anywhere">
                 @{{result.userName}}<br />
                 {{result.firstName + ' ' + result.lastName}}
               </span>

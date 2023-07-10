@@ -418,13 +418,13 @@ namespace FriendifyMain.Controllers
                 // Check if the other user exists
                 if (otherUser == null || otherUser.UserName == null)
                 {
-                    return NotFound(); // Return a 404 not found response with an error message
+                    return NotFound("User not found."); // Return a 404 not found response with an error message
                 }
 
                 // Check if the current user is already following the other user
                 if (currentUser.Following.Select(e => e.UserId == otherUser.Id).FirstOrDefault())
                 {
-                    return Ok(); // Return a 200 OK response with a message
+                    return Ok("You are already following this user."); // Return a 200 OK response with a message
                 }
 
                 // If not, add the other user to the follows list of the current user and save changes to database context
@@ -483,7 +483,7 @@ namespace FriendifyMain.Controllers
                 // Check if the other user exists
                 if (otherUser == null)
                 {
-                    return NotFound(); // Return a 404 not found response with an error message
+                    return NotFound("User not found."); // Return a 404 not found response with an error message
                 }
 
 
@@ -500,7 +500,7 @@ namespace FriendifyMain.Controllers
                 // Check if the current user is following the other user
                 if (!following)
                 {
-                    return Ok(); // Return a 200 OK response with a message
+                    return Ok("You are not following this user."); // Return a 200 OK response with a message
                 }
 
                 // If yes, remove the other user from the follows list of the current user and save changes to database context
