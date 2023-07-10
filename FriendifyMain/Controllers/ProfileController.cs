@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 namespace FriendifyMain.Controllers
 {
@@ -101,12 +102,20 @@ namespace FriendifyMain.Controllers
                             .Where(p => p.UserId == selectedUser.Id)
                             .ToListAsync();
 
+            
+
             await _context.Users
                      .Include(u => u.Picture) // Include the Picture navigation property
                      .Include(u => u.Images)
                      .Include(u => u.Videos)
                      .FirstOrDefaultAsync(u => u.Id == selectedUser.Id); // Filter by id
 
+            foreach (var post in selectedUser.Posts)
+            {
+
+                post.ProfilePicture = selectedUser.Picture?.Url ?? post.ProfilePicture;
+
+            }
 
             // Check if the current user is an admin or requesting their own profile
             if (currentUser.IsAdmin || currentUser.Id == selectedUser.Id)
@@ -164,6 +173,13 @@ namespace FriendifyMain.Controllers
             await _context.Users
                      .Include(u => u.Picture) // Include the Picture navigation property
                      .FirstOrDefaultAsync(u => u.Id == selectedUser.Id); // Filter by id
+
+            foreach (var post in selectedUser.Posts)
+            {
+
+                post.ProfilePicture = selectedUser.Picture?.Url ?? post.ProfilePicture;
+
+            }
 
             // Remove Critical fields from response
             selectedUser.PasswordHash = "Censored";
