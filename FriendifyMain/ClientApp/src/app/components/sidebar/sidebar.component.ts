@@ -11,20 +11,17 @@ import {AuthService} from "../../services/auth.service";
   styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent {
-  following: { code: number; name: string }[] = [];
+  following: Follower[] = [];
   messagedUsernames: string[] = [];
   user: User | undefined = undefined;
-  activeMessageTab: string | undefined = undefined;
+  activeMessageTab: string = "";
   followingMessage: Follower | undefined = undefined;
 
 
   constructor(private messagesService: MessagesService, private authService: AuthService) {
     this.messagesService.following$.subscribe((following) => {
       console.log('following', following);
-      this.following = following.map(item => ({
-        name: item.username,
-        code: item.userId
-      }));
+      this.following = following;
     })
     this.messagesService.messages$.subscribe((messages) => {
       this.messagedUsernames = this.getMessagedUsernames(messages as Message[]);
@@ -59,7 +56,4 @@ export class SidebarComponent {
     }
     return Array.from(usernames);
   }
-
-
-  protected readonly undefined = undefined;
 }

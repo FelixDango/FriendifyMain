@@ -1,13 +1,17 @@
 <div class="sidebar">
-  <ul class="sidebar-list">
+  <ul class="sidebar-list mb-7">
 
-    <li *ngFor="let name of messagedUsernames" class="sidebar-item" [ngClass]="{'active' : name === activeMessageTab}" (click)="loadMessages(name)">{{name}}</li>
+    <li *ngFor="let name of messagedUsernames" class="sidebar-item" [ngClass]="{'active' : name === activeMessageTab}" (click)="loadMessages(name)">@{{name}}</li>
     <!-- Add more sidebar items as needed -->
   </ul>
-  <p>Add new chat:</p>
-  <ng-container *ngIf="following.length>2">
-    <p-dropdown  [options]="following" [(ngModel)]="followingMessage" optionLabel="name">
-    </p-dropdown>
+  <ng-container *ngIf="following.length>0">
+    <p>Start a new conversation:</p>
+    <select [(ngModel)]="activeMessageTab" class="w-full mb-3 ng-pristine" (change)="loadMessages(activeMessageTab)">
+      <option [value]="">Select</option>
+      <option *ngFor="let user of following" [value]="user.username">@{{ user.username }}</option>
+    </select>
   </ng-container>
+
+
 
 </div>
