@@ -43,9 +43,9 @@ namespace FriendifyMain.Controllers
 
             foreach (var currentUser in users) {
                 // Load the related data explicitly
-                await _context.Entry(currentUser).Collection(u => u.Followers).LoadAsync();
-                await _context.Entry(currentUser).Collection(u => u.Following).LoadAsync();
-                await _context.Entry(currentUser).Collection(u => u.Posts).LoadAsync();
+                //await _context.Entry(currentUser).Collection(u => u.Followers).LoadAsync();
+                //await _context.Entry(currentUser).Collection(u => u.Following).LoadAsync();
+                //await _context.Entry(currentUser).Collection(u => u.Posts).LoadAsync();
 
                 await _context.Users
                          .Include(u => u.Picture) // Include the Picture navigation property
@@ -56,7 +56,12 @@ namespace FriendifyMain.Controllers
             // Filter users by name (Username, Firstname or Lastname) if provided
             if (!string.IsNullOrEmpty(name))
             {
-                users = users.Where(u => u.UserName != null && (u.UserName.ToUpper().Contains(name.ToUpper()) || u.FirstName.ToUpper().Contains(name.ToUpper()) || u.LastName.ToUpper().Contains(name.ToUpper()))).ToList();
+                users = users.Where(u => u.UserName != null && (u.UserName.ToUpper().Contains(name.ToUpper()) ||
+                                    u.FirstName.ToUpper().Contains(name.ToUpper()) || 
+                                    u.LastName.ToUpper().Contains(name.ToUpper())  ||
+                                    name.ToUpper().Contains(u.FirstName.ToUpper()) ||
+                                    name.ToUpper().Contains(u.LastName.ToUpper()) ))
+                                    .ToList();
             }
             // Remove Critical fields from response
             foreach (var user in users)
