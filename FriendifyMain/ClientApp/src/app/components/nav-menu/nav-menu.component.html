@@ -3,8 +3,35 @@
     <ng-template pTemplate="start">
       <img routerLink="/" src="assets/media/logo.png" height="100" class="mr-2" />
       <div class="flex flex-col search-container">
-        <input type="text" pInputText placeholder="Search" class="w-full" />
+        <div class="flex items-cente rounded-md">
+          <input type="text" pInputText [(ngModel)]="searchText" placeholder="Search" class="w-full px-2 py-1 outline-none" style="margin-right:5px">
+          <button pButton type="button" label="" icon="pi pi-search" (click)="doSearch()" [disabled]="!searchText"></button>
+        </div>
       </div>
     </ng-template>
   </p-menubar>
 </header>
+<p-dialog header="Search Results" [(visible)]="showPopup" [style]="{width: '50vw'}" [modal]="true">
+  <p-progressSpinner [style]="{width: '50px', height: '50px'}" [ngStyle]="{'display': loading ? 'block' : 'none'}"></p-progressSpinner>
+  <div *ngIf="searchResults.length > 0; else noResults" class="p-grid p-justify-center">
+    <div *ngFor="let result of searchResults" class="p-col-12 p-md-6 p-lg-4">
+      <p-card styleClass="user-card" [style]="{'position': 'relative'}">
+        <ng-template pTemplate="title">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <img (click)="window.location.assign(baseUrl + '/own-profile/' + result.userName)" src="{{backendUrl + '/' + result.picture.url}}" alt="{{result.userName}}" width="50px" height="50px" style="margin-left:10px; margin-right: 15px" />
+
+              <span (click)="window.location.assign(baseUrl + '/own-profile/' + result.userName)" style="overflow-wrap: anywhere">
+                @{{result.userName}}<br />
+                {{result.firstName + ' ' + result.lastName}}
+              </span>
+            </div>
+          </div>
+        </ng-template>
+      </p-card>
+    </div>
+  </div>
+  <ng-template #noResults>
+    <p *ngIf="!loading">No results found.</p>
+  </ng-template>
+</p-dialog>

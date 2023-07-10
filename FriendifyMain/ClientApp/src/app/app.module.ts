@@ -50,9 +50,15 @@ import { ToastModule } from 'primeng/toast';
 import { TagModule } from 'primeng/tag';
 import { SkeletonModule } from 'primeng/skeleton';
 import { PostManagementComponent } from './views/post-management/post-management.component';
+<<<<<<< Updated upstream
 import { AgePipe } from './pipes/age.pipe';
 
 
+=======
+import { AutoCompleteModule } from "primeng/autocomplete";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { CardModule } from 'primeng/card';
+>>>>>>> Stashed changes
 
 @NgModule({
   declarations: [
@@ -119,7 +125,10 @@ import { AgePipe } from './pipes/age.pipe';
       RadioButtonModule,
       ToastModule,
       TagModule,
-      SkeletonModule
+      SkeletonModule,
+      AutoCompleteModule,
+      ProgressSpinnerModule,
+      CardModule
     ],
   providers: [
     {

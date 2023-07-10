@@ -31,8 +31,13 @@ namespace FriendifyMain.Controllers
         [HttpGet("finduser")]
         [Authorize] // Require authentication
         [ProducesResponseType(typeof(List<User>), 200)] // Specify possible response type and status code
-        public async Task<IActionResult> FindUser([FromQuery] string name) // Indicate that the name (Username, Firstname or Lastname) from query string
+        public async Task<IActionResult> FindUser([FromQuery] string? name) // Indicate that the name (Username, Firstname or Lastname) from query string
         {
+            if (name == null || name.Trim() == "")
+            {
+                return Ok(new List<User>());
+            }
+
             // Get all users from the database context
             var users = await _context.Users.ToListAsync();
 

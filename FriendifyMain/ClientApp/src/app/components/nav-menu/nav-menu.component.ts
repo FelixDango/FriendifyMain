@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from "../../services/auth.service";
 import { MenuItem } from "primeng/api";
-import { Observable } from 'rxjs';
-import {User} from "../../models/user";
-import {HttpService} from "../../services/http.service";
-import {ProfileService} from "../../services/profile.service";
+import { BehaviorSubject, Observable } from 'rxjs';
+import { User } from "../../models/user";
+import { HttpService } from "../../services/http.service";
+import { ProfileService } from "../../services/profile.service";
+import { SearchService } from "../../services/search.service";
+import { Post } from "../../models/post";
+import { AutoComplete } from "primeng/autocomplete";
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-nav-menu',
@@ -14,15 +18,32 @@ import {ProfileService} from "../../services/profile.service";
 export class NavMenuComponent implements OnInit {
   isExpanded = false;
   items: MenuItem[] = [];
+  // Define the user property as User or undefined
   user: User | undefined;
+
+
   assetsUrl: string;
 
+  searchText: string = "";
+  searchResults: User[] = [];
+  showPopup: boolean = false;
+  loading: boolean = false;
+
+  public window = window;
+  username = '';
+
+  baseUrl: string = "https://localhost:44401";
+  backendUrl: string = "https://localhost:7073";
+
   constructor(
+    // Inject the AuthService
     private authService: AuthService,
     private httpService: HttpService,
-    private profileService: ProfileService
+    private profileService: ProfileService,
+    private searchService: SearchService,
   ) {
     this.assetsUrl = this.httpService.assetsUrl;
+    // Assign the user property with the value from the authService
     this.authService.user$.subscribe((user: User) => {
       this.user = user;
     });
@@ -43,9 +64,6 @@ export class NavMenuComponent implements OnInit {
     }
     this.updateMenuItems();
 
-
-    // Subscribe to isLoggedIn$ to update the navigation in real time
-
   }
   toggle() {
     this.isExpanded = !this.isExpanded;
@@ -55,10 +73,12 @@ export class NavMenuComponent implements OnInit {
     this.authService.logout();
   }
 
+
   private updateMenuItems(): void {
-    let username = '';
+
     if (this.authService.isLoggedIn()) {
-      username = this.authService.getUserName();
+      this.username = this.authService.getUserName();
+
     }
 
     this.items = [
@@ -83,11 +103,11 @@ export class NavMenuComponent implements OnInit {
         label: 'Profile',
         icon: 'pi pi-fw pi-user',
         visible: this.authService.isLoggedIn(),
-        items : [
+        items: [
           {
             label: 'View Profile',
             icon: 'pi pi-fw pi-user',
-            routerLink: ['/own-profile/' + username],
+            routerLink: ['/own-profile/' + this.username],
             visible: this.authService.isLoggedIn(),
           },
           {
@@ -113,8 +133,25 @@ export class NavMenuComponent implements OnInit {
             routerLink: '/admin',
             visible: this.authService.isLoggedIn() && this.authService.isAdmin() || this.authService.isModerator()
           }
-          ]
+        ]
       },
     ];
   }
+
+  doSearch() {
+
+    this.loading = true;
+    this.showPopup = true;
+    this.searchResults = [];
+
+    this.searchService.findUser(this.searchText).subscribe((users: User[]) => {
+      this.searchResults = users;
+
+      this.loading = false;
+    });
+
+  }
+
+
 }
+
