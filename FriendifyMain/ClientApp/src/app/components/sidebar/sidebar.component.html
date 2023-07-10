@@ -5,5 +5,9 @@
     <!-- Add more sidebar items as needed -->
   </ul>
   <p>Add new chat:</p>
-  <p-dropdown [options]="following" [(ngModel)]="followingMessage" optionLabel="name"></p-dropdown>
+  <ng-container *ngIf="following.length>2">
+    <p-dropdown  [options]="following" [(ngModel)]="followingMessage" optionLabel="name">
+    </p-dropdown>
+  </ng-container>
+
 </div>

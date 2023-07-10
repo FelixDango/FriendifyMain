@@ -139,4 +139,9 @@ export class AuthService {
     return user.isAdmin;
   }
 
+  isModerator(): boolean {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    return user.isModerator;
+  }
+
 }
