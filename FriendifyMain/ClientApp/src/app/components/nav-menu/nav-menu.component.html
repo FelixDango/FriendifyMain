@@ -3,9 +3,11 @@
     <ng-template pTemplate="start">
       <img routerLink="/" src="assets/media/logo.png" height="100" class="mr-2" />
       <div class="flex flex-col search-container">
-        <div class="flex items-cente rounded-md">
-          <input type="text" pInputText [(ngModel)]="searchText" placeholder="Search" class="w-full px-2 py-1 outline-none" style="margin-right:5px">
-          <button pButton type="button" label="" icon="pi pi-search" (click)="doSearch()" [disabled]="!searchText"></button>
+        <div class="flex items-cente rounded-md" *ngIf="authService.isLoggedIn()">
+
+            <input type="text" pInputText [(ngModel)]="searchText" placeholder="Search" class="w-full px-2 py-1 outline-none" style="margin-right:5px">
+            <button pButton type="button" label="" icon="pi pi-search" (click)="doSearch()" [disabled]="!searchText"></button>
+
         </div>
       </div>
     </ng-template>

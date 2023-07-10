@@ -37,7 +37,7 @@ export class NavMenuComponent implements OnInit {
 
   constructor(
     // Inject the AuthService
-    private authService: AuthService,
+    public authService: AuthService,
     private httpService: HttpService,
     private profileService: ProfileService,
     private searchService: SearchService,
