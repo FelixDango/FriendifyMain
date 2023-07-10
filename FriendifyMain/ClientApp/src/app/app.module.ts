@@ -50,6 +50,7 @@ import { ToastModule } from 'primeng/toast';
 import { TagModule } from 'primeng/tag';
 import { SkeletonModule } from 'primeng/skeleton';
 import { PostManagementComponent } from './views/post-management/post-management.component';
+import { AgePipe } from './pipes/age.pipe';
 
 
 
@@ -74,7 +75,8 @@ import { PostManagementComponent } from './views/post-management/post-management
     CommentComponent,
     UserManagementComponent,
     AdminSidebarComponent,
-    PostManagementComponent
+    PostManagementComponent,
+    AgePipe
   ],
     imports: [
         BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),

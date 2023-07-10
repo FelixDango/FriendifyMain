@@ -7,7 +7,7 @@
       <h2 class="name">{{ user$.value?.firstName }} {{ user$.value?.lastName }}</h2>
       <h3 class="username">@{{ user$.value?.userName }}</h3>
       <p *ngIf="user$.value?.city && user$.value?.country" class="location">{{ user$.value?.city }}, {{ user$.value?.country }}</p>
-      <p class="sex">
+      <p class="info">{{birthdate | age}}
         {{
         user$.value?.sex === 0 ? 'Male' :
           user$.value?.sex === 1 ? 'Female' :

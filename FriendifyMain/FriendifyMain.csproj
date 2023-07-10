@@ -2786,6 +2786,7 @@
     <ItemGroup>
       <Folder Include="ClientApp\src\app\components\" />
       <Folder Include="ClientApp\src\app\models\" />
+      <Folder Include="ClientApp\src\app\pipes\" />
       <Folder Include="ClientApp\src\app\views\" />
       <Folder Include="ClientApp\src\assets\media\" />
       <Folder Include="Helpers\" />

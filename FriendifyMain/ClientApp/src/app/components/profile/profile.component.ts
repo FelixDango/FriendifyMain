@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {SexEnum, StatusEnum, User} from "../../models/user";
+import {User} from "../../models/user";
 import {HttpService} from "../../services/http.service";
 import {AuthService} from "../../services/auth.service";
 import {BehaviorSubject} from "rxjs";
@@ -16,7 +16,7 @@ export class ProfileComponent implements OnInit {
   loggedInUser: User | undefined = undefined;
   assetsUrl: string;
   isFollowing$ = new BehaviorSubject(<boolean>false);
-
+  birthdate: Date = new Date();
   constructor(
     private httpService: HttpService,
     private authService: AuthService
@@ -49,6 +49,7 @@ export class ProfileComponent implements OnInit {
       (response: User) => {
         this.authService.updateUser();
         this.user$.next(response);
+        this.birthdate = new Date(response.birthDate);
         if (this.loggedInUser) {
           this.checkFollow(this.loggedInUser.id);
         }
