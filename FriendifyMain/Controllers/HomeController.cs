@@ -63,7 +63,19 @@ namespace FriendifyMain.Controllers
                     .OrderByDescending(p => p.Date)
                     .ToListAsync();
 
+                foreach (var post in posts)
+                {
+                    var user = await _userManager.FindByNameAsync(post.Username);
 
+                    if (user != null)
+                    {
+                        await _context.Users
+                            .Include(u => u.Picture) // Include the Picture navigation property
+                            .FirstOrDefaultAsync(u => u.Id == user.Id); // Filter by id
+
+                        post.ProfilePicture = user.Picture?.Url ?? post.ProfilePicture;
+                    }
+                }
 
                 // Return an OK response with the posts as the data 
                 return Ok(posts);
@@ -82,6 +94,8 @@ namespace FriendifyMain.Controllers
         {
             try
             {
+                
+                
                 // Get all posts ordered by date in descending order
                 var posts = await _context.Posts
                     .Include(p => p.Pictures)
@@ -90,6 +104,22 @@ namespace FriendifyMain.Controllers
                     .Include(p => p.Likes)
                     .OrderByDescending(p => p.Date)
                     .ToListAsync();
+
+                foreach (var post in posts)
+                {
+                    var user = await _userManager.FindByNameAsync(post.Username);
+                    
+                    if (user != null)
+                    {
+                        await _context.Users
+                            .Include(u => u.Picture) // Include the Picture navigation property
+                            .FirstOrDefaultAsync(u => u.Id == user.Id); // Filter by id
+                        
+                        post.ProfilePicture = user.Picture?.Url ?? post.ProfilePicture;
+                    }
+                }
+
+                
 
                 // Check if paging is enabled
                 if (pageSize > 0)
