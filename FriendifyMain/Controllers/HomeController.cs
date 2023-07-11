@@ -55,6 +55,7 @@ namespace FriendifyMain.Controllers
 
                 // Get the latest posts from the followed users and the current user, ordered by date in descending order 
                 var posts = await _context.Posts
+                    .AsNoTracking()
                     .Where(p => followedUsers.Contains(p.UserId))
                     .Include(p => p.Pictures)
                     .Include(p => p.Videos)
@@ -63,6 +64,7 @@ namespace FriendifyMain.Controllers
                     .OrderByDescending(p => p.Date)
                     .ToListAsync();
 
+
                 foreach (var post in posts)
                 {
                     var user = await _userManager.FindByNameAsync(post.Username);
@@ -70,8 +72,8 @@ namespace FriendifyMain.Controllers
                     if (user != null)
                     {
                         await _context.Users
-                            .Include(u => u.Picture) // Include the Picture navigation property
-                            .FirstOrDefaultAsync(u => u.Id == user.Id); // Filter by id
+                            .Select(u => new { u.Id, u.Picture })
+                            .FirstOrDefaultAsync(u => u.Id == user.Id);
 
                         post.ProfilePicture = user.Picture?.Url ?? post.ProfilePicture;
                     }
@@ -94,8 +96,8 @@ namespace FriendifyMain.Controllers
         {
             try
             {
-                
-                
+
+
                 // Get all posts ordered by date in descending order
                 var posts = await _context.Posts
                     .Include(p => p.Pictures)
@@ -108,18 +110,18 @@ namespace FriendifyMain.Controllers
                 foreach (var post in posts)
                 {
                     var user = await _userManager.FindByNameAsync(post.Username);
-                    
+
                     if (user != null)
                     {
                         await _context.Users
-                            .Include(u => u.Picture) // Include the Picture navigation property
-                            .FirstOrDefaultAsync(u => u.Id == user.Id); // Filter by id
-                        
+                            .Select(u => new { u.Id, u.Picture })
+                            .FirstOrDefaultAsync(u => u.Id == user.Id);
+
                         post.ProfilePicture = user.Picture?.Url ?? post.ProfilePicture;
                     }
                 }
 
-                
+
 
                 // Check if paging is enabled
                 if (pageSize > 0)
@@ -162,8 +164,8 @@ namespace FriendifyMain.Controllers
                         return BadRequest("You are suspended"); // Return a bad request response with an error message
                     }
                     await _context.Users
-                     .Include(u => u.Picture) // Include the Picture navigation property
-                     .FirstOrDefaultAsync(u => u.Id == currentUser.Id); // Filter by id
+                            .Select(u => new { u.Id, u.Picture })
+                            .FirstOrDefaultAsync(u => u.Id == currentUser.Id);
 
                     // Validate the post model using data annotations and custom logic
                     if (ModelState.IsValid && !string.IsNullOrEmpty(postModel.Content))
@@ -427,8 +429,13 @@ namespace FriendifyMain.Controllers
                     return BadRequest("You are suspended"); //Return bad request response with error message
                 }
 
-                // Get the post by its id from the database context
-                var post = await _context.Posts.FindAsync(PostId);
+                var post = await _context.Posts
+                .Include(p => p.Comments)
+                .Include(p => p.Pictures)
+                .Include(p => p.Videos)
+                .Include(p => p.Likes)
+                .FirstOrDefaultAsync(p => p.Id == PostId);
+
 
                 // Check if the post exists
                 if (post == null)
@@ -436,17 +443,12 @@ namespace FriendifyMain.Controllers
                     return NotFound(); // Return a 404 not found response
                 }
 
-                // Load the related data explicitly
-                await _context.Entry(post).Collection(p => p.Comments).LoadAsync();
-                await _context.Entry(post).Collection(p => p.Pictures).LoadAsync();
-                await _context.Entry(post).Collection(p => p.Videos).LoadAsync();
-                await _context.Entry(post).Collection(p => p.Likes).LoadAsync();
 
                 //Check if current user is owner or moderator of post
                 if (post.UserId == currentUser.Id || currentUser.IsModerator || currentUser.IsAdmin)
                 {
                     //If yes, remove post from database context and save changes
-                     _context.Posts.Remove(post);
+                    _context.Posts.Remove(post);
                     await _context.SaveChangesAsync();
 
                     // Return a 200 OK response
@@ -486,8 +488,13 @@ namespace FriendifyMain.Controllers
                     return BadRequest("You are suspended"); // Return a bad request response with an error message
                 }
 
-                // Get the post by its id from the database context
-                var post = await _context.Posts.FindAsync(PostId);
+                var post = await _context.Posts
+                        .Include(p => p.Comments)
+                        .Include(p => p.Pictures)
+                        .Include(p => p.Videos)
+                        .Include(p => p.Likes)
+                        .FirstOrDefaultAsync(p => p.Id == PostId);
+
 
                 // Check if the post exists
                 if (post == null)
@@ -495,11 +502,7 @@ namespace FriendifyMain.Controllers
                     return NotFound(); // Return a 404 not found response
                 }
 
-                // Load the related data explicitly
-                await _context.Entry(post).Collection(p => p.Comments).LoadAsync();
-                await _context.Entry(post).Collection(p => p.Pictures).LoadAsync();
-                await _context.Entry(post).Collection(p => p.Videos).LoadAsync();
-                await _context.Entry(post).Collection(p => p.Likes).LoadAsync();
+
 
                 // Check if the current user is the owner or admin or moderator of the post
                 if (post.UserId == currentUser.Id || currentUser.IsAdmin || currentUser.IsModerator)
@@ -550,20 +553,19 @@ namespace FriendifyMain.Controllers
                 // Validate the post model using data annotations and custom logic
                 if (ModelState.IsValid && !string.IsNullOrEmpty(postModel.Content))
                 {
-                    // Get the post by its id from the database context
-                    var originalPost = await _context.Posts.FindAsync(PostId);
+                    var originalPost = await _context.Posts
+                                    .Include(p => p.Comments)
+                                    .Include(p => p.Pictures)
+                                    .Include(p => p.Videos)
+                                    .Include(p => p.Likes)
+                                    .FirstOrDefaultAsync(p => p.Id == PostId);
+
 
                     // Check if the original post exists and matches with the given post id
                     if (originalPost == null || originalPost.Id != PostId)
                     {
                         return NotFound(); // Return a 404 not found response
                     }
-
-                    // Load the related data explicitly
-                    await _context.Entry(originalPost).Collection(p => p.Comments).LoadAsync();
-                    await _context.Entry(originalPost).Collection(p => p.Pictures).LoadAsync();
-                    await _context.Entry(originalPost).Collection(p => p.Videos).LoadAsync();
-                    await _context.Entry(originalPost).Collection(p => p.Likes).LoadAsync();
 
                     // Check if the current user is the owner or admin or moderator of the original post
                     if (originalPost.UserId == currentUser.Id || currentUser.IsAdmin || currentUser.IsModerator)
