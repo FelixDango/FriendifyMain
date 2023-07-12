@@ -1,5 +1,5 @@
 import {Post} from "../models/post";
-import {BehaviorSubject, Observable, of} from "rxjs";
+import {BehaviorSubject, map, Observable, of} from "rxjs";
 import {Injectable} from "@angular/core";
 import {HttpService} from "./http.service";
 import {AuthService} from "./auth.service";
@@ -87,5 +87,35 @@ export class PostsService {
       }
     )
   }
+
+  // Load random posts from all users
+  loadRandomPosts(): Observable<Post[]> {
+    // Create an empty array of posts
+    let posts: Post[] = [];
+
+    // Get all posts from the server
+    return this.httpService.get('/Home/getallposts').pipe(
+      map((response: any) => {
+        posts = response as Post[];
+
+        // Shuffle the array of posts
+        posts = this.shuffleArray(posts);
+
+        return posts.slice(0, 10);
+      })
+    );
+  }
+
+  // Helper function to shuffle an array
+  shuffleArray(array: any[]): any[] {
+    for (let i = array.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
+
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+
+    return array;
+  }
+
 
 }

@@ -8,26 +8,25 @@
   <h1>Your Timeline!</h1>
 </ng-container>
 <h1 *ngIf="user === undefined">Stay Connected, Stay Friendified!</h1>
-<p-progressSpinner *ngIf="(publicPosts$ | async)!.length === 0 && user === undefined" [style]="{width: '50px', height: '50px'}"></p-progressSpinner>
-<ng-container *ngIf="(publicPosts$ | async)!.length > 0">
-  <div *ngIf="publicPosts$ && (publicPosts$ | async)!.length > 0; else noPosts">
-    <div *ngFor="let post of publicPosts$ | async">
+
+<ng-container *ngIf="user !== undefined">
+  <p-progressSpinner *ngIf="isLoading" [style]="{width: '50px', height: '50px'}"></p-progressSpinner>
+  <p *ngIf="!isLoading && random">No posts available. Here are some random posts from random users.</p>
+  <div *ngIf="(posts$ | async)!.length > 0">
+    <div *ngFor="let post of posts$ | async">
       <div class="shadow-3 mb-4">
         <app-user-post [postIsPublic]=true [post]="post"></app-user-post>
       </div>
     </div>
   </div>
-  <ng-template #noPosts>
-    <p>No posts available.</p>
-  </ng-template>
 </ng-container>
 
-<p-progressSpinner *ngIf="(posts$ | async)!.length === 0 && user !== undefined" [style]="{width: '50px', height: '50px'}"></p-progressSpinner>
-<ng-container *ngIf="(posts$ | async)!.length > 0">
-  <div *ngIf="(posts$ | async)!.length > 0; else noPosts">
-    <div *ngFor="let post of posts$ | async">
+<p-progressSpinner *ngIf="isLoading && user === undefined" [style]="{width: '50px', height: '50px'}"></p-progressSpinner>
+<ng-container *ngIf="(publicPosts$ | async)!.length > 0">
+  <div *ngIf="publicPosts$ && (publicPosts$ | async)!.length > 0; else noPosts">
+    <div *ngFor="let post of publicPosts$ | async">
       <div class="shadow-3 mb-4">
-        <app-user-post [post]="post"></app-user-post>
+        <app-user-post [postIsPublic]=true [post]="post"></app-user-post>
       </div>
     </div>
   </div>
