@@ -15,6 +15,12 @@ interface LoginResponse extends HttpResponse<any> {
 })
 
 export class AuthService {
+  private baseUrl = 'https://localhost:7073/api/Account';
+  isLoggedInSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public isLoggedIn$: Observable<boolean> = this.isLoggedInSubject.asObservable();
+  public user$: ReplaySubject<User> = new ReplaySubject<User>(1); // Replay the last value to new subscribers
+  constructor(private http: HttpClient, private router: Router) { }
+
   getToken() {
     return localStorage.getItem('token');
   }
@@ -32,21 +38,10 @@ export class AuthService {
     return 0;
   }
 
-
   updateUser() {
-    console.log('updateUser');
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     this.user$.next(user);
   }
-
-
-  private baseUrl = 'https://localhost:7073/api/Account';
-  isLoggedInSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  public isLoggedIn$: Observable<boolean> = this.isLoggedInSubject.asObservable();
-  public user$: ReplaySubject<User> = new ReplaySubject<User>(1); // Replay the last value to new subscribers
-
-  constructor(private http: HttpClient, private router: Router) { }
-
   login(username: string, password: string, rememberMe: boolean): Observable<LoginResponse> {
     const loginData = {
       username: username,
@@ -57,7 +52,6 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.baseUrl}/login`, loginData, { responseType: 'json' }).pipe(
       tap(response=>{ // Add a colon and specify the type
         // Save token and user data to local storage
-        console.log('response', response);
         localStorage.setItem('token', response.token);
         localStorage.setItem('user', JSON.stringify(response.user));
         // Emit the authentication status

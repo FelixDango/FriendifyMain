@@ -63,13 +63,11 @@ export class ProfileComponent implements OnInit {
   // check if the user follows this profile
   checkFollow(id: number) {
     const followers = this.user$.value?.followers;
-    console.log('followers', followers);
-    console.log('id to check', id);
-
     if (followers) {
       for (let i = 0; i < followers.length; i++) {
         if (followers[i].followerId === id) {
           this.isFollowing$.next(true);
+          break;
         } else {
           this.isFollowing$.next(false);
         }
@@ -91,7 +89,6 @@ export class ProfileComponent implements OnInit {
   unfollowUser(username: string) {
     this.httpService.post('/Profile/' + username + '/unfollow',null).subscribe(
       (response) => {
-        console.log('unfollow res:',response);
         this.isFollowing$.next(false);
         this.loadUser(username);
       }
@@ -100,11 +97,9 @@ export class ProfileComponent implements OnInit {
   toggleFollow() {
     if (this.isFollowing$.value) {
       this.unfollowUser(this.user$.value?.userName || '');
-      console.log('this follow', this.isFollowing$.value);
 
     } else {
       this.followUser(this.user$.value?.userName || '');
-      console.log('this follow', this.isFollowing$.value);
 
     }
   }
