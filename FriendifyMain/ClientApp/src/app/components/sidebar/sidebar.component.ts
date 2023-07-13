@@ -45,7 +45,15 @@ export class SidebarComponent {
 
   getMessagedUsernames(messages: Message[]): string[] {
     const usernames = new Set<string>();
-    messages.forEach(item => {
+    let sortedMessages = [];
+    console.log('messages',messages);
+    // sort messages by date
+    sortedMessages = messages.sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return dateB.getTime() - dateA.getTime();
+    });
+    sortedMessages.forEach(item => {
       // add sender usernames
       if (item.username !== this.user?.userName) {
         usernames.add(item.username);

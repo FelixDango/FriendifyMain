@@ -5,7 +5,7 @@
     <!-- Add more sidebar items as needed -->
   </ul>
   <ng-container *ngIf="following.length>0">
-    <p>Start a new conversation:</p>
+    <p>Message someone you follow:</p>
     <select [(ngModel)]="activeMessageTab" class="w-full mb-3 ng-pristine" (change)="loadMessages(activeMessageTab)">
       <option [value]="">Select</option>
       <option *ngFor="let user of following" [value]="user.username">@{{ user.username }}</option>
