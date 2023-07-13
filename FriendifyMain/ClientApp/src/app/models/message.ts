@@ -13,4 +13,5 @@ export interface Message {
   pictures: Picture[];
   videos: Video[];
   username: string;
+  receiverUsername: string;
 }

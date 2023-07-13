@@ -20,7 +20,6 @@ export class SidebarComponent {
 
   constructor(private messagesService: MessagesService, private authService: AuthService) {
     this.messagesService.following$.subscribe((following) => {
-      console.log('following', following);
       this.following = following;
     })
     this.messagesService.messages$.subscribe((messages) => {
@@ -47,8 +46,13 @@ export class SidebarComponent {
   getMessagedUsernames(messages: Message[]): string[] {
     const usernames = new Set<string>();
     messages.forEach(item => {
+      // add sender usernames
       if (item.username !== this.user?.userName) {
         usernames.add(item.username);
+      }
+      // add receiver usernames
+      if (item.receiverUsername !== this.user?.userName) {
+        usernames.add(item.receiverUsername);
       }
     });
     if (usernames.size > 0) {

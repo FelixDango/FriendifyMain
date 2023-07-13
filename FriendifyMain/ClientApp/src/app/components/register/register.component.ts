@@ -35,11 +35,9 @@ export class RegisterComponent {
       sex: parseInt(String(this.sex), 10),
       status: 0
     };
-    console.log(registerData);
     this.authService.register(registerData).subscribe(
       (response: any) => {
         console.log(response);
-        // Handle successful registration response
       },
       (error: any) => {
         // Handle registration error

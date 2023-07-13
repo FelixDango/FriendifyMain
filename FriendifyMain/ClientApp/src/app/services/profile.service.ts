@@ -14,7 +14,6 @@ export class ProfileService {
 
   constructor(private httpService: HttpService, private authService: AuthService) {
     this.authService.user$.subscribe((user: User) => {
-      console.log('user',user);
       if (user) this.loggedInUser = user;
     });
 

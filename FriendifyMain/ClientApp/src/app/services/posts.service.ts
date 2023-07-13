@@ -46,7 +46,6 @@ export class PostsService {
 
     this.httpService.get('/Home/getallposts').subscribe(
       (response: any) => {
-        console.log(response as Post[]);
         posts = response;
         this.publicPostsSubject.next(posts);
       },

@@ -28,7 +28,6 @@ export class MessagesService {
 
   getMessages() {
     this.httpService.get('/Message').subscribe((messages: any) => {
-      console.log('res get message',messages);
       this.messages$.next(messages);
     })
   }
@@ -36,16 +35,23 @@ export class MessagesService {
   loadFollowers() {
     if (this.user !== undefined) {
       this.httpService.get('/Profile/' + this.user?.userName + '/view').subscribe((response: any) => {
-        console.log('res get followers',response.following);
         this.following$.next(response.following);
       })
     }
   }
 
   postMessage(message: string, receiverUsername: string) {
+    const m = {
+      "id": 0,
+      "userId": 0,
+      "receiverId": 0,
+      "content": message,
+      "username": receiverUsername,
+      "receiverUsername": receiverUsername
+    } as Message;
     this.httpService.post('/Message', {content: message, ReceiverUsername: receiverUsername}).subscribe((response: any) => {
-        console.log('res post message',response);
-        this.getMessagesByUsername(receiverUsername);
+      this.activeMessageTab$.next(receiverUsername);
+      this.messages$.next([response, ...this.messages$.value]);
       }, (error: any) => {
         console.log(error);
       }
@@ -55,7 +61,6 @@ export class MessagesService {
 
   getMessagesByUsername(username: string) {
     this.httpService.get('/Message/' + username + '/messages').subscribe((messages: any) => {
-      console.log('res get message',messages);
       this.loadedMessages$.next(messages);
     })
   }

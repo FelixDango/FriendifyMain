@@ -42,7 +42,6 @@ export class PrivateMessagesComponent {
 
   sendMessage(username: string) {
     // Add code to send a message
-    console.log('message',this.message);
     if (this.message != undefined) {
       this.messageService.postMessage(this.message, username);
       this.messageService.getMessagesByUsername(username);
