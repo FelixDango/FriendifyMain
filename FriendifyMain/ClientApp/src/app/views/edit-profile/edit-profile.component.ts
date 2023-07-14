@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {AuthService} from "../../services/auth.service";
 import {User} from "../../models/user";
 import {HttpService} from "../../services/http.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-edit-profile',
@@ -25,7 +26,7 @@ export class EditProfileComponent implements OnInit{
 
 
 
-  constructor(private authService: AuthService, private httpService: HttpService) {
+  constructor(private authService: AuthService, private httpService: HttpService, private router : Router) {
     this.authService.user$.subscribe((user: User) => {
       this.user = user;
     })
@@ -66,7 +67,12 @@ export class EditProfileComponent implements OnInit{
 
     this.httpService.put('/Profile/' + this.user?.userName + '/update', this.formData).subscribe(
       (response: any) => {
-        console.log(response);
+        if (response) {
+          // route to profile page
+          this.router.navigate(['/own-profile/' + this.user?.userName]);
+
+        }
+
         // Handle successful registration response
       },
       (error: any) => {
